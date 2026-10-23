@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Normal.Realtime;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 #if UNITY_EDITOR
@@ -117,7 +118,7 @@ public class RoomGeneration : MonoBehaviour
     private string frontWallDirection = "";
 
     // Stairwell variables to track
-    private int stairDepth = 5; // Makes for an angle of 31 degrees, architectural height for a comfortable set of stairs
+    private int stairDepth = 5; // Stairwell is stairDepth + 4 tiles long; with 4 m walls the flight comes out around 32 degrees, a comfortable set of stairs
     private bool stairwellIsOpenBottom = false;
     private int stairwellOpenBottomY = -999;
     private HashSet<Vector2Int> activeStairwellFootprint = null;
@@ -656,6 +657,21 @@ public class RoomGeneration : MonoBehaviour
                 // Filter the floor-wide door strings down to Vector2Int coordinates inside this specific room
                 HashSet<Vector2Int> roomDoorTiles = GetDoorTilesForRoom(floorDoors, floorRooms[i]);
 
+                // The front door and an open-bottomed stairwell aren't in floorDoors, but furniture must not block them either
+                if (floor == 0)
+                {
+                    if (floorRooms[i].Contains(mainDoorTile)) roomDoorTiles.Add(mainDoorTile);
+
+                    if (stairwellIsOpenBottom && stairwellOpenBottomY != -999)
+                    {
+                        for (int x = 0; x < 2; x++)
+                        {
+                            Vector2Int stairEntryTile = new Vector2Int(globalStairTile.x + x, stairwellOpenBottomY - 1);
+                            if (floorRooms[i].Contains(stairEntryTile)) roomDoorTiles.Add(stairEntryTile);
+                        }
+                    }
+                }
+
                 // Fetch the assigned type
                 string assignedType = roomTypes[floorRooms[i]];
 
@@ -692,8 +708,54 @@ public class RoomGeneration : MonoBehaviour
         RoomDecoration decorator = GetComponent<RoomDecoration>();
         if (decorator != null)
             decorator.DecorateRooms(allGeneratedRooms, houseParent);
+
+#if UNITY_EDITOR
+        // Occlusion culling baked for the previous house (or for the scene this one was copied from) no longer matches it
+        if (!Application.isPlaying)
+            DetachStaleOcclusionData();
+#endif
     }
     #endregion
+
+#if UNITY_EDITOR
+    #region Occlusion Culling
+    // Baked occlusion culling stores the walls that existed when it was baked, and a duplicated scene keeps pointing at the
+    // original scene's bake. Once the house is regenerated those walls are gone, but the data still hides whatever stood behind
+    // them, so distant buildings pop in and out. Detach it from the loaded scenes (the asset is left alone since another scene
+    // may own it) and re-bake with the button on the RoomGenerator once the layout is final.
+    void DetachStaleOcclusionData()
+    {
+        List<string> detached = new List<string>();
+
+        // OcclusionCullingSettings has no managed type, so find the per-scene settings by their serialized data field
+        foreach (Object settings in Resources.FindObjectsOfTypeAll<Object>())
+        {
+            if (settings == null || settings.GetType() != typeof(Object) || EditorUtility.IsPersistent(settings)) continue;
+
+            SerializedObject serializedSettings = new SerializedObject(settings);
+            SerializedProperty occlusionData = serializedSettings.FindProperty("m_OcclusionCullingData");
+            if (occlusionData == null || occlusionData.objectReferenceValue == null) continue;
+
+            detached.Add(AssetDatabase.GetAssetPath(occlusionData.objectReferenceValue));
+            occlusionData.objectReferenceValue = null;
+            serializedSettings.ApplyModifiedProperties();
+        }
+
+        if (detached.Count == 0) return;
+
+        // Drop the copy Unity already loaded so the editor stops culling with it too (nothing is referenced anymore, so no asset is touched)
+        StaticOcclusionCulling.Clear();
+
+        Debug.LogWarning($"[RoomGeneration] Detached baked occlusion culling ({string.Join(", ", detached)}): it was baked for a different house and would hide distant buildings. Click 'Bake Occlusion Culling' on the RoomGenerator once you're happy with the layout.");
+    }
+
+    // Occluder/occludee flags let an occlusion bake use the house shell. No static batching: OAVA reads these flammable meshes at runtime
+    void MarkAsOccluder(GameObject obj)
+    {
+        GameObjectUtility.SetStaticEditorFlags(obj, StaticEditorFlags.OccluderStatic | StaticEditorFlags.OccludeeStatic);
+    }
+    #endregion
+#endif
 
     #region Layout Generation Callers
     void GenerateOutbuilding(Transform parent)
@@ -1502,6 +1564,12 @@ public class RoomGeneration : MonoBehaviour
             wallMaterial,
             addCollider: addCollidersToCombinedGeometry);
 
+#if UNITY_EDITOR
+        MarkAsOccluder(floorGroup);
+        MarkAsOccluder(ceilingGroup);
+        MarkAsOccluder(wallGroup);
+#endif
+
         // After baking, capture the default material of the roof through our RoofData tracker
         RoofData data = ceilingGroup.AddComponent<RoofData>();
         data.originalMaterial = ceilingGroup.GetComponent<MeshRenderer>().sharedMaterial;
@@ -1655,7 +1723,7 @@ public class RoomGeneration : MonoBehaviour
                 {
                     GameObject spawnedDoor = Instantiate(doorPrefab, prefabPos, Quaternion.LookRotation(new Vector3(dir.x, 0, dir.y)), parent.parent);
                     FitPrefabToHole(spawnedDoor, 1f, doorHeight, 0.25f, pos.y);
-                    spawnedDoor.GetComponent<BoxCollider>().enabled = false;
+                    HangTouchDoor(spawnedDoor, pos.y);
                 }
                 continue;
             }
@@ -1809,6 +1877,28 @@ public class RoomGeneration : MonoBehaviour
     #endregion
 
     #region Spawning Helpers
+    // Hangs the front door on a hinge at the left edge of its opening so touching it swings it into the house (see TouchDoor).
+    // The door stays solid, so players open it rather than walking through it
+    void HangTouchDoor(GameObject door, float floorY)
+    {
+        Transform doorTransform = door.transform;
+
+        GameObject hinge = new GameObject("Front Door");
+        hinge.transform.SetParent(doorTransform.parent, false);
+        hinge.transform.SetPositionAndRotation(
+            new Vector3(doorTransform.position.x, floorY, doorTransform.position.z) - doorTransform.right * 0.5f,
+            doorTransform.rotation);
+        doorTransform.SetParent(hinge.transform, true);
+
+        // A moving collider should sit on a kinematic rigidbody rather than be moved as static geometry
+        Rigidbody hingeBody = hinge.AddComponent<Rigidbody>();
+        hingeBody.isKinematic = true;
+        hingeBody.useGravity = false;
+
+        hinge.AddComponent<RealtimeView>();
+        hinge.AddComponent<TouchDoor>();
+    }
+
     void SpawnWall(Vector3 tilePos, Vector2Int dir, Transform parent, bool isInterior, float startHeight = 0f, float customHeight = -1f, float customWidth = 1.0f)
     {
         // If no custom height is provided, use the default wallHeight
@@ -1891,43 +1981,90 @@ public class RoomGeneration : MonoBehaviour
     {
         if (topTile.x == -999) return;
 
-        // Vertical Bounds
-        float surfaceBottom = heightOffset - 2f;
-        float surfaceTop = heightOffset + wallHeight - 1.55f; // was 1.5f
-        float rise = surfaceTop - surfaceBottom;
+        // Rooms are built in world tile coordinates, but the floor parent sits at the generator's offset, so every stair
+        // piece is placed with world positions. Footprint (see DetermineGlobalStairwell): a 1 tile bottom landing, the flight,
+        // then a 1 tile top landing on the row the upper floor's stairwell door opens from
+        int totalLength = depth + 4;
+        float flightStartZ = topTile.y - (totalLength - 1) + 0.5f;
+        float flightEndZ = topTile.y - 0.5f;
+        float run = flightEndZ - flightStartZ;
 
-        // Horizontal Bounds - ADJUSTED FOR TOP LANDING
-        int topLandingDepth = 2; // The number of flat tiles at the top
-        float run = (float)depth; // The actual slanted part of the stairs
+        // Climb from this floor's surface to the next one (the ceiling/floor slab adds 0.5 above the walls)
+        float baseY = heightOffset;
+        float rise = wallHeight + 0.5f;
 
-        // Position the ramp so it starts AFTER the top landing
-        // We shift the centerZ further back by the landing depth
-        float centerZ = (float)topTile.y - (run - 1f) - topLandingDepth;
+        float centerX = topTile.x + 0.5f; // The stairwell is 2 tiles wide
+        float stairWidth = 1.95f;
 
-        // Ramp Geometry
-        float rampLength = Mathf.Sqrt((run * run) + (rise * rise));
-        float angle = Mathf.Atan2(rise, run) * Mathf.Rad2Deg;
+        // Aim for ~18 cm risers. The last riser steps up onto the top landing, so there's one fewer tread than risers
+        int riserCount = Mathf.Max(2, Mathf.RoundToInt(rise / 0.18f));
+        float riser = rise / riserCount;
+        float tread = run / (riserCount - 1);
 
+        // Visible steps: solid blocks merged into one mesh with no colliders (the ramp below handles walking)
+        GameObject steps = new GameObject("Stairs");
+        steps.transform.SetParent(parent, false);
+        steps.transform.position = new Vector3(centerX, baseY, flightStartZ);
+
+        for (int step = 1; step < riserCount; step++)
+        {
+            float stepTop = step * riser;
+            Vector3 stepCenter = new Vector3(centerX, baseY + stepTop / 2f, flightStartZ + (step - 0.5f) * tread);
+            GameObject block = SpawnPrimitive(PrimitiveType.Cube, steps.transform, Vector3.zero, Vector3.one, "Step");
+            block.transform.position = stepCenter;
+            block.transform.localScale = new Vector3(stairWidth, stepTop, tread);
+        }
+
+        MeshFilter[] stepFilters = steps.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[stepFilters.Length];
+        for (int i = 0; i < stepFilters.Length; i++)
+        {
+            combine[i].mesh = stepFilters[i].sharedMesh;
+            combine[i].transform = steps.transform.worldToLocalMatrix * stepFilters[i].transform.localToWorldMatrix;
+        }
+
+        Mesh stepMesh = new Mesh();
+        stepMesh.name = "Stairs";
+        stepMesh.CombineMeshes(combine);
+
+        for (int i = steps.transform.childCount - 1; i >= 0; i--)
+            DestroyImmediate(steps.transform.GetChild(i).gameObject);
+
+        steps.AddComponent<MeshFilter>().sharedMesh = stepMesh;
+        MeshRenderer stepRenderer = steps.AddComponent<MeshRenderer>();
+
+        // Invisible ramp collider for smooth VR movement. It runs through the middle of every tread (within half a riser
+        // of each step), starting on the bottom landing and ending flush with the top landing
+        float rampStartZ = flightStartZ - tread / 2f;
+        float rampRun = run + tread;
+        float rampLength = Mathf.Sqrt((rampRun * rampRun) + (rise * rise));
+        float angle = Mathf.Atan2(rise, rampRun);
         float thickness = 0.2f;
-        float centerY = ((surfaceBottom + surfaceTop) / 2f) - ((thickness / 2f) * Mathf.Cos(angle * Mathf.Deg2Rad));
-        float centerX = topTile.x + 0.6f; // was 0.5f
 
-        // Spawn the slanted ramp
-        Vector3 rampPos = new Vector3(centerX, centerY, centerZ);
-        GameObject ramp = SpawnPrimitive(PrimitiveType.Cube, parent, rampPos, new Vector3(1.95f, thickness, rampLength), "Stair_Ramp");
-        ramp.transform.localRotation = Quaternion.Euler(-angle, 0, 0);
+        // Push the box down along its normal so its top face is the walking surface
+        Vector3 slopeMid = new Vector3(centerX, baseY + rise / 2f, rampStartZ + rampRun / 2f);
+        Vector3 slopeNormal = new Vector3(0f, Mathf.Cos(angle), -Mathf.Sin(angle));
 
-        // SPAWN THE TOP LANDING (The flat bridge)
-        // Positioned at the topTile, flush with the upper floor
-        float landingCenterZ = (float)topTile.y - (topLandingDepth * 1.5f) + 0.5f; // was (topLandingDepth/2f) + 0.5f
-        Vector3 landingPos = new Vector3(centerX, surfaceTop - (thickness / 2f), landingCenterZ); 
-        GameObject landing = SpawnPrimitive(PrimitiveType.Cube, parent, landingPos, new Vector3(1.95f, thickness, topLandingDepth), "Stair_Top_Landing");
+        GameObject ramp = SpawnPrimitive(PrimitiveType.Cube, parent, Vector3.zero, new Vector3(stairWidth, thickness, rampLength), "Stair_Ramp");
+        ramp.transform.position = slopeMid - slopeNormal * (thickness / 2f);
+        ramp.transform.rotation = Quaternion.Euler(-angle * Mathf.Rad2Deg, 0, 0);
+        ramp.GetComponent<MeshRenderer>().enabled = false;
+
+        // Top landing: a full-thickness slab level with the upper floor
+        float landingThickness = 1f;
+        GameObject landing = SpawnPrimitive(PrimitiveType.Cube, parent, Vector3.zero, new Vector3(stairWidth, landingThickness, 1f), "Stair_Top_Landing");
+        landing.transform.position = new Vector3(centerX, baseY + rise - landingThickness / 2f, topTile.y);
 
         if (floorMaterial != null)
         {
-            ramp.GetComponent<MeshRenderer>().sharedMaterial = floorMaterial;
+            stepRenderer.sharedMaterial = floorMaterial;
             landing.GetComponent<MeshRenderer>().sharedMaterial = floorMaterial;
         }
+
+#if UNITY_EDITOR
+        MarkAsOccluder(steps);
+        MarkAsOccluder(landing);
+#endif
     }
 
     // Helpers to spawn primitives - could be used later for spawning primitive furniture etc.
@@ -1970,7 +2107,7 @@ public class RoomGeneration : MonoBehaviour
         footprint = null;
         stairTile = new Vector2Int(-999, -999);
         int width = 2; // stairwellWidth
-        // We increase this to 9: (2 tile bottom landing + 5 tiles ramp + 2 tile top landing)
+        // We increase this to 9: (1 tile bottom landing + 7 tile flight of stairs + 1 tile top landing)
         int totalLength = stairDepth + 4;
 
         // Scan from top to bottom, left to right
@@ -2732,7 +2869,7 @@ public class RoomGeneration : MonoBehaviour
             case "Master Bedroom": targetWindowCount = Random.Range(1, 3); break; // 1 to 2 windows
             case "Bedroom": targetWindowCount = 1; break; // Always 1 window
             case "Bathroom": targetWindowCount = 1; break; // Always 1 window
-            case "Kitchen": targetWindowCount = Random.Range(0, 2); break; // 0 to 1 window
+            case "Kitchen": targetWindowCount = 1; break; // Always 1 window (RoomDecoration keeps appliances and counters clear of it)
             case "Dining Room": targetWindowCount = Random.Range(1, 3); break; // 1 to 2 windows
             default: targetWindowCount = (Random.value <= windowChance) ? 1 : 0; break;
         }
@@ -2964,7 +3101,7 @@ public class RoomGeneration : MonoBehaviour
             string roomType = roomTypes[roomTiles];
 
             // Target only the types requiring guaranteed natural light
-            if (roomType == "Living Room" || roomType == "Bathroom" || roomType == "Bedroom" || roomType == "Master Bedroom")
+            if (roomType == "Living Room" || roomType == "Bathroom" || roomType == "Bedroom" || roomType == "Master Bedroom" || roomType == "Kitchen")
             {
                 bool hasWindow = false;
                 foreach (var windowStr in plannedWindows)

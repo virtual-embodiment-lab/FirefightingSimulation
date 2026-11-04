@@ -28,7 +28,7 @@ public static class SmokeFusionExperiment
         EditorApplication.update += Tick;
         UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, mode) => {
             if (!SessionState.GetBool("FusionPending", false) || scene.path != ScenePath) return;
-            foreach (var realtime in UnityEngine.Object.FindObjectsByType<Normal.Realtime.Realtime>()) {
+            foreach (var realtime in UnityEngine.Object.FindObjectsByType<Normal.Realtime.Realtime>(FindObjectsSortMode.None)) {
                 var so = new SerializedObject(realtime);
                 var p = so.FindProperty("_joinRoomOnStartOptions._enabled") ?? so.FindProperty("_joinRoomOnStart");
                 if (p == null) throw new Exception("Offline auto-connect property missing");
@@ -129,11 +129,11 @@ public static class SmokeFusionExperiment
         }
         if (state != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool("FusionPending", false)) return;
         SessionState.SetBool("FusionPending", false);
-        particles = UnityEngine.Object.FindObjectsByType<ParticleRoomSmoke>().OrderBy(s => s.lifecycleFireSource != null ? 0 : 1).ToArray();
+        particles = UnityEngine.Object.FindObjectsByType<ParticleRoomSmoke>(FindObjectsSortMode.None).OrderBy(s => s.lifecycleFireSource != null ? 0 : 1).ToArray();
         if(particles.Length != 2 || particles[0].lifecycleFireSource == null) throw new Exception("Fusion scene needs the shared stove lifecycle. Rebuild using Tools/Smoke Fusion.");
         preview = SessionState.GetBool("FusionPreview", false);
         camera = GameObject.Find("Smoke Integration Observation Camera").GetComponent<Camera>();
-        foreach (var c in UnityEngine.Object.FindObjectsByType<Camera>()) c.enabled = false;
+        foreach (var c in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None)) c.enabled = false;
         camera.enabled = true; camera.tag = "MainCamera";
         EditorApplication.ExecuteMenuItem("Window/General/Game");
         camera.rect = new Rect(0, 0, 1, 1);
@@ -181,7 +181,7 @@ public static class SmokeFusionExperiment
     static void Capture(string label)
     {
         // Hide contributions without restarting either simulation; restore in finally.
-        var emitters = UnityEngine.Object.FindObjectsByType<FlammableObject>();
+        var emitters = UnityEngine.Object.FindObjectsByType<FlammableObject>(FindObjectsSortMode.None);
         var alphas = emitters.Select(e => e.smokeAlpha).ToArray();
         var renderers = particles.Select(p => p.effect.GetComponent<Renderer>()).ToArray();
         var enabled = renderers.Select(r => r.enabled).ToArray();
@@ -193,7 +193,7 @@ public static class SmokeFusionExperiment
                 for (int v = 0; v < views.Length; v++) Render(views[v], $"{label}-view{v}-{new[] { "legacy", "particles", "overlay" }[mode]}.png");
             }
             File.AppendAllText(Path.Combine(Results, "samples.txt"), label + " time=" + (Time.time-start) + " rates=" + string.Join(",", particles.Select(p => p.CurrentRate.ToString("F1"))) + " alive=" + string.Join(",", particles.Select(p => p.effect.aliveParticleCount)) + "\n");
-            foreach (var room in UnityEngine.Object.FindObjectsByType<RoomSmokeController>()) {
+            foreach (var room in UnityEngine.Object.FindObjectsByType<RoomSmokeController>(FindObjectsSortMode.None)) {
                 File.AppendAllText(Path.Combine(Results, "samples.txt"), "ROOM enabled="+room.enabled+" source="+ParticleSmokePrototypeTools.Hierarchy(room.fireSource.transform)+" sameStove="+(room.fireSource.gameObject==Fire(particles[0]).gameObject)+"\n");
                 foreach (var zone in room.smokeZones) {
                     var z = zone.smokeSource;

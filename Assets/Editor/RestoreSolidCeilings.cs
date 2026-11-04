@@ -19,7 +19,7 @@ public static class RestoreSolidCeilings
         int collidersAdded = 0;
         int flags = 0;
 
-        foreach (RoomGeneration generator in Object.FindObjectsByType<RoomGeneration>(FindObjectsInactive.Include))
+        foreach (RoomGeneration generator in Object.FindObjectsByType<RoomGeneration>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (!generator.roomRoofsTransparent)
                 continue;
@@ -30,7 +30,7 @@ public static class RestoreSolidCeilings
             flags++;
         }
 
-        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
+        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (transform.name != "Ceilings")
                 continue;
@@ -79,7 +79,7 @@ public static class RestoreSolidCeilings
 
         SceneAssetGuard();
         int added = 0;
-        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
+        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (transform.name != "Ceilings")
                 continue;

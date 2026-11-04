@@ -27,7 +27,7 @@ public static class SmokeGeometryVerification
         EditorApplication.playModeStateChanged+=Changed;
         UnityEngine.SceneManagement.SceneManager.sceneLoaded+=(scene,mode)=>{
             if(!SessionState.GetBool("GeometryPending",false) || scene.path!=SmokeGeometryTools.ScenePath)return;
-            foreach(var realtime in UnityEngine.Object.FindObjectsByType<Normal.Realtime.Realtime>()){
+            foreach(var realtime in UnityEngine.Object.FindObjectsByType<Normal.Realtime.Realtime>(FindObjectsSortMode.None)){
                 var serialized=new SerializedObject(realtime);
                 var property=serialized.FindProperty("_joinRoomOnStartOptions._enabled")??serialized.FindProperty("_joinRoomOnStart");
                 if(property==null)throw new Exception("Cannot suppress offline test auto-connect");
@@ -56,7 +56,7 @@ public static class SmokeGeometryVerification
         validation=SessionState.GetBool("GeometryValidation",false);
         live=SessionState.GetBool("GeometryLive",false);
         folder=Path.Combine(SmokeGeometryTools.Results,validation?"validation":"after");if(!live)Directory.CreateDirectory(folder);
-        smoke=UnityEngine.Object.FindObjectsByType<ParticleRoomSmoke>().OrderBy(s=>s.source.name=="stove"?0:1).ToArray();
+        smoke=UnityEngine.Object.FindObjectsByType<ParticleRoomSmoke>(FindObjectsSortMode.None).OrderBy(s=>s.source.name=="stove"?0:1).ToArray();
         for(int i=0;i<smoke.Length;i++){
             smoke[i].gameObject.layer=30+i;
             smoke[i].Configure();smoke[i].effect.Reinit();smoke[i].effect.Play();
@@ -64,8 +64,8 @@ public static class SmokeGeometryVerification
         views=new[]{GameObject.Find("Smoke Integration Observation Camera").GetComponent<Camera>(),GameObject.Find("Smoke Door Observation Camera").GetComponent<Camera>(),GameObject.Find("Smoke Hallway Particle Slice").GetComponent<Camera>()};
         // Keep the entire real house; suppress unrelated outdoor drawing in this transient test only.
         var house=GameObject.Find("RoomGenerator/House").transform;
-        foreach(var r in UnityEngine.Object.FindObjectsByType<Renderer>())if(!r.transform.IsChildOf(house) && !(r is VFXRenderer))r.enabled=false;
-        foreach(var c in UnityEngine.Object.FindObjectsByType<Camera>())c.enabled=false;
+        foreach(var r in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))if(!r.transform.IsChildOf(house) && !(r is VFXRenderer))r.enabled=false;
+        foreach(var c in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))c.enabled=false;
         views[0].enabled=true;
         views[0].tag="MainCamera";
         if(live){

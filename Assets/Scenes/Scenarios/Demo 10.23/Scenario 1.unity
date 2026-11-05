@@ -5040,280 +5040,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &54009246
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 54009255}
-  - component: {fileID: 54009254}
-  - component: {fileID: 54009253}
-  - component: {fileID: 54009252}
-  - component: {fileID: 54009247}
-  - component: {fileID: 54009251}
-  - component: {fileID: 54009250}
-  - component: {fileID: 54009249}
-  - component: {fileID: 54009248}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &54009247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45fa1a403ac351a47a29cea99a046537, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxSpread: 20
-  fireCrawlSpeed: 0.05
-  overrideFireVFX: 1
-  overrideVFXVariant: 7
-  fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
-  colorIntensityMultiplier: 3
-  fireColorBlend: 0.1
-  flameLength: 2
-  smokeColor: {r: 0.18039216, g: 0.18039216, b: 0.18039216, a: 1}
-  smokeColorIntensity: 10
-  smokeAlpha: 2.5
-  smokeVFXMultiplier: 1
-  smokeParticleSize: 3.85
-  embersVFXMultiplier: 1
-  embersBurstVFXMultiplier: 1
-  embersBurstDelayMinMax: {x: 2, y: 4}
-  embersParticleSize: 1
-  useExtinguishSteam: 1
-  enableMaterialAnimation: 1
-  shaderEmissionColor: {r: 0.94509804, g: 0.4745098, b: 0.043137256, a: 1}
-  shaderBurntColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-  maximumBurnDarkening: 0.5
-  shaderToBurntInterpolateSpeed: 0.03
-  shaderEmissionMultiplier: 1
-  achieveMaxBrightness_s: 20
-  shaderColorNoise: 0.05
-  shaderColorNoiseSpeed: 1
-  useMaterialAnimationOnAllRenderers: 1
-  animateMaterialsRenderers: []
-  flameCatchAreaAddition: {x: 0.5, y: 0.5, z: 0.5}
-  setThisOnFireOnStart: 0
-  fireSpread: 0
-  onFireTimer: 0
-  isEffectOnForever: 0
-  burnOutStart_s: 9999
-  burnOutLength_s: 10
-  isReignitable: 0
-  deleteAfterBurnout: 0
-  useMeshFire: 0
-  meshFireCount: 10
-  meshFireMeshFilters: []
-  calculateFlammationAreaFromMesh: 0
-  affectedByWind: 1
-  ignitionTime: 15
-  enableFlameVFX: 0
-  flameEnvironmentalSpeed: 1
-  flameLiveliness: 1
-  windForceMultiplier: 1
-  flameLivelinessSpeed: 1
-  flameParticleSize: 1
-  flameBurstDelayMinMax: {x: 0, y: 0}
-  flameAreaNoiseMinMaxMultiplier: {x: 0.9, y: 1}
-  flameVFXMultiplier: 1
-  flameVisibilityMultiplier: 1
-  onFire: 0
-  flammableColliders: []
-  flammableMaterialIndexes: 
-  useFireSFX: 1
-  customFireSFX: {fileID: 0}
-  customFireOriginOnStart: {fileID: 0}
-  flameLights: []
-  fullExtinguishToughness: 0.5
-  backSpreadCoolDown_s: 5
-  spreadLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  openTabUpper: 2
-  openTabLower: 4
---- !u!114 &54009248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 339088f2a4c02f34680657a5ec4c027c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxTemperature: 1000
-  currentTemperature: 1000
-  currentProfile: 2
-  tempRegenRate: 250
-  tempDrainPerParticle: 0.5
-  regenDelay: 1
-  smolderThreshold: 100
-  reigniteChance: 0.5
-  autoFizzleRate: 0.01
-  readyForSmolder: 0
-  flammableObject: {fileID: 54009247}
-  collider: {fileID: 54009252}
---- !u!114 &54009249
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf71975fe6dc4631b24a5c69ff5e55a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprayHitRadius: 0.1
-  sprayHitMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  presentationDelaySeconds: 0.15
-  enableLocalExtinguishPrediction: 0
-  enableSynchronizationDiagnostics: 1
---- !u!114 &54009250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -363599832, guid: ebae63e7edba59945a994528ada1f7a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _realtime: {fileID: 0}
-  _sceneViewUUID: 
-  _viewUUID: 0f03edac-4c47-40b7-a1ee-331f206513d6
-  _sceneViewPreventOwnershipTakeover: 0
-  _sceneViewDestroyWhenLastClientLeaves: 1
-  _components:
-  - componentID: 1
-    component: {fileID: 54009249}
-    isDeprecated: 0
-  _childViews: []
---- !u!114 &54009251
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a8763ca304103b489f9f9a1705acc9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  temperature: 0
-  heatUpSpeed: 0.22
-  coolDownSpeed: 0.5
---- !u!65 &54009252
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &54009253
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &54009254
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &54009255
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 54009246}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2130467010}
-  m_Father: {fileID: 1674248963}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &54693877
 GameObject:
   m_ObjectHideFlags: 0
@@ -13703,9 +13429,48 @@ MonoBehaviour:
   m_GameObject: {fileID: 158998510}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1313015415}
+  m_Script: {fileID: 11500000, guid: b62c2f458f113eb41a7e118d277ce804, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layoutName: Custom House Layout
+  seed: 0
+  settings:
+    maxHouseWidth: 0
+    maxHouseLength: 0
+    minRoomWidth: 0
+    maxRoomWidth: 0
+    minRoomLength: 0
+    maxRoomLength: 0
+    wallHeight: 0
+    numberOfRooms: 0
+    numberOfFloors: 0
+    identicalFloors: 0
+    roomAmountsDifferPerFloor: 0
+    heightenedNooks: 0
+    generateHallways: 0
+    spineHallways: 0
+    hallwayChance: 0
+    hallwayWidth: 0
+    minComplexity: 0
+    maxComplexity: 0
+    allowVoidSpaces: 0
+    minViableWidth: 0
+    minViableLength: 0
+    windowChance: 0
+    doorHeight: 0
+    windowHeight: 0
+    windowWidth: 0
+    windowSpacing: 0
+    generateYard: 0
+    minYardPadding: 0
+    maxYardPadding: 0
+    chanceForOutbuilding: 0
+    outbuildingSpawnChance: 0
+    outbuildingOffset: 0
+    floorMaterial: {fileID: 0}
+    wallMaterial: {fileID: 0}
+    ceilingMaterial: {fileID: 0}
+    yardMaterial: {fileID: 0}
 --- !u!1 &159230915
 GameObject:
   m_ObjectHideFlags: 0
@@ -61803,8 +61568,56 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5696770371371422430, guid: c240efe879a8bc249b3f1332f485edc1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 712930627}
   m_SourcePrefab: {fileID: 100100000, guid: c240efe879a8bc249b3f1332f485edc1, type: 3}
+--- !u!1 &712930626 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5696770371371422430, guid: c240efe879a8bc249b3f1332f485edc1, type: 3}
+  m_PrefabInstance: {fileID: 712930625}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &712930627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 712930626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0401cb3f4bb10c348bc29e261893e1c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireSources: []
+  smokeTemplate: {fileID: 0}
+  muteEmbeddedSmoke: 1
+  flameSpeedToSmoke: 1
+  baseSmokeSpeed: 1.05
+  riseSpeed: 0.55
+  wanderDegreesPerSecond: 16
+  fullStrengthSeconds: 8
+  fullSpreadMeters: 3
+  minimumSmokeStrength: 0.4
+  spawnInterval: 1
+  maxVolumesPerFire: 36
+  maxLiveVolumes: 72
+  heightOffset: 1.25
+  bodyRadius: 0.3
+  particleCeilingMargin: 0.45
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  growthSeconds: 2.5
+  fadeSeconds: 8
+  fadeDistanceDelay: 1.5
+  smokeColor: {r: 0.02, g: 0.02, b: 0.02, a: 1}
+  smokeColorIntensity: 20
+  smokeAlpha: 0.7
+  smokeVFXMultiplier: 4
+  smokeParticleSize: 4
+  generatedBlockScale: {x: 1.2, y: 0.7, z: 1.2}
 --- !u!1 &713167685
 GameObject:
   m_ObjectHideFlags: 0
@@ -122840,21 +122653,6 @@ MonoBehaviour:
     component: {fileID: 1312993090}
     isDeprecated: 0
   _childViews: []
---- !u!115 &1313015415
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 7
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_Type: 0
-  m_ExecutionOrder: 0
-  m_ClassName: HouseLayoutData
-  m_Namespace: 
-  m_AssemblyName: Assembly-CSharp
 --- !u!1 &1313425637
 GameObject:
   m_ObjectHideFlags: 0
@@ -156207,7 +156005,6 @@ Transform:
   m_Children:
   - {fileID: 475392607}
   - {fileID: 1230296993}
-  - {fileID: 54009255}
   m_Father: {fileID: 1886220226}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1674248966
@@ -156239,8 +156036,8 @@ MonoBehaviour:
     component: {fileID: 475392610}
     isDeprecated: 0
   - componentID: 2
-    component: {fileID: 54009250}
-    isDeprecated: 0
+    component: {fileID: 0}
+    isDeprecated: 1
 --- !u!114 &1674248967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156407,14 +156204,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1674248962}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5e9cf8fc4e04b678d54a6a3ef729d90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fireSource: {fileID: 1674248968}
   smokeZones:
-  - smokeSource: {fileID: 54009247}
+  - smokeSource: {fileID: 0}
   - smokeSource: {fileID: 0}
   initialGrowthDuration: 10
   initialMaximumDistanceDelay: 4
@@ -201098,59 +200895,6 @@ MonoBehaviour:
     component: {fileID: 2128077249}
     isDeprecated: 0
   _childViews: []
---- !u!1 &2130467009
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2130467010}
-  - component: {fileID: 2130467011}
-  m_Layer: 7
-  m_Name: Hitbox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2130467010
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2130467009}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 54009255}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2130467011
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2130467009}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &2130596280
 Mesh:
   m_ObjectHideFlags: 0

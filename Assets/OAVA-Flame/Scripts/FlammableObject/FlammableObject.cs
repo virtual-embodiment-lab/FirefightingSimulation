@@ -259,6 +259,8 @@ namespace Ignis
         public int openTabLower = 0;
 
         private List<VisualEffect> fires = new List<VisualEffect>();
+
+        [System.NonSerialized] public SmokeContainmentField smokeContainmentField;
         private List<FireTrigger> fireTriggers = new List<FireTrigger>();
         private List<AudioSource> fireSFX = new List<AudioSource>();
         private FlameEventInvoker flameEventInvoker;
@@ -1875,6 +1877,9 @@ namespace Ignis
 
         private void SetBoxesOnFire()
         {
+            FlameEngine engine = FlameEngine.instance;
+            bool useContainment = overrideFireVFX && overrideVFXVariant == FlameEngine.FireVFXVariant.OnlySmoke &&
+                smokeContainmentField != null && smokeContainmentField.IsValid && engine.containmentSmokeGraph != null;
             for (int boxIndex = 0; boxIndex < flammableColliders.Count; boxIndex++)
             {
                 BoxCollider box = flammableColliders[boxIndex];
@@ -1882,6 +1887,12 @@ namespace Ignis
                 GameObject fire = Instantiate(FlameEngine.instance.GetFireVFX(overrideVFXVariant, overrideFireVFX), new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), FlameEngine.instance.fireParent);
                 VisualEffect fireEffect = fire.GetComponent<VisualEffect>();
                 FlameEngine.instance.AddFlame(fire);
+                if (useContainment)
+                {
+                    fireEffect.pause = true;
+                    fireEffect.visualEffectAsset = engine.containmentSmokeGraph;
+                    smokeContainmentField.Bind(fireEffect);
+                }
                 SetupFireConstants(fireEffect);
 
                 //Place
@@ -1891,7 +1902,12 @@ namespace Ignis
                 fireEffect.SetVector3("Box_center", emissionCenter);
                 fireEffect.SetVector3("Rotation", Clamp0360Vector(box.transform.rotation.eulerAngles));
 
-                ApplyNetworkSeed(fireEffect, boxIndex, true);
+                ApplyNetworkSeed(fireEffect, boxIndex, !useContainment);
+                if (useContainment)
+                {
+                    fireEffect.Reinit();
+                    fireEffect.pause = false;
+                }
 
                 fires.Add(fire.GetComponent<VisualEffect>());
 

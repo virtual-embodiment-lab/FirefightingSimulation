@@ -42,6 +42,13 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Tooltip("While this component owns a burning fire, Ignis keeps the flames and the drifting blocks carry the smoke.")]
     public bool muteEmbeddedSmoke = true;
 
+    [Header("Particle Containment")]
+    [Tooltip("Use the Ignis smoke graph that checks particle births and movement against baked house geometry.")]
+    public bool useContainmentEnabledSmoke;
+
+    [HideInInspector]
+    public SmokeContainmentField bakedCollisionField;
+
     [Header("Flame Spread And Smoke")]
     [Tooltip("Extra drift speed, in meters per second, added for each meter per second of the fire's crawl speed.")]
     [Min(0f)]
@@ -499,6 +506,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     {
         smoke.overrideFireVFX = true;
         smoke.overrideVFXVariant = FlameEngine.FireVFXVariant.OnlySmoke;
+        smoke.smokeContainmentField = useContainmentEnabledSmoke ? bakedCollisionField : null;
         smoke.enableFlameVFX = false;
         smoke.embersVFXMultiplier = 0f;
         smoke.embersBurstVFXMultiplier = 0f;

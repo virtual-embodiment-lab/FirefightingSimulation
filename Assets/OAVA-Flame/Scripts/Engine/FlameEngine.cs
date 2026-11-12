@@ -86,6 +86,9 @@ namespace Ignis
         [Tooltip("All different flame variants")]
         public FlameVariantPrefabs flameVariantPrefabs;
 
+        [Tooltip("Project-wide OnlySmoke graph used by emitters with a baked collision field.")]
+        public VisualEffectAsset containmentSmokeGraph;
+
         [Tooltip("CANNOT MODIFY AT RUNTIME. VFX variant of the flame VFX. Only use High quality if you want few very high quality flames. If there is a lot of flames high quality might spawn too much particles")]
         public FireVFXVariant fireVFXVariant = FireVFXVariant.Wild;
 

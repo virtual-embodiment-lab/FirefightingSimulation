@@ -61593,6 +61593,8 @@ MonoBehaviour:
   fireSources: []
   smokeTemplate: {fileID: 0}
   muteEmbeddedSmoke: 1
+  useContainmentEnabledSmoke: 1
+  bakedCollisionField: {fileID: 11400000, guid: bde74149f7da96f4ab10b56798a8f891, type: 2}
   flameSpeedToSmoke: 1
   baseSmokeSpeed: 1.05
   riseSpeed: 0.55
@@ -61604,7 +61606,7 @@ MonoBehaviour:
   maxVolumesPerFire: 36
   maxLiveVolumes: 72
   heightOffset: 1.25
-  bodyRadius: 0.3
+  bodyRadius: 0.5
   particleCeilingMargin: 0.45
   obstacleMask:
     serializedVersion: 2
@@ -61612,11 +61614,14 @@ MonoBehaviour:
   growthSeconds: 2.5
   fadeSeconds: 8
   fadeDistanceDelay: 1.5
+  lowestSmokeHeight: 0.6
+  bankDownSeconds: 60
+  sinkSpeed: 0.15
   smokeColor: {r: 0.02, g: 0.02, b: 0.02, a: 1}
   smokeColorIntensity: 20
   smokeAlpha: 0.7
   smokeVFXMultiplier: 4
-  smokeParticleSize: 4
+  smokeParticleSize: 3
   generatedBlockScale: {x: 1.2, y: 0.7, z: 1.2}
 --- !u!1 &713167685
 GameObject:

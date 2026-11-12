@@ -4909,6 +4909,7 @@ MonoBehaviour:
   triggerParent: {fileID: 1365444856260468483}
   runTimeTreeParent: {fileID: 8795917215549083779}
   vsProMaskParent: {fileID: 2271388883672224839}
+  containmentSmokeGraph: {fileID: 8926484042661614526, guid: e36783e773508bd48aa99e450a7b79f6, type: 3}
   flameVariantPrefabs:
     fireBoxPrefab: {fileID: 1782572316093908408, guid: 18b4e468acd8dc846913720a696759ed,
       type: 3}

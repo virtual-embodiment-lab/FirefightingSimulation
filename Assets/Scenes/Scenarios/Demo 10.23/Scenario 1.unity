@@ -444,6 +444,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -931,6 +932,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -2332,6 +2334,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -3083,6 +3086,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -3536,6 +3540,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -5170,6 +5175,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -6099,6 +6105,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -6659,6 +6666,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -7038,6 +7046,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -8082,7 +8091,7 @@ Transform:
   m_GameObject: {fileID: 98079353}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -4.33, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8618,6 +8627,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -9132,6 +9142,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -9442,6 +9453,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -9767,6 +9779,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -10582,6 +10595,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -11246,6 +11260,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -11542,6 +11557,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -12488,6 +12504,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -13206,6 +13223,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -13874,6 +13892,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -14252,6 +14271,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -14562,6 +14582,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -15134,6 +15155,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -15970,6 +15992,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -16304,7 +16327,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -17261,6 +17284,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -18052,6 +18076,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -18348,6 +18373,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -18792,6 +18818,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -19138,6 +19165,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -19669,6 +19697,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -20371,6 +20400,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -21000,6 +21030,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -22576,6 +22607,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -22884,6 +22916,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -23367,6 +23400,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -23708,6 +23742,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -24585,6 +24620,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -26957,6 +26993,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -27336,6 +27373,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -28345,6 +28383,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -29149,6 +29188,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -29630,6 +29670,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -30145,6 +30186,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -30563,6 +30605,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -31050,6 +31093,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -32399,6 +32443,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -33024,6 +33069,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -33596,6 +33642,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -34102,6 +34149,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -34650,6 +34698,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -35054,6 +35103,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -35350,6 +35400,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -35954,6 +36005,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -36764,6 +36816,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -37441,6 +37494,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -38946,6 +39000,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -39311,6 +39366,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -39735,7 +39791,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -40671,6 +40727,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -41471,6 +41528,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -41789,6 +41847,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -42085,6 +42144,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -43007,6 +43067,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -43499,6 +43560,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -43878,6 +43940,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -44299,6 +44362,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -44595,6 +44659,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -45454,6 +45519,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -45750,6 +45816,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -46242,6 +46309,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -47236,6 +47304,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -47532,6 +47601,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -47753,6 +47823,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -48208,7 +48279,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -48593,6 +48664,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -48889,6 +48961,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -49403,6 +49476,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -49782,6 +49856,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -50078,6 +50153,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -50376,6 +50452,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -51120,6 +51197,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -51871,6 +51949,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -52342,6 +52421,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -52958,6 +53038,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -53792,6 +53873,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -54296,6 +54378,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -54606,6 +54689,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -55990,6 +56074,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -56518,6 +56603,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -56849,6 +56935,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -57353,6 +57440,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -57651,6 +57739,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -58217,6 +58306,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -58613,6 +58703,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -58909,6 +59000,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -59257,6 +59349,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -59904,6 +59997,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -60448,6 +60542,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -61311,6 +61406,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -61609,9 +61705,18 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  growthSeconds: 2.5
+  growthSeconds: 30
   fadeSeconds: 8
   fadeDistanceDelay: 1.5
+  lowestSmokeHeight: 0.8
+  bankDownSeconds: 60
+  sinkSpeed: 0.15
+  containSmoke: 1
+  containedSmokePrefab: {fileID: 0}
+  roomBoundaryMask:
+    serializedVersion: 2
+    m_Bits: 1
+  wallFadeWidth: 0.08
   smokeColor: {r: 0.02, g: 0.02, b: 0.02, a: 1}
   smokeColorIntensity: 20
   smokeAlpha: 0.7
@@ -61896,6 +62001,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -62311,6 +62417,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -62918,6 +63025,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -63825,6 +63933,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -64340,6 +64449,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -64796,6 +64906,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -65215,6 +65326,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -66345,6 +66457,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -66641,6 +66754,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -66929,6 +67043,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -67225,6 +67340,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -67620,7 +67736,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &781461844
 Transform:
   m_ObjectHideFlags: 0
@@ -68923,6 +69039,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -70068,6 +70185,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -71239,6 +71357,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -71537,6 +71656,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -72268,6 +72388,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -72724,6 +72845,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -73081,6 +73203,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -73377,6 +73500,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -73838,6 +73962,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -74148,6 +74273,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -74609,6 +74735,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -74988,6 +75115,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -75383,6 +75511,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -75784,6 +75913,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -76096,7 +76226,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -76361,6 +76491,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -76740,6 +76871,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -77557,6 +77689,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -78180,6 +78313,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -78641,6 +78775,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -79162,6 +79297,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -80441,6 +80577,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -80988,6 +81125,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -81578,6 +81716,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -82672,6 +82811,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -82946,6 +83086,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -83242,6 +83383,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -83621,6 +83763,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -84261,6 +84404,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -84557,6 +84701,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -85150,7 +85295,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85296,6 +85441,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -85745,6 +85891,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -86131,6 +86278,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -86427,6 +86575,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -87095,6 +87244,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -87563,6 +87713,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -88218,6 +88369,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -88925,6 +89077,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -89315,6 +89468,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -89611,6 +89765,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -90190,6 +90345,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -90867,6 +91023,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -91163,6 +91320,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -91473,6 +91631,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -91948,6 +92107,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -92369,6 +92529,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -92748,6 +92909,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -93127,6 +93289,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -93437,6 +93600,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -94059,6 +94223,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -94369,6 +94534,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -95410,6 +95576,7 @@ MonoBehaviour:
   fireCrawlSpeed: 1
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -96076,6 +96243,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -96964,6 +97132,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -97260,6 +97429,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -97857,6 +98027,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -98605,6 +98776,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -99066,6 +99238,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -99362,6 +99535,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -99651,6 +99825,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -100000,6 +100175,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -100721,6 +100897,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -100995,6 +101172,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -101394,6 +101572,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -101690,6 +101869,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -102225,6 +102405,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -102535,6 +102716,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -102934,6 +103116,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -103266,6 +103449,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -104066,6 +104250,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -104573,6 +104758,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -105611,6 +105797,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -106800,6 +106987,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -107548,6 +107736,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -108117,6 +108306,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -108444,6 +108634,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -108816,6 +109007,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -109244,6 +109436,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -109562,6 +109755,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -109941,6 +110135,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -110445,6 +110640,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -111145,6 +111341,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -111650,6 +111847,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -112202,7 +112400,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -112431,6 +112629,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -112956,6 +113155,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -113526,6 +113726,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -113955,6 +114156,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -114397,6 +114599,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -116639,6 +116842,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -116935,6 +117139,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -117389,6 +117594,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -118122,6 +118328,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -119228,6 +119435,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -120645,6 +120853,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -120941,6 +121150,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -121320,6 +121530,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -121616,6 +121827,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -122034,6 +122246,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -122495,6 +122708,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -122852,6 +123066,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -123890,6 +124105,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -124560,6 +124776,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -125365,6 +125582,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -125927,6 +126145,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -126699,6 +126918,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -127081,6 +127301,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -127302,6 +127523,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -127777,6 +127999,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -128937,6 +129160,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -130529,6 +130753,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -131782,6 +132007,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -132615,6 +132841,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -133085,6 +133312,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -133775,6 +134003,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -134175,6 +134404,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -134505,6 +134735,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -134884,6 +135115,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -135302,6 +135534,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -135920,6 +136153,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -136734,6 +136968,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -137030,6 +137265,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -137305,6 +137541,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -137645,6 +137882,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -138140,6 +138378,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -138414,6 +138653,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -138824,6 +139064,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -139203,6 +139444,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -139582,6 +139824,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -139961,6 +140204,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -140257,6 +140501,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -140692,6 +140937,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -142137,6 +142383,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -142612,6 +142859,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -143129,6 +143377,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -143425,6 +143674,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -143699,6 +143949,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -144798,6 +145049,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -145456,6 +145708,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -145842,6 +146095,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -146806,6 +147060,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -147483,6 +147738,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -148057,6 +148313,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -148561,6 +148818,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -148977,6 +149235,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -149363,6 +149622,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -150032,6 +150292,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -150501,6 +150762,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -151138,6 +151400,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -151559,6 +151822,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -151869,6 +152133,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -153483,6 +153748,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -153781,6 +154047,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -154113,6 +154380,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -154784,6 +155052,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -155701,6 +155970,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -156133,6 +156403,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -156210,11 +156481,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireSource: {fileID: 1674248968}
-  smokeZones:
-  - smokeSource: {fileID: 0}
-  - smokeSource: {fileID: 0}
-  initialGrowthDuration: 10
-  initialMaximumDistanceDelay: 4
+  smokeZones: []
+  initialGrowthDuration: 30
+  initialMaximumDistanceDelay: 10
   fadeDuration: 60
   maximumDistanceDelay: 15
   reignitionRestoreDuration: 3
@@ -156912,6 +157181,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -157945,6 +158215,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -158782,6 +159053,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -159080,6 +159352,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -160001,6 +160274,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -160545,6 +160819,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -161254,6 +161529,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -161729,6 +162005,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -162961,6 +163238,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -164061,6 +164339,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -164349,6 +164628,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -164913,6 +165193,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -166518,6 +166799,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -166908,7 +167190,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8efeb41b26587f54487d77918a2cd454, type: 2}
+  - {fileID: 2100000, guid: 15ee2042f27af81459dc4f0bc28046a0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -167107,6 +167389,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -168195,6 +168478,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -168666,6 +168950,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -169119,6 +169404,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -169498,6 +169784,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -169977,6 +170264,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -170431,6 +170719,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -170741,6 +171030,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -172830,6 +173120,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -173414,6 +173705,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -174314,6 +174606,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -174781,6 +175074,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -175895,6 +176189,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -176370,6 +176665,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -176898,6 +177194,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -177412,6 +177709,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -178057,6 +178355,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -178672,6 +178971,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -179298,6 +179598,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -179573,6 +179874,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -180005,6 +180307,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -181070,6 +181373,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -181345,6 +181649,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -181633,6 +181938,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -181943,6 +182249,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -184139,6 +184446,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -184435,6 +184743,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -184982,6 +185291,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -185565,6 +185875,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -185971,6 +186282,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -187224,6 +187536,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -187551,6 +187864,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -188004,6 +188318,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -189192,6 +189507,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -189817,6 +190133,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -190091,6 +190408,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -190395,6 +190713,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -190774,6 +191093,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -191561,6 +191881,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -192704,6 +193025,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -193381,6 +193703,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -193657,6 +193980,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -194100,6 +194424,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -194754,6 +195079,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -195133,6 +195459,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -195547,6 +195874,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -195857,6 +196185,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -196618,6 +196947,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -197162,6 +197492,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -197458,6 +197789,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -197893,6 +198225,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -198786,6 +199119,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -199374,6 +199708,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -199670,6 +200005,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -200131,6 +200467,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -200441,6 +200778,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -200737,6 +201075,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -201176,6 +201515,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -201525,6 +201865,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -201904,6 +202245,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1
@@ -202286,6 +202628,7 @@ MonoBehaviour:
   fireCrawlSpeed: 0.05
   overrideFireVFX: 0
   overrideVFXVariant: 3
+  fireVFXPrefabOverride: {fileID: 0}
   fireColor: {r: 0.7490196, g: 0.65882355, b: 0, a: 1}
   colorIntensityMultiplier: 3
   fireColorBlend: 0.1

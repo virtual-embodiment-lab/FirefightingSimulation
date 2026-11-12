@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Scenarios/Base.unity
-    guid: d0b00d36b7e139841b275d12cc2ec56d
+    path: Assets/Scenes/Scenarios/Demo 10.23/Scenario 1.unity
+    guid: 06aa5787bb4b1674db433657063a3dae
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 58383a587d51b4ee6afc1fee4bc25715, type: 2}

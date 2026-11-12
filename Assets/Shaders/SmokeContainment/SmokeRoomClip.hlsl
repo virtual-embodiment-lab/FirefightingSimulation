@@ -8,6 +8,10 @@
 // fades out. Room boxes come from SmokeRoomClipVolumes at runtime and are
 // shared by every contained smoke particle in the scene. With no rooms set,
 // nothing is clipped.
+//
+// ContainedFlame.shadergraph uses the same rooms for the Flames and Embers of
+// Flame_box_wild_contained. Those particles belong to the room of the object
+// that is burning (see FlameRoomVisibility).
 
 #ifndef SMOKE_ROOM_CLIP_INCLUDED
 #define SMOKE_ROOM_CLIP_INCLUDED
@@ -48,6 +52,24 @@ float SmokeRoomPlanDepth(float3 worldPosition, int room)
     return min(inside.x, inside.z);
 }
 
+// The pixel shows if it is inside any box of the room that box belongs to.
+float SmokeRoomGroupVisibility(int box, float3 worldPosition)
+{
+    int first = (int)_SmokeRoomGroups[box].x;
+    int boxes = (int)_SmokeRoomGroups[box].y;
+    float fade = max(_SmokeRoomFade, 0.001);
+    float visibility = 0.0;
+    for (int j = 0; j < SMOKE_ROOM_CLIP_MAX_ROOMS; j++)
+    {
+        if (j >= boxes)
+            break;
+
+        visibility = max(visibility, saturate(SmokeRoomDepth(worldPosition, first + j) / fade));
+    }
+
+    return visibility;
+}
+
 float SmokeRoomVisibility(float3 particleCenter, float3 worldPosition)
 {
     int count = (int)_SmokeRoomCount;
@@ -71,20 +93,39 @@ float SmokeRoomVisibility(float3 particleCenter, float3 worldPosition)
         }
     }
 
-    // The pixel shows if it is inside any box of that room.
-    int first = (int)_SmokeRoomGroups[box].x;
-    int boxes = (int)_SmokeRoomGroups[box].y;
-    float fade = max(_SmokeRoomFade, 0.001);
-    float visibility = 0.0;
-    for (int j = 0; j < SMOKE_ROOM_CLIP_MAX_ROOMS; j++)
+    return SmokeRoomGroupVisibility(box, worldPosition);
+}
+
+// Flames and embers belong to the room that holds the object that is burning
+// (Owner), not to the particle's own center: flames rise and flicker into the
+// wall behind them, and embers fly through it. An owner outside every listed
+// room is not clipped, so a fire in a room the smoke has not measured, or on
+// another floor, still shows.
+float FlameRoomVisibility(float3 owner, float3 worldPosition)
+{
+    int count = (int)_SmokeRoomCount;
+    if (count <= 0)
+        return 1.0;
+
+    int box = 0;
+    float best = -1.0e9;
+    for (int i = 0; i < SMOKE_ROOM_CLIP_MAX_ROOMS; i++)
     {
-        if (j >= boxes)
+        if (i >= count)
             break;
 
-        visibility = max(visibility, saturate(SmokeRoomDepth(worldPosition, first + j) / fade));
+        float depth = SmokeRoomDepth(owner, i);
+        if (depth > best)
+        {
+            best = depth;
+            box = i;
+        }
     }
 
-    return visibility;
+    if (best < 0.0)
+        return 1.0;
+
+    return SmokeRoomGroupVisibility(box, worldPosition);
 }
 
 // Same layout as VFX Graph's GetSubUV: frame 0 is the top-left tile.
@@ -92,6 +133,20 @@ float2 SmokeFlipbookUV(float frame, float2 uv, float2 size, float2 invSize)
 {
     float2 tile = float2(fmod(frame, size.x), size.y - 1.0 - floor(frame * invSize.x));
     return (tile + uv) * invSize;
+}
+
+// Flipbook sample with frame blending, like VFX Graph's flipbook outputs. A
+// texture without frames uses a FlipbookSize of 1 and a TexIndex of 0.
+float4 SmokeFlipbookSample(UnityTexture2D MainTexture, float2 UV, float2 FlipbookSize, float TexIndex)
+{
+    float2 size = max(FlipbookSize, float2(1.0, 1.0));
+    float2 invSize = 1.0 / size;
+    float blend = frac(TexIndex);
+    float frame = TexIndex - blend;
+
+    float4 current = SAMPLE_TEXTURE2D(MainTexture.tex, MainTexture.samplerstate, SmokeFlipbookUV(frame, UV, size, invSize));
+    float4 next = SAMPLE_TEXTURE2D(MainTexture.tex, MainTexture.samplerstate, SmokeFlipbookUV(frame + 1.0, UV, size, invSize));
+    return lerp(current, next, blend);
 }
 
 // Matches the OnlySmoke output it replaces: flipbook with frame blending,
@@ -108,15 +163,7 @@ void ContainedSmokeParticle_float(
     out float3 Color,
     out float Alpha)
 {
-    float2 size = max(FlipbookSize, float2(1.0, 1.0));
-    float2 invSize = 1.0 / size;
-    float blend = frac(TexIndex);
-    float frame = TexIndex - blend;
-
-    float4 current = SAMPLE_TEXTURE2D(MainTexture.tex, MainTexture.samplerstate, SmokeFlipbookUV(frame, UV, size, invSize));
-    float4 next = SAMPLE_TEXTURE2D(MainTexture.tex, MainTexture.samplerstate, SmokeFlipbookUV(frame + 1.0, UV, size, invSize));
-    float4 texel = lerp(current, next, blend);
-
+    float4 texel = SmokeFlipbookSample(MainTexture, UV, FlipbookSize, TexIndex);
     Color = ParticleColor * texel.rgb;
     Alpha = saturate(ParticleAlpha * texel.a * SmokeRoomVisibility(ParticleCenter, WorldPosition));
 }
@@ -136,6 +183,45 @@ void ContainedSmokeParticle_half(
     float3 color;
     float alpha;
     ContainedSmokeParticle_float(MainTexture, UV, FlipbookSize, TexIndex, ParticleColor, ParticleAlpha, ParticleCenter, WorldPosition, color, alpha);
+    Color = color;
+    Alpha = alpha;
+}
+
+// Matches the additive Flames and Embers outputs of Flame_box_wild: texture
+// times particle color and alpha, with no clamp, then the room clip around the
+// burning object at Owner.
+void ContainedFlameParticle_float(
+    UnityTexture2D MainTexture,
+    float2 UV,
+    float2 FlipbookSize,
+    float TexIndex,
+    float3 ParticleColor,
+    float ParticleAlpha,
+    float3 Owner,
+    float3 WorldPosition,
+    out float3 Color,
+    out float Alpha)
+{
+    float4 texel = SmokeFlipbookSample(MainTexture, UV, FlipbookSize, TexIndex);
+    Color = ParticleColor * texel.rgb;
+    Alpha = ParticleAlpha * texel.a * FlameRoomVisibility(Owner, WorldPosition);
+}
+
+void ContainedFlameParticle_half(
+    UnityTexture2D MainTexture,
+    float2 UV,
+    float2 FlipbookSize,
+    float TexIndex,
+    float3 ParticleColor,
+    float ParticleAlpha,
+    float3 Owner,
+    float3 WorldPosition,
+    out half3 Color,
+    out half Alpha)
+{
+    float3 color;
+    float alpha;
+    ContainedFlameParticle_float(MainTexture, UV, FlipbookSize, TexIndex, ParticleColor, ParticleAlpha, Owner, WorldPosition, color, alpha);
     Color = color;
     Alpha = alpha;
 }

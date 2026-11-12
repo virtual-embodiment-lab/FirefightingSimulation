@@ -19,7 +19,9 @@ using UnityEngine.SceneManagement;
 /// blocks play Only_smoke_contained, whose shader draws each particle only
 /// inside the room that holds its center. The rooms come from probing the
 /// building's own walls, ceilings and floors, so any structure works without
-/// setup.
+/// setup. With Contain Flames also on, objects that burn with the Wild flames
+/// play Flame_box_wild_contained, whose flames and embers are clipped to the
+/// room of the object that is burning.
 /// </remarks>
 [DisallowMultipleComponent]
 [DefaultExecutionOrder(-50)]
@@ -31,6 +33,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     const float MaxRoomRadius = 22f;
     const int MaxOpenCells = 2400;
     const string ContainedSmokeResource = "Smoke/Only_smoke_contained";
+    const string ContainedFlameResource = "Fire/Flame_box_wild_contained";
     // Room boxes are measured this far under the ceiling, above door headers,
     // so rays from a room do not leave it through a doorway.
     const float RoomProbeBelowCeiling = 0.25f;
@@ -143,6 +146,12 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Tooltip("Smoke effect whose shader clips particles to their room. Leave empty to use Resources/Smoke/Only_smoke_contained.")]
     public GameObject containedSmokePrefab;
 
+    [Tooltip("Draws flames and embers only inside the room of the object that is burning, so fire never shows through a wall. Uses the rooms measured for Contain Smoke; a fire outside them is drawn as usual. Applies to every object that uses the plugin's Wild flames.")]
+    public bool containFlames = true;
+
+    [Tooltip("Flame effect whose shader clips flames and embers to the burning object's room. Leave empty to use Resources/Fire/Flame_box_wild_contained.")]
+    public GameObject containedFlamePrefab;
+
     [Tooltip("Layers of the walls, ceilings and floors that bound a room. Generated buildings use Default. Keep furniture and players off these layers so they do not split a room.")]
     public LayerMask roomBoundaryMask = 1;
 
@@ -250,6 +259,42 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         }
 
         SmokeRoomClipVolumes.EdgeFade = wallFadeWidth;
+
+        if (containSmoke && containFlames)
+            UseContainedFlames();
+    }
+
+    /// <summary>
+    /// Gives every object that burns with the plugin's Wild flames the
+    /// contained copy instead. Its flames and embers are clipped to the room of
+    /// the burning object, so they never show through a wall. Runs before any
+    /// object catches fire on Start.
+    /// </summary>
+    void UseContainedFlames()
+    {
+        FlameEngine engine = FlameEngine.instance;
+        if (engine == null)
+            return;
+
+        if (containedFlamePrefab == null)
+        {
+            containedFlamePrefab = Resources.Load<GameObject>(ContainedFlameResource);
+            if (containedFlamePrefab == null)
+            {
+                Debug.LogWarning("IgnisSmokeDiffusion could not find Resources/" + ContainedFlameResource + ", so flames can show through walls. Build it from Tools > Smoke Containment > Build Contained Flames.", this);
+                return;
+            }
+        }
+
+        GameObject wild = engine.GetFireVFX(FlameEngine.FireVFXVariant.Wild);
+        FlammableObject[] objects = Object.FindObjectsByType<FlammableObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        for (int i = 0; i < objects.Length; i++)
+        {
+            FlammableObject flammable = objects[i];
+            if (flammable.fireVFXPrefabOverride == null &&
+                engine.GetFireVFX(flammable.overrideVFXVariant, flammable.overrideFireVFX) == wild)
+                flammable.fireVFXPrefabOverride = containedFlamePrefab;
+        }
     }
 
     void OnValidate()

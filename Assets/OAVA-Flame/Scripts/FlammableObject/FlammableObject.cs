@@ -46,6 +46,9 @@ namespace Ignis
         [Tooltip("Override default VFX with this Variant.")]
         public FlameEngine.FireVFXVariant overrideVFXVariant = FlameEngine.FireVFXVariant.Wild;
 
+        [Tooltip("Optional VFX prefab this object plays instead of its variant's FlameEngine prefab. Its graph must expose the same parameters as that variant.")]
+        public GameObject fireVFXPrefabOverride;
+
         [Tooltip("Color to blend in fire.")]
         public Color fireColor = new Color(191f / 255f, 168 / 255f, 0f, 1f);
 
@@ -1873,13 +1876,20 @@ namespace Ignis
             }
         }
 
+        private GameObject FireVFXPrefab()
+        {
+            return fireVFXPrefabOverride != null
+                ? fireVFXPrefabOverride
+                : FlameEngine.instance.GetFireVFX(overrideVFXVariant, overrideFireVFX);
+        }
+
         private void SetBoxesOnFire()
         {
             for (int boxIndex = 0; boxIndex < flammableColliders.Count; boxIndex++)
             {
                 BoxCollider box = flammableColliders[boxIndex];
 
-                GameObject fire = Instantiate(FlameEngine.instance.GetFireVFX(overrideVFXVariant, overrideFireVFX), new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), FlameEngine.instance.fireParent);
+                GameObject fire = Instantiate(FireVFXPrefab(), new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), FlameEngine.instance.fireParent);
                 VisualEffect fireEffect = fire.GetComponent<VisualEffect>();
                 FlameEngine.instance.AddFlame(fire);
                 SetupFireConstants(fireEffect);
@@ -1946,7 +1956,7 @@ namespace Ignis
 
                 newPointOnMesh1 = meshFilter.transform.TransformPoint(newPointOnMesh1); // convert back to worldspace
 
-                GameObject fire = Instantiate(FlameEngine.instance.GetFireVFX(overrideVFXVariant, overrideFireVFX), new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), FlameEngine.instance.fireParent);
+                GameObject fire = Instantiate(FireVFXPrefab(), new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), FlameEngine.instance.fireParent);
                 VisualEffect fireEffect = fire.GetComponent<VisualEffect>();
 
                 FlameEngine.instance.AddFlame(fire);

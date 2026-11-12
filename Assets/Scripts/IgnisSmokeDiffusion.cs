@@ -13,6 +13,13 @@ using UnityEngine.SceneManagement;
 /// A scene turns this on by putting the component on its FlameEngine object.
 /// It is not added automatically, so scenes with their own smoke keep it.
 /// With Fire Sources left empty, every fire that starts burning releases smoke.
+///
+/// Ignis smoke particles are large camera-facing quads, so a block that stops
+/// at a wall still draws smoke on the far side of it. With Contain Smoke on,
+/// blocks play Only_smoke_contained, whose shader draws each particle only
+/// inside the room that holds its center. The rooms come from probing the
+/// building's own walls, ceilings and floors, so any structure works without
+/// setup.
 /// </remarks>
 [DisallowMultipleComponent]
 [DefaultExecutionOrder(-50)]
@@ -23,6 +30,12 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     const float CellSize = 0.6f;
     const float MaxRoomRadius = 22f;
     const int MaxOpenCells = 2400;
+    const string ContainedSmokeResource = "Smoke/Only_smoke_contained";
+    // Room boxes are measured this far under the ceiling, above door headers,
+    // so rays from a room do not leave it through a doorway.
+    const float RoomProbeBelowCeiling = 0.25f;
+    const float RoomProbeRange = 40f;
+    const float MinRoomHalfSize = 0.25f;
 
     static readonly Vector2Int[] Neighbors =
     {
@@ -123,6 +136,20 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Min(0f)]
     public float sinkSpeed = 0.15f;
 
+    [Header("Wall Containment")]
+    [Tooltip("Draws each smoke particle only inside the room it belongs to, so smoke never shows through a wall, ceiling or floor. The smoke's size, motion and spread are unchanged.")]
+    public bool containSmoke = true;
+
+    [Tooltip("Smoke effect whose shader clips particles to their room. Leave empty to use Resources/Smoke/Only_smoke_contained.")]
+    public GameObject containedSmokePrefab;
+
+    [Tooltip("Layers of the walls, ceilings and floors that bound a room. Generated buildings use Default. Keep furniture and players off these layers so they do not split a room.")]
+    public LayerMask roomBoundaryMask = 1;
+
+    [Tooltip("Width, in meters, over which smoke fades out at a wall. Smoke reaches the inside face of the wall at full strength and fades out inside the wall itself, so keep this below the wall thickness.")]
+    [Min(0.01f)]
+    public float wallFadeWidth = 0.08f;
+
     [Header("Plugin Smoke Appearance")]
     [Tooltip("Ignis multiplies this by Smoke Color Intensity. The product is the color sent to OnlySmoke.")]
     public Color smokeColor = new Color(0.02f, 0.02f, 0.02f, 1f);
@@ -144,8 +171,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     public Vector3 generatedBlockScale = new Vector3(1.2f, 0.7f, 1.2f);
 
     readonly List<FireFront> fronts = new List<FireFront>();
+    readonly RaycastHit[] boundaryHits = new RaycastHit[16];
     Transform blockHolder;
     bool warnedAboutMissingEngine;
+    bool loadedContainedSmokePrefab;
     float nextDiscoveryTime;
 
     class FireFront
@@ -219,6 +248,13 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             blockHolder = holderObject.transform;
             blockHolder.SetParent(transform, false);
         }
+
+        SmokeRoomClipVolumes.EdgeFade = wallFadeWidth;
+    }
+
+    void OnValidate()
+    {
+        SmokeRoomClipVolumes.EdgeFade = wallFadeWidth;
     }
 
     void OnDisable()
@@ -499,6 +535,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     {
         smoke.overrideFireVFX = true;
         smoke.overrideVFXVariant = FlameEngine.FireVFXVariant.OnlySmoke;
+        smoke.fireVFXPrefabOverride = containSmoke ? ContainedSmokePrefab() : null;
         smoke.enableFlameVFX = false;
         smoke.embersVFXMultiplier = 0f;
         smoke.embersBurstVFXMultiplier = 0f;
@@ -879,7 +916,259 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             }
         }
 
-        return room.open.Count > 0 ? room : null;
+        if (room.open.Count == 0)
+            return null;
+
+        if (containSmoke)
+            SmokeRoomClipVolumes.SetRooms(front, MeasureRooms(room));
+        return room;
+    }
+
+    GameObject ContainedSmokePrefab()
+    {
+        if (containedSmokePrefab == null && !loadedContainedSmokePrefab)
+        {
+            loadedContainedSmokePrefab = true;
+            containedSmokePrefab = Resources.Load<GameObject>(ContainedSmokeResource);
+            if (containedSmokePrefab == null)
+                Debug.LogWarning("IgnisSmokeDiffusion could not find Resources/" + ContainedSmokeResource + ", so its smoke can show through walls. Build it from Tools > Smoke Containment.", this);
+        }
+
+        return containedSmokePrefab;
+    }
+
+    /// <summary>
+    /// Boxes of the rooms the smoke can reach, for clipping. The air the smoke
+    /// spreads through is sampled on the building's own grid just under the
+    /// ceiling, where door headers close off doorways, so the cells split into
+    /// rooms. Each room is covered with rectangles whose sides reach out to the
+    /// nearest wall, and all rectangles of a room share its group, so the shader
+    /// treats an L-shaped room as one space.
+    /// </summary>
+    List<SmokeRoomClipVolumes.Room> MeasureRooms(RoomAir room)
+    {
+        float probeY = Mathf.Max(room.floorY + 0.5f, room.ceilingY - RoomProbeBelowCeiling);
+        Vector3 origin = new Vector3(room.origin.x, probeY, room.origin.z);
+        Vector3 right = BuildingRight(origin);
+        Vector3 forward = new Vector3(-right.z, 0f, right.x);
+        var grid = new RoomGrid { origin = origin, right = right, forward = forward };
+
+        // Cells under the ceiling, inside the air the smoke can reach.
+        var visited = new HashSet<Vector2Int>();
+        foreach (Vector2Int open in room.open)
+        {
+            Vector3 offset = CellCenter(room, open) - room.origin;
+            var cell = new Vector2Int(
+                Mathf.RoundToInt(Vector3.Dot(offset, right) / CellSize),
+                Mathf.RoundToInt(Vector3.Dot(offset, forward) / CellSize));
+            if (!visited.Add(cell))
+                continue;
+
+            // Above a doorway the cell sits inside the wall over it.
+            if (!Physics.CheckSphere(grid.Point(cell), 0.1f, roomBoundaryMask, QueryTriggerInteraction.Ignore))
+                grid.air.Add(cell);
+        }
+
+        // Rooms: cells joined without a wall between them.
+        int roomCount = 0;
+        var queue = new Queue<Vector2Int>();
+        foreach (Vector2Int start in grid.air)
+        {
+            if (grid.roomOf.ContainsKey(start))
+                continue;
+
+            grid.roomOf[start] = roomCount;
+            queue.Enqueue(start);
+            while (queue.Count > 0)
+            {
+                Vector2Int cell = queue.Dequeue();
+                for (int i = 0; i < Neighbors.Length; i++)
+                {
+                    Vector2Int next = cell + Neighbors[i];
+                    if (!grid.air.Contains(next) || grid.roomOf.ContainsKey(next) || !Joined(grid, cell, next))
+                        continue;
+
+                    grid.roomOf[next] = roomCount;
+                    queue.Enqueue(next);
+                }
+            }
+
+            roomCount++;
+        }
+
+        // Rectangles of each room, grown row by row.
+        var cells = new List<Vector2Int>(grid.air);
+        cells.Sort((a, b) => a.y != b.y ? a.y.CompareTo(b.y) : a.x.CompareTo(b.x));
+        var used = new HashSet<Vector2Int>();
+        var boxes = new List<SmokeRoomClipVolumes.Room>();
+        foreach (Vector2Int start in cells)
+        {
+            if (used.Contains(start))
+                continue;
+
+            int group = grid.roomOf[start];
+            int maxX = start.x;
+            while (Free(grid, used, group, new Vector2Int(maxX + 1, start.y), new Vector2Int(maxX, start.y)))
+                maxX++;
+
+            int maxY = start.y;
+            while (RowFree(grid, used, group, start.x, maxX, maxY + 1))
+                maxY++;
+
+            for (int y = start.y; y <= maxY; y++)
+            {
+                for (int x = start.x; x <= maxX; x++)
+                    used.Add(new Vector2Int(x, y));
+            }
+
+            boxes.Add(RectangleBox(grid, room, start.x, maxX, start.y, maxY, group));
+            if (boxes.Count >= SmokeRoomClipVolumes.MaxRooms)
+                break;
+        }
+
+        return boxes;
+    }
+
+    class RoomGrid
+    {
+        public Vector3 origin;
+        public Vector3 right;
+        public Vector3 forward;
+        public readonly HashSet<Vector2Int> air = new HashSet<Vector2Int>();
+        public readonly Dictionary<Vector2Int, int> roomOf = new Dictionary<Vector2Int, int>();
+
+        public Vector3 Point(Vector2Int cell)
+        {
+            return origin + right * (cell.x * CellSize) + forward * (cell.y * CellSize);
+        }
+    }
+
+    bool Joined(RoomGrid grid, Vector2Int a, Vector2Int b)
+    {
+        return !Physics.Linecast(grid.Point(a), grid.Point(b), roomBoundaryMask, QueryTriggerInteraction.Ignore);
+    }
+
+    bool Free(RoomGrid grid, HashSet<Vector2Int> used, int group, Vector2Int cell, Vector2Int from)
+    {
+        return grid.roomOf.TryGetValue(cell, out int cellGroup) && cellGroup == group &&
+               !used.Contains(cell) && Joined(grid, from, cell);
+    }
+
+    bool RowFree(RoomGrid grid, HashSet<Vector2Int> used, int group, int minX, int maxX, int y)
+    {
+        for (int x = minX; x <= maxX; x++)
+        {
+            if (!Free(grid, used, group, new Vector2Int(x, y), new Vector2Int(x, y - 1)))
+                return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Box over a rectangle of cells. Each side reaches out to the nearest wall
+    /// found from any cell along it, but no further than one and a half cells,
+    /// so the box stays inside the room at an inside corner. A side facing more
+    /// of the same room overlaps the next rectangle, which leaves no seam.
+    /// </summary>
+    SmokeRoomClipVolumes.Room RectangleBox(RoomGrid grid, RoomAir room, int minX, int maxX, int minY, int maxY, int group)
+    {
+        float reach = CellSize * 1.5f;
+        float east = reach, west = reach, north = reach, south = reach;
+        float top = float.MaxValue;
+        for (int y = minY; y <= maxY; y++)
+        {
+            east = Mathf.Min(east, SideReach(grid.Point(new Vector2Int(maxX, y)), grid.right, reach));
+            west = Mathf.Min(west, SideReach(grid.Point(new Vector2Int(minX, y)), -grid.right, reach));
+        }
+
+        for (int x = minX; x <= maxX; x++)
+        {
+            north = Mathf.Min(north, SideReach(grid.Point(new Vector2Int(x, maxY)), grid.forward, reach));
+            south = Mathf.Min(south, SideReach(grid.Point(new Vector2Int(x, minY)), -grid.forward, reach));
+        }
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            for (int x = minX; x <= maxX; x++)
+            {
+                Vector3 point = grid.Point(new Vector2Int(x, y));
+                if (BoundaryDistance(point, Vector3.up, out float up))
+                    top = Mathf.Min(top, point.y + up);
+            }
+        }
+
+        if (top == float.MaxValue)
+            top = room.ceilingY;
+        float bottom = room.floorY;
+
+        float lowX = minX * CellSize - west;
+        float highX = maxX * CellSize + east;
+        float lowZ = minY * CellSize - south;
+        float highZ = maxY * CellSize + north;
+        Vector3 center = grid.origin + grid.right * ((lowX + highX) * 0.5f) + grid.forward * ((lowZ + highZ) * 0.5f);
+        center.y = (top + bottom) * 0.5f;
+
+        // Grown by the fade width, so smoke reaches the wall at full strength
+        // and fades out inside it.
+        var halfSize = new Vector3((highX - lowX) * 0.5f, (top - bottom) * 0.5f, (highZ - lowZ) * 0.5f);
+        return new SmokeRoomClipVolumes.Room
+        {
+            center = center,
+            halfSize = halfSize + Vector3.one * wallFadeWidth,
+            right = grid.right,
+            group = group
+        };
+    }
+
+    float SideReach(Vector3 point, Vector3 direction, float reach)
+    {
+        return BoundaryDistance(point, direction, out float distance) ? Mathf.Min(distance, reach) : reach;
+    }
+
+    /// <summary>
+    /// The building's x axis in the floor plan, from the first wall found around
+    /// a point. Generated houses are usually aligned with the world, but a turned
+    /// one is measured along its own walls.
+    /// </summary>
+    Vector3 BuildingRight(Vector3 point)
+    {
+        Vector3[] directions = { Vector3.right, Vector3.left, Vector3.forward, Vector3.back };
+        for (int i = 0; i < directions.Length; i++)
+        {
+            if (!BoundaryHit(point, directions[i], out RaycastHit hit) || Mathf.Abs(hit.normal.y) > 0.3f)
+                continue;
+
+            float angle = Mathf.Repeat(Mathf.Atan2(hit.normal.z, hit.normal.x), Mathf.PI * 0.5f);
+            return new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+        }
+
+        return Vector3.right;
+    }
+
+    bool BoundaryDistance(Vector3 origin, Vector3 direction, out float distance)
+    {
+        bool found = BoundaryHit(origin, direction, out RaycastHit hit);
+        distance = found ? hit.distance : 0f;
+        return found;
+    }
+
+    bool BoundaryHit(Vector3 origin, Vector3 direction, out RaycastHit closest)
+    {
+        closest = default;
+        int count = Physics.RaycastNonAlloc(origin, direction, boundaryHits, RoomProbeRange, roomBoundaryMask, QueryTriggerInteraction.Ignore);
+        float best = float.MaxValue;
+        for (int i = 0; i < count; i++)
+        {
+            Collider collider = boundaryHits[i].collider;
+            if (IgnoreSolid(collider) || collider is CharacterController || boundaryHits[i].distance >= best)
+                continue;
+
+            best = boundaryHits[i].distance;
+            closest = boundaryHits[i];
+        }
+
+        return best < float.MaxValue;
     }
 
     bool TryFindShell(Vector3 rough, out Collider floor, out Collider ceiling, out float floorY, out float ceilingY)
@@ -1165,6 +1454,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         front.flameOutput = 0f;
         front.farthestDistance = 0f;
         front.room = null;
+        SmokeRoomClipVolumes.Remove(front);
     }
 
     void ReleaseFront(FireFront front)

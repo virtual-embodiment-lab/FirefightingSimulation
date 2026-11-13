@@ -1,5 +1,6 @@
 // Builds the room-clipped copies of Ignis effects used by IgnisSmokeDiffusion.
-// The clip itself is in SmokeRoomClip.hlsl.
+// The clip itself is in SmokeRoomClip.hlsl; the search for the room a particle
+// belongs to is in SmokeRoomSelect.hlsl and runs per particle, not per pixel.
 //
 // Smoke (Tools > Smoke Containment > Build Contained Smoke):
 //   ContainedSmoke.shadergraph      draws an Ignis smoke particle the same way
@@ -8,6 +9,20 @@
 //   Only_smoke_contained.vfx        a copy of Only_smoke_neutral.vfx whose smoke
 //                                   output uses that Shader Graph.
 //   Only_smoke_contained.prefab     a copy of the OnlySmoke prefab that plays it.
+//                                   IgnisSmokeDiffusion uses it when lingering
+//                                   smoke is off, so every volume churns.
+//   Only_smoke_plume.vfx            the same churning smoke, holding at most
+//   Only_smoke_plume.prefab         PlumeCapacity particles instead of 1000. The
+//                                   plume over the fire plays it. Up close every
+//                                   plume particle covers most of the view, so
+//                                   the count sets most of its cost.
+//   Only_smoke_lingering.vfx        the same clipped smoke, but each particle is
+//   Only_smoke_lingering.prefab     released once and then lingers: it lives
+//                                   as long as SmokeLifetime and churns slowly in
+//                                   place where it was released, so a drifting
+//                                   volume leaves smoke along its path.
+//                                   SmokeSpawnRate starts and stops the release;
+//                                   SmokeCeiling caps how high it goes.
 //
 // Flames (Tools > Smoke Containment > Build Contained Flames):
 //   ContainedFlame.shadergraph      draws an additive flame or ember the same way
@@ -37,6 +52,7 @@ using UnityEditor.ShaderGraph;
 using UnityEditor.ShaderGraph.Drawing;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEditor.VFX;
+using UnityEditor.VFX.Block;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -51,6 +67,47 @@ static class ContainedSmokeBuilder
     const string VfxPath = OutputFolder + "/Only_smoke_contained.vfx";
     const string PrefabPath = OutputFolder + "/Only_smoke_contained.prefab";
     const string SmokeSystemTitle = "Smoke";
+
+    const string PlumeVfxPath = OutputFolder + "/Only_smoke_plume.vfx";
+    const string PlumePrefabPath = OutputFolder + "/Only_smoke_plume.prefab";
+    // Ignis spawns far more smoke than the original 1000 slots hold, so the
+    // plume always runs full: this is how many particles it shows.
+    const uint PlumeCapacity = 250;
+
+    const string LingeringVfxPath = OutputFolder + "/Only_smoke_lingering.vfx";
+    const string LingeringPrefabPath = OutputFolder + "/Only_smoke_lingering.prefab";
+    // Exposed properties IgnisSmokeDiffusion sets on each lingering volume.
+    const string SpawnRateProperty = "SmokeSpawnRate";
+    const string LifetimeProperty = "SmokeLifetime";
+    // The highest a particle is released, in world meters: just under the ceiling above its volume.
+    const string CeilingProperty = "SmokeCeiling";
+    // FlammableObject sets Box to the volume's emission box every frame.
+    const string SmokeBoxParameter = "Box";
+    // A lingering volume holds a small, fixed batch of particles.
+    const uint LingeringCapacity = 128;
+    // Seconds a released particle takes to fade in and to grow to full size.
+    const float LingerFadeInSeconds = 3f;
+    const float LingerGrowSeconds = 12f;
+    // The churning puff flipbook, slowed from about 25 to this many frames a second.
+    const float LingerFramesPerSecond = 4f;
+    // A particle lives for minutes, so any steady speed would carry it meters
+    // from where it was released, out through the ceiling or floor where the room clip
+    // hides it. Drag stops its launch speed, and a soft spring of this
+    // strength (per second squared) pulls it back to where it was released.
+    // Against the turbulence it churns within about 0.2 meters of that spot.
+    const float LingerDrag = 0.6f;
+    const float LingerTurbulence = 0.05f;
+    const float LingerTether = 0.25f;
+    // A churning particle brightens, then darkens over its short life. Weighted
+    // by its alpha it shows at about this brightness, which a lingering particle holds.
+    const float LingerBrightness = 0.95f;
+    const float LingerAlpha = 0.47f;
+    // A churning particle rose about 0.75 to 3 meters above its volume before
+    // it died, which kept the smoke densest under the ceiling and left clearer
+    // air below. A lingering particle is released up to this far above its
+    // volume instead, but never above SmokeCeiling, so the highest ones gather
+    // under the ceiling.
+    const float LingerRise = 1.5f;
 
     const string FlameShaderGraphPath = "Assets/Shaders/SmokeContainment/ContainedFlame.shadergraph";
     const string FlameSourceVfxPath = "Assets/OAVA-Flame/VFX/Flame_box_wild.vfx";
@@ -68,8 +125,13 @@ static class ContainedSmokeBuilder
     const string TexIndexName = "TexIndex";
     const string ParticleColorName = "ParticleColor";
     const string ParticleAlphaName = "ParticleAlpha";
-    const string ParticleCenterName = "ParticleCenter";
-    const string OwnerName = "Owner";
+    // Index of the room box a particle belongs to. A Custom HLSL operator in
+    // each VFX output works it out once per particle corner with
+    // SmokeRoomSelect.hlsl, instead of the Shader Graph searching every room
+    // box for every pixel.
+    const string ParticleRoomName = "ParticleRoom";
+    const string OwnerRoomName = "OwnerRoom";
+    const string RoomSelectHlslPath = "Assets/Shaders/SmokeContainment/SmokeRoomSelect.hlsl";
 
     [MenuItem("Tools/Smoke Containment/Build Contained Smoke")]
     public static void BuildAll()
@@ -77,7 +139,11 @@ static class ContainedSmokeBuilder
         BuildShaderGraph();
         BuildVfx();
         BuildPrefab();
-        Debug.Log("[ContainedSmoke] Built " + ShaderGraphPath + ", " + VfxPath + " and " + PrefabPath);
+        BuildLingeringVfx();
+        BuildLingeringPrefab();
+        BuildPlumeVfx();
+        BuildPlumePrefab();
+        Debug.Log("[ContainedSmoke] Built " + ShaderGraphPath + ", " + VfxPath + ", " + PrefabPath + ", " + LingeringVfxPath + ", " + LingeringPrefabPath + ", " + PlumeVfxPath + " and " + PlumePrefabPath);
     }
 
     [MenuItem("Tools/Smoke Containment/Build Contained Flames")]
@@ -92,8 +158,15 @@ static class ContainedSmokeBuilder
     [MenuItem("Tools/Smoke Containment/Steps/Smoke 1 Build Shader Graph")]
     public static void BuildShaderGraph()
     {
-        WriteShaderGraph(ShaderGraphPath, "ContainedSmokeParticle", AlphaMode.Alpha, ParticleCenterName,
+        WriteShaderGraph(ShaderGraphPath, "ContainedSmokeParticle", AlphaMode.Alpha, ParticleRoomName,
             SmokeTexture(), new Vector2(8f, 8f));
+    }
+
+    /// <summary>Feeds a smoke output's room input from the room search at the particle's center.</summary>
+    static void LinkSmokeRoom(VFXGraph graph, VFXContext composed, Vector2 position)
+    {
+        LinkSlots(AttributeNode(graph, "position", position).outputSlots[0],
+            RoomSearch(graph, composed, ParticleRoomName, "SmokeParticleRoom", position));
     }
 
     [MenuItem("Tools/Smoke Containment/Steps/Smoke 2 Build VFX")]
@@ -104,7 +177,7 @@ static class ContainedSmokeBuilder
         var graph = resource.GetOrCreateGraph();
 
         ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
-            (composed, position) => LinkAttribute(graph, composed, "position", ParticleCenterName, position));
+            (composed, position) => LinkSmokeRoom(graph, composed, position));
 
         WriteVfx(graph, resource, VfxPath);
     }
@@ -115,12 +188,59 @@ static class ContainedSmokeBuilder
         WritePrefab(SourcePrefabPath, OutputFolder, PrefabPath, VfxPath);
     }
 
+    [MenuItem("Tools/Smoke Containment/Steps/Smoke 4 Build Lingering VFX")]
+    public static void BuildLingeringVfx()
+    {
+        var shaderGraph = LoadShaderGraph(ShaderGraphPath);
+        var resource = CopyVfx(SourceVfxPath, OutputFolder, LingeringVfxPath);
+        var graph = resource.GetOrCreateGraph();
+
+        ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
+            (composed, position) => LinkSmokeRoom(graph, composed, position));
+        MakeSmokeLinger(graph);
+
+        WriteVfx(graph, resource, LingeringVfxPath);
+    }
+
+    [MenuItem("Tools/Smoke Containment/Steps/Smoke 5 Build Lingering Prefab")]
+    public static void BuildLingeringPrefab()
+    {
+        WritePrefab(SourcePrefabPath, OutputFolder, LingeringPrefabPath, LingeringVfxPath);
+    }
+
+    [MenuItem("Tools/Smoke Containment/Steps/Smoke 6 Build Plume VFX")]
+    public static void BuildPlumeVfx()
+    {
+        var shaderGraph = LoadShaderGraph(ShaderGraphPath);
+        var resource = CopyVfx(SourceVfxPath, OutputFolder, PlumeVfxPath);
+        var graph = resource.GetOrCreateGraph();
+
+        ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
+            (composed, position) => LinkSmokeRoom(graph, composed, position));
+        SystemContext<VFXBasicInitialize>(graph, SmokeSystemTitle).GetData().SetSettingValue("capacity", PlumeCapacity);
+
+        WriteVfx(graph, resource, PlumeVfxPath);
+    }
+
+    [MenuItem("Tools/Smoke Containment/Steps/Smoke 7 Build Plume Prefab")]
+    public static void BuildPlumePrefab()
+    {
+        WritePrefab(SourcePrefabPath, OutputFolder, PlumePrefabPath, PlumeVfxPath);
+    }
+
     [MenuItem("Tools/Smoke Containment/Steps/Flames 1 Build Shader Graph")]
     public static void BuildFlameShaderGraph()
     {
         var flames = SourceOutput(FlameSourceVfxPath, FlamesSystemTitle);
-        WriteShaderGraph(FlameShaderGraphPath, "ContainedFlameParticle", AlphaMode.Additive, OwnerName,
+        WriteShaderGraph(FlameShaderGraphPath, "ContainedFlameParticle", AlphaMode.Additive, OwnerRoomName,
             OutputTexture(flames), OutputFlipbookSize(flames));
+    }
+
+    /// <summary>Feeds a flame output's room input from the room search at the burning object.</summary>
+    static void LinkFlameRoom(VFXGraph graph, VFXContext composed, Vector2 position)
+    {
+        LinkParameterField(graph, FlameBoxParameter, "center",
+            RoomSearch(graph, composed, OwnerRoomName, "FlameOwnerRoom", position));
     }
 
     [MenuItem("Tools/Smoke Containment/Steps/Flames 2 Build VFX")]
@@ -134,7 +254,7 @@ static class ContainedSmokeBuilder
         {
             var source = SystemOutput(graph, system);
             ConvertOutput(graph, system, shaderGraph, FlameShaderGraphPath, OutputTexture(source), OutputFlipbookSize(source),
-                (composed, position) => LinkParameter(graph, composed, FlameBoxParameter, "center", OwnerName));
+                (composed, position) => LinkFlameRoom(graph, composed, position));
         }
 
         WriteVfx(graph, resource, FlameVfxPath);
@@ -148,10 +268,11 @@ static class ContainedSmokeBuilder
 
     /// <summary>
     /// An unlit, transparent, VFX-ready Shader Graph that calls the named
-    /// function from SmokeRoomClip.hlsl. Its seventh input, centerName, is the
-    /// point that decides which room a particle belongs to.
+    /// function from SmokeRoomClip.hlsl. Its seventh input, roomName, is the
+    /// index of the room box the particle belongs to, from RoomSearch; below
+    /// zero means not clipped.
     /// </summary>
-    static void WriteShaderGraph(string path, string functionName, AlphaMode alphaMode, string centerName,
+    static void WriteShaderGraph(string path, string functionName, AlphaMode alphaMode, string roomName,
         Texture texture, Vector2 flipbook)
     {
         var target = (UniversalTarget)Activator.CreateInstance(typeof(UniversalTarget));
@@ -191,7 +312,8 @@ static class ContainedSmokeBuilder
         particleColor.value = new Vector4(1f, 1f, 1f, 0f);
         var particleAlpha = AddProperty(graph, new Vector1ShaderProperty(), ParticleAlphaName);
         particleAlpha.value = 1f;
-        var particleCenter = AddProperty(graph, new Vector3ShaderProperty(), centerName);
+        var particleRoom = AddProperty(graph, new Vector1ShaderProperty(), roomName);
+        particleRoom.value = -1f;
 
         var function = new CustomFunctionNode();
         function.sourceType = HlslSourceType.File;
@@ -203,7 +325,7 @@ static class ContainedSmokeBuilder
         function.AddSlot(new Vector1MaterialSlot(3, TexIndexName, TexIndexName, SlotType.Input, 0f));
         function.AddSlot(new Vector3MaterialSlot(4, ParticleColorName, ParticleColorName, SlotType.Input, Vector3.one));
         function.AddSlot(new Vector1MaterialSlot(5, ParticleAlphaName, ParticleAlphaName, SlotType.Input, 1f));
-        function.AddSlot(new Vector3MaterialSlot(6, centerName, centerName, SlotType.Input, Vector3.zero));
+        function.AddSlot(new Vector1MaterialSlot(6, "Room", "Room", SlotType.Input, -1f));
         function.AddSlot(new Vector3MaterialSlot(7, "WorldPosition", "WorldPosition", SlotType.Input, Vector3.zero));
         function.AddSlot(new Vector3MaterialSlot(8, "Color", "Color", SlotType.Output, Vector3.zero));
         function.AddSlot(new Vector1MaterialSlot(9, "Alpha", "Alpha", SlotType.Output, 0f));
@@ -225,7 +347,7 @@ static class ContainedSmokeBuilder
         Connect(graph, AddPropertyNode(graph, texIndex, -400f, 20f), PropertyNode.OutputSlotId, function, 3);
         Connect(graph, AddPropertyNode(graph, particleColor, -400f, 100f), PropertyNode.OutputSlotId, function, 4);
         Connect(graph, AddPropertyNode(graph, particleAlpha, -400f, 180f), PropertyNode.OutputSlotId, function, 5);
-        Connect(graph, AddPropertyNode(graph, particleCenter, -400f, 250f), PropertyNode.OutputSlotId, function, 6);
+        Connect(graph, AddPropertyNode(graph, particleRoom, -400f, 250f), PropertyNode.OutputSlotId, function, 6);
         Connect(graph, position, 0, function, 7);
 
         Connect(graph, function, 8, Block(graph, BlockFields.SurfaceDescription.BaseColor), 0);
@@ -268,10 +390,10 @@ static class ContainedSmokeBuilder
     /// <summary>
     /// Switches one system's output to the Shader Graph and feeds it the
     /// particle's flipbook frame, color and alpha, like the output it replaces.
-    /// linkCenter connects the point that picks the particle's room.
+    /// linkRoom feeds the room the particle belongs to, from RoomSearch.
     /// </summary>
     static void ConvertOutput(VFXGraph graph, string systemTitle, ShaderGraphVfxAsset shaderGraph, string shaderGraphPath,
-        Texture texture, Vector2 flipbook, Action<VFXContext, Vector2> linkCenter)
+        Texture texture, Vector2 flipbook, Action<VFXContext, Vector2> linkRoom)
     {
         var output = SystemOutput(graph, systemTitle);
         var data = output.GetData();
@@ -303,7 +425,253 @@ static class ContainedSmokeBuilder
 
         LinkAttribute(graph, composed, "color", ParticleColorName, outputPosition + new Vector2(-420f, 90f));
         LinkAttribute(graph, composed, "alpha", ParticleAlphaName, outputPosition + new Vector2(-420f, 180f));
-        linkCenter(composed, outputPosition + new Vector2(-420f, 270f));
+        linkRoom(composed, outputPosition + new Vector2(-420f, 270f));
+    }
+
+    /// <summary>
+    /// Turns the churning OnlySmoke system into one that releases a batch of
+    /// particles and keeps them. The original bursts up to 20 particles every
+    /// frame, each living 1.5 to 6 seconds while it rises and plays its
+    /// flipbook at about 25 frames a second, so a volume is always full of new
+    /// smoke. Here the script turns the release on only where its volume is
+    /// passing through air that does not yet hold enough smoke. Each particle
+    /// lives for SmokeLifetime and churns slowly in place where it was released,
+    /// so a wandering volume leaves smoke behind it and the room fills evenly.
+    /// </summary>
+    static void MakeSmokeLinger(VFXGraph graph)
+    {
+        var init = SystemContext<VFXBasicInitialize>(graph, SmokeSystemTitle);
+        var update = SystemContext<VFXBasicUpdate>(graph, SmokeSystemTitle);
+        var output = SystemContext<VFXAbstractComposedParticleOutput>(graph, SmokeSystemTitle);
+        var spawner = graph.children.OfType<VFXBasicSpawner>().First(s => s.outputContexts.Contains(init));
+
+        init.GetData().SetSettingValue("capacity", LingeringCapacity);
+
+        // Release: a rate the script controls, instead of a burst every frame.
+        foreach (var burst in spawner.children.OfType<VFXSpawnerBurst>().ToList())
+            RemoveBlock(spawner, burst);
+        var rate = ScriptableObject.CreateInstance<VFXSpawnerConstantRate>();
+        spawner.AddChild(rate);
+        LinkExposedFloat(graph, SpawnRateProperty, 0f, rate.inputSlots[0]);
+
+        // Lifetime: as long as the script asks, the same for every particle.
+        var lifetime = init.children.OfType<SetAttribute>().First(b => b.attribute == "lifetime");
+        foreach (var slot in lifetime.inputSlots)
+            slot.UnlinkAll(true);
+        lifetime.SetSettingValue("Random", RandomMode.Off);
+        LinkExposedFloat(graph, LifetimeProperty, 600f, lifetime.inputSlots[0]);
+
+        // Released somewhere between the volume and LingerRise above it.
+        var placed = init.children.OfType<SetAttribute>().Last(b => b.attribute == "position");
+        var rise = NewSetAttribute("position", RandomMode.PerComponent, AttributeCompositionMode.Add);
+        init.AddChild(rise, init.GetIndex(placed) + 1);
+        SetVector(rise.inputSlots[0], Vector3.zero);
+        SetVector(rise.inputSlots[1], new Vector3(0f, LingerRise, 0f));
+
+        // Never above the ceiling, where the room clip would hide it for good.
+        var capped = NewSetAttribute("position", RandomMode.Off, AttributeCompositionMode.Overwrite);
+        init.AddChild(capped, init.GetIndex(rise) + 1);
+        LinkSlots(CapHeight(graph, init.position + new Vector2(-900f, 200f)), capped.inputSlots[0]);
+
+        // Each particle starts on a random frame, so a batch does not churn in step.
+        var frame = NewSetAttribute("texIndex", RandomMode.Uniform, AttributeCompositionMode.Overwrite);
+        init.AddChild(frame);
+        frame.inputSlots[0].value = 0f;
+        frame.inputSlots[1].value = 63.99f;
+
+        // Where it was released, in the world. It stays there while its volume
+        // drifts on, so a wandering volume leaves smoke along its path and the
+        // whole room fills instead of the smoke riding around in one clump.
+        var anchor = NewSetAttribute("targetPosition", RandomMode.Off, AttributeCompositionMode.Overwrite);
+        init.AddChild(anchor);
+        LinkSlots(AttributeNode(graph, "position", init.position + new Vector2(-640f, 400f)).outputSlots[0], anchor.inputSlots[0]);
+
+        // No steady updraft: the volume itself rises to its place in the layer.
+        foreach (var force in update.children.OfType<Force>())
+        {
+            if (force.GetSetting("Mode").value.ToString() == "Relative")
+                force.activationSlot.value = false;
+        }
+
+        int tetherIndex = 0;
+        foreach (var turbulence in update.children.OfType<Turbulence>().ToList())
+        {
+            Slot(turbulence, "Intensity").value = LingerTurbulence;
+            tetherIndex = update.GetIndex(turbulence) + 1;
+        }
+
+        // Pulled back toward where it was released, so it churns in place.
+        var tether = ScriptableObject.CreateInstance<Force>();
+        update.AddChild(tether, tetherIndex);
+        tether.SetSettingValue("Mode", UnityEditor.VFX.Block.ForceMode.Absolute);
+        LinkSlots(TetherForce(graph, update.position + new Vector2(-900f, 300f)), Slot(tether, "Force"));
+        foreach (var drag in update.children.OfType<Drag>())
+            Slot(drag, "dragCoefficient").value = LingerDrag;
+        foreach (var flipbook in update.children.OfType<FlipbookPlay>())
+        {
+            var frameRate = Slot(flipbook, "frameRate");
+            frameRate.UnlinkAll(true);
+            frameRate.value = LingerFramesPerSecond;
+        }
+
+        // Size and color: grow and fade in over the first seconds, then hold.
+        foreach (var curve in output.children.OfType<AttributeFromCurve>())
+        {
+            if (curve.attribute == "size")
+            {
+                curve.SetSettingValue("SampleMode", AttributeFromCurve.CurveSampleMode.Custom);
+                LinkSlots(AgeRamp(graph, LingerGrowSeconds, output.position + new Vector2(-640f, 0f)), Slot(curve, "SampleTime"));
+            }
+            else if (curve.attribute == "color")
+            {
+                curve.SetSettingValue("SampleMode", AttributeFromCurve.CurveSampleMode.Custom);
+                var gradient = new Gradient();
+                gradient.SetKeys(
+                    new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white * LingerBrightness, 1f) },
+                    new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(LingerAlpha, 1f) });
+                Slot(curve, "Color").value = gradient;
+                LinkSlots(AgeRamp(graph, LingerFadeInSeconds, output.position + new Vector2(-640f, 120f)), Slot(curve, "SampleTime"));
+            }
+        }
+
+        Debug.Log("[ContainedSmoke] Lingering smoke: capacity " + LingeringCapacity + ", release by " + SpawnRateProperty + ", life by " + LifetimeProperty);
+    }
+
+    static T SystemContext<T>(VFXGraph graph, string systemTitle) where T : VFXContext
+    {
+        var context = graph.children.OfType<T>().FirstOrDefault(c => c.GetData() != null && c.GetData().title == systemTitle);
+        if (context == null)
+            throw new InvalidOperationException("No " + typeof(T).Name + " on the '" + systemTitle + "' system.");
+        return context;
+    }
+
+    static void RemoveBlock(VFXContext context, VFXBlock block)
+    {
+        foreach (var slot in block.inputSlots)
+            slot.UnlinkAll(true);
+        context.RemoveChild(block);
+    }
+
+    static SetAttribute NewSetAttribute(string attribute, RandomMode random, AttributeCompositionMode composition)
+    {
+        var block = ScriptableObject.CreateInstance<SetAttribute>();
+        block.SetSettingValue("attribute", attribute);
+        block.SetSettingValue("Random", random);
+        block.SetSettingValue("Composition", composition);
+        return block;
+    }
+
+    static VFXAttributeParameter AttributeNode(VFXGraph graph, string attribute, Vector2 position)
+    {
+        var node = ScriptableObject.CreateInstance<VFXAttributeParameter>();
+        node.SetSettingValue("attribute", attribute);
+        node.position = position;
+        graph.AddChild(node);
+        return node;
+    }
+
+    /// <summary>Particle age divided by seconds, clamped to 0..1.</summary>
+    static VFXSlot AgeRamp(VFXGraph graph, float seconds, Vector2 position)
+    {
+        var divide = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.Divide>();
+        divide.position = position + new Vector2(220f, 0f);
+        graph.AddChild(divide);
+        LinkSlots(AttributeNode(graph, "age", position).outputSlots[0], divide.inputSlots[0]);
+        divide.inputSlots[1].value = Mathf.Max(0.01f, seconds);
+
+        var saturate = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.Saturate>();
+        saturate.position = position + new Vector2(400f, 0f);
+        graph.AddChild(saturate);
+        LinkSlots(divide.outputSlots[0], saturate.inputSlots[0]);
+        return saturate.outputSlots[0];
+    }
+
+    /// <summary>The particle's position with its height capped at the CeilingProperty.</summary>
+    static VFXSlot CapHeight(VFXGraph graph, Vector2 position)
+    {
+        var current = AttributeNode(graph, "position", position).outputSlots[0];
+
+        var lowest = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.Minimum>();
+        lowest.position = position + new Vector2(220f, 80f);
+        graph.AddChild(lowest);
+        LinkSlots(Component(current, "y"), lowest.inputSlots[0]);
+        LinkExposedFloat(graph, CeilingProperty, 1000f, lowest.inputSlots[1]);
+
+        var combined = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.AppendVector>();
+        combined.position = position + new Vector2(440f, 0f);
+        graph.AddChild(combined);
+        combined.AddOperand();
+        LinkSlots(Component(current, "x"), combined.inputSlots[0]);
+        LinkSlots(lowest.outputSlots[0], combined.inputSlots[1]);
+        LinkSlots(Component(current, "z"), combined.inputSlots[2]);
+        return combined.outputSlots[0];
+    }
+
+    /// <summary>(targetPosition - position) * LingerTether: a spring back to the release point.</summary>
+    static VFXSlot TetherForce(VFXGraph graph, Vector2 position)
+    {
+        var away = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.Subtract>();
+        away.position = position + new Vector2(440f, 0f);
+        graph.AddChild(away);
+        away.SetOperandType(0, typeof(Vector3));
+        away.SetOperandType(1, typeof(Vector3));
+        LinkSlots(AttributeNode(graph, "targetPosition", position + new Vector2(220f, 0f)).outputSlots[0], away.inputSlots[0]);
+        LinkSlots(AttributeNode(graph, "position", position + new Vector2(220f, 140f)).outputSlots[0], away.inputSlots[1]);
+
+        var pull = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.Multiply>();
+        pull.position = position + new Vector2(660f, 0f);
+        graph.AddChild(pull);
+        pull.SetOperandType(0, typeof(Vector3));
+        LinkSlots(away.outputSlots[0], pull.inputSlots[0]);
+        pull.inputSlots[1].value = LingerTether;
+        return pull.outputSlots[0];
+    }
+
+    /// <summary>The x, y or z slot under a vector or position slot.</summary>
+    static VFXSlot Component(VFXSlot vector, string name)
+    {
+        foreach (var child in vector.children)
+        {
+            if (child.name == name)
+                return child;
+            var nested = child.children.FirstOrDefault(c => c.name == name);
+            if (nested != null)
+                return nested;
+        }
+
+        throw new InvalidOperationException(vector.owner + "." + vector.name + " has no '" + name + "' component.");
+    }
+
+    static void LinkExposedFloat(VFXGraph graph, string name, float defaultValue, VFXSlot target)
+    {
+        var parameter = graph.children.OfType<VFXParameter>().FirstOrDefault(p => p.exposedName == name);
+        if (parameter == null)
+        {
+            parameter = ScriptableObject.CreateInstance<VFXParameter>();
+            parameter.Init(typeof(float));
+            parameter.SetSettingValue("m_ExposedName", name);
+            parameter.SetSettingValue("m_Exposed", true);
+            parameter.value = defaultValue;
+            graph.AddChild(parameter);
+        }
+
+        LinkSlots(parameter.outputSlots[0], target);
+        parameter.ValidateNodes();
+    }
+
+    /// <summary>Position attributes take a Position slot, others a Vector3.</summary>
+    static void SetVector(VFXSlot slot, Vector3 value)
+    {
+        if (slot.property.type == typeof(Position))
+            slot.value = new Position { position = value };
+        else
+            slot.value = value;
+    }
+
+    static void LinkSlots(VFXSlot from, VFXSlot to)
+    {
+        if (!from.Link(to))
+            throw new InvalidOperationException("Could not link " + from.owner + "." + from.name + " to " + to.owner + "." + to.name + ".");
     }
 
     static void WritePrefab(string sourcePrefabPath, string folder, string prefabPath, string vfxPath)
@@ -439,12 +807,39 @@ static class ContainedSmokeBuilder
             throw new InvalidOperationException("Could not connect " + from.name + " slot " + fromSlot + " to " + to.name + " slot " + toSlot);
     }
 
-    static VFXSlot Slot(VFXContext context, string name)
+    static VFXSlot Slot(IVFXSlotContainer container, string name)
     {
-        var slot = context.inputSlots.FirstOrDefault(s => s.name == name);
+        var slot = container.inputSlots.FirstOrDefault(s => s.name == name);
         if (slot == null)
-            throw new InvalidOperationException("The Shader Graph output has no '" + name + "' slot.");
+            throw new InvalidOperationException(container.GetType().Name + " has no '" + name + "' slot.");
         return slot;
+    }
+
+    /// <summary>
+    /// Adds a Custom HLSL operator that runs selectFunction from
+    /// SmokeRoomSelect.hlsl on a point and feeds the room box it returns to the
+    /// output's slotName input. VFX evaluates Shader Graph inputs in the vertex
+    /// stage, so the search over every room box runs once per particle corner
+    /// rather than once per pixel. Returns the operator's point input to link.
+    /// </summary>
+    static VFXSlot RoomSearch(VFXGraph graph, VFXContext context, string slotName, string selectFunction, Vector2 position)
+    {
+        var search = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.CustomHLSL>();
+        search.position = position + new Vector2(220f, 0f);
+        graph.AddChild(search);
+        search.SetSettingValue("m_OperatorName", "Room Search");
+        search.SetSettingValue("m_HLSLCode",
+            "#include \"" + RoomSelectHlslPath + "\"\n" +
+            "float RoomOf(in float3 center)\n" +
+            "{\n" +
+            "    return " + selectFunction + "(center);\n" +
+            "}\n");
+        search.ResyncSlots(true);
+        if (search.inputSlots.Count != 1 || search.outputSlots.Count != 1)
+            throw new InvalidOperationException("The room search operator has " + search.inputSlots.Count + " inputs and " + search.outputSlots.Count + " outputs; expected 1 and 1.");
+
+        LinkSlots(search.outputSlots[0], Slot(context, slotName));
+        return search.inputSlots[0];
     }
 
     static void LinkAttribute(VFXGraph graph, VFXContext context, string attribute, string slotName, Vector2 position)
@@ -462,7 +857,7 @@ static class ContainedSmokeBuilder
     /// fire effects are spawned at the world origin with no rotation, so their
     /// local space is world space.
     /// </summary>
-    static void LinkParameter(VFXGraph graph, VFXContext context, string exposedName, string field, string slotName)
+    static void LinkParameterField(VFXGraph graph, string exposedName, string field, VFXSlot target)
     {
         var parameter = graph.children
             .OfType<VFXParameter>()
@@ -474,8 +869,8 @@ static class ContainedSmokeBuilder
         if (source == null)
             throw new InvalidOperationException("Property '" + exposedName + "' has no '" + field + "'.");
 
-        if (!source.Link(Slot(context, slotName)))
-            throw new InvalidOperationException("Could not link '" + exposedName + "." + field + "' to '" + slotName + "'.");
+        if (!source.Link(target))
+            throw new InvalidOperationException("Could not link '" + exposedName + "." + field + "' to '" + target.owner + "." + target.name + "'.");
 
         // Attaches the new link to one of the property's nodes in the graph view.
         parameter.ValidateNodes();

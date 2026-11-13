@@ -22,6 +22,19 @@ using UnityEngine.SceneManagement;
 /// setup. With Contain Flames also on, objects that burn with the Wild flames
 /// play Flame_box_wild_contained, whose flames and embers are clipped to the
 /// room of the object that is burning.
+///
+/// The first volume of a fire is its plume: it stays over the fire and keeps
+/// churning, so the source of the smoke looks aggressive. It plays
+/// Only_smoke_plume, which holds 250 particles instead of 1000, each made more
+/// opaque by Plume Opacity, because up close every plume particle covers most
+/// of the view and it is the most expensive smoke to draw. The other volumes
+/// play Only_smoke_lingering: each volume heads for the nearest patch of air
+/// that does not hold enough smoke yet, following the open floor around
+/// furniture and through doorways, and leaves particles there that stay for
+/// minutes instead of being replaced every few seconds. The
+/// smoke fills every room it reaches evenly, from the ceiling down as the
+/// volumes bank down, and the particle count is bounded by the size of the
+/// building rather than by how long the fire burns.
 /// </remarks>
 [DisallowMultipleComponent]
 [DefaultExecutionOrder(-50)]
@@ -33,6 +46,20 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     const float MaxRoomRadius = 22f;
     const int MaxOpenCells = 2400;
     const string ContainedSmokeResource = "Smoke/Only_smoke_contained";
+    const string LingeringSmokeResource = "Smoke/Only_smoke_lingering";
+    // Exposed properties of Only_smoke_lingering, see ContainedSmokeBuilder.
+    const string SpawnRateProperty = "SmokeSpawnRate";
+    const string LifetimeProperty = "SmokeLifetime";
+    const string CeilingProperty = "SmokeCeiling";
+    const string PlumeSmokeResource = "Smoke/Only_smoke_plume";
+    // A lingering particle is released at least this far under the ceiling
+    // above its volume, so it stays inside the room for its whole life.
+    const float LingerCeilingGap = 0.3f;
+    // Lingering smoke is counted in patches of air this wide and this tall.
+    const float FillCellSize = 1.2f;
+    const float FillBandHeight = 0.8f;
+    // Seconds between updates of the field that steers volumes to unfilled air.
+    const float FillFieldSeconds = 0.25f;
     const string ContainedFlameResource = "Fire/Flame_box_wild_contained";
     // Room boxes are measured this far under the ceiling, above door headers,
     // so rays from a room do not leave it through a doorway.
@@ -126,6 +153,43 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Min(0f)]
     public float fadeDistanceDelay = 1.5f;
 
+    [Header("Plume And Lingering Smoke")]
+    [Tooltip("Keeps the first smoke volume of each fire anchored over the fire, constantly churning and rising, so the source looks aggressive. Needs Contain Smoke.")]
+    public bool keepPlumeAtFire = true;
+
+    [Tooltip("How opaque each plume particle is, as a multiple of its usual opacity. The plume effect holds 250 particles instead of 1000, so each must be more opaque for it to look as thick. Costs no extra GPU time.")]
+    [Range(1f, 6f)]
+    public float plumeOpacity = 2.5f;
+
+    [Tooltip("Smoke effect for the plume over the fire. Leave empty to use Resources/Smoke/Only_smoke_plume.")]
+    public GameObject plumeSmokePrefab;
+
+    [Tooltip("The drifting volumes leave smoke behind them that lingers where it was put, instead of churning out new smoke all the time. A volume only adds smoke where the air does not hold enough yet, so the rooms fill evenly. Needs Contain Smoke. Off, every volume churns like the plume.")]
+    public bool lingeringSmoke = true;
+
+    [Tooltip("Smoke particles left in each 1.2 m patch of air, per 0.8 m of height. Volumes stop adding smoke to a patch once it holds this many. Higher fills more thickly and costs more GPU time.")]
+    [Min(1)]
+    public int particlesPerCell = 3;
+
+    [Tooltip("Particles a second a drifting volume releases while it is in air that needs more smoke.")]
+    [Min(0.1f)]
+    public float releaseRate = 10f;
+
+    [Tooltip("Most particles one drifting volume can leave. The lingering effect holds at most 128.")]
+    [Range(1, 128)]
+    public int particlesPerVolume = 128;
+
+    [Tooltip("How opaque each lingering particle is, as a multiple of a churning particle at its peak. A patch of air holds a few lingering particles where churning volumes kept hundreds passing through, so each must be more opaque for the smoke to look as thick. Costs no extra GPU time.")]
+    [Range(1f, 8f)]
+    public float lingeringOpacity = 3f;
+
+    [Tooltip("Seconds a released particle lives. Keep it longer than the fire burns, so the smoke stays until the fire is out and its volume fades.")]
+    [Min(1f)]
+    public float lingerSeconds = 600f;
+
+    [Tooltip("Smoke effect for the drifting volumes. Leave empty to use Resources/Smoke/Only_smoke_lingering.")]
+    public GameObject lingeringSmokePrefab;
+
     [Header("Banking Down")]
     [Tooltip("Height above the floor that the lowest smoke volumes settle to once the room has fully banked down. Their Ignis particles reach a little below this. Lower leaves less clear air at the floor.")]
     [Min(0f)]
@@ -184,6 +248,8 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     Transform blockHolder;
     bool warnedAboutMissingEngine;
     bool loadedContainedSmokePrefab;
+    bool loadedLingeringSmokePrefab;
+    bool loadedPlumeSmokePrefab;
     float nextDiscoveryTime;
 
     class FireFront
@@ -203,6 +269,13 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         public float farthestDistance;
         public float nextMapTime;
         public readonly List<SmokeVolume> volumes = new List<SmokeVolume>();
+        // Lingering particles left so far in each patch of air, keyed by FillKey.
+        public readonly Dictionary<Vector3Int, float> smokeFill = new Dictionary<Vector3Int, float>();
+        // Per height band: steps from each open cell to the nearest cell whose
+        // patch still needs smoke, and when that field was last worked out.
+        public readonly Dictionary<int, int[]> fillField = new Dictionary<int, int[]>();
+        public readonly Dictionary<int, float> fillFieldTime = new Dictionary<int, float>();
+        public int[] fillQueue;
     }
 
     class SmokeVolume
@@ -221,6 +294,13 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         public bool ignited;
         public int spawnFrame;
         public VolumePhase phase;
+        // The plume stays over the fire and keeps churning.
+        public bool plume;
+        // A lingering volume leaves particles behind it, up to Particles Per Volume.
+        public bool lingers;
+        public float released;
+        // A stuck volume wanders instead of steering until this time.
+        public float wanderUntil;
     }
 
     /// <summary>Open cells of one room, in meters, keyed from the floor point under the fire.</summary>
@@ -232,6 +312,13 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         public float ceilingY;
         public Vector3 origin;
         public readonly HashSet<Vector2Int> open = new HashSet<Vector2Int>();
+        // The open cells as arrays, for the fill field: each cell's index, its
+        // four neighbors (-1 where not open) and the fill patch it lies in.
+        public Vector2Int[] cells;
+        public int[] links;
+        public int[] patchX;
+        public int[] patchZ;
+        public readonly Dictionary<Vector2Int, int> cellIndex = new Dictionary<Vector2Int, int>();
     }
 
     enum VolumePhase
@@ -471,6 +558,9 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             front.nextMapTime = Time.unscaledTime + 0.5f;
         }
 
+        // Volumes that already faded out took their smoke with them, so the
+        // count starts over. A patch whose smoke survived may get a little more.
+        front.smokeFill.Clear();
         for (int i = 0; i < front.volumes.Count; i++)
         {
             if (front.volumes[i].phase == VolumePhase.Fading)
@@ -513,9 +603,12 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             ? Instantiate(smokeTemplate, position, Quaternion.identity, blockHolder)
             : CreateSmokeBlock(position);
 
-        smoke.name = "IgnisSmoke_" + front.fire.name + "_" + front.volumes.Count;
+        bool plume = keepPlumeAtFire && containSmoke && !HasPlume(front);
+        bool lingers = !plume && lingeringSmoke && containSmoke && LingeringSmokePrefab() != null;
+
+        smoke.name = "IgnisSmoke_" + front.fire.name + "_" + front.volumes.Count + (plume ? "_Plume" : "");
         smoke.gameObject.SetActive(true);
-        PrepareSmokeObject(smoke);
+        PrepareSmokeObject(smoke, plume, lingers);
 
         float authoredAlpha = Mathf.Max(0f, smoke.smokeAlpha);
         float authoredIntensity = Mathf.Max(0f, smoke.smokeColorIntensity);
@@ -529,8 +622,21 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             authoredAlpha = authoredAlpha,
             authoredColorIntensity = authoredIntensity,
             spawnFrame = Time.frameCount,
-            phase = VolumePhase.Growing
+            phase = VolumePhase.Growing,
+            plume = plume,
+            lingers = lingers
         });
+    }
+
+    static bool HasPlume(FireFront front)
+    {
+        for (int i = 0; i < front.volumes.Count; i++)
+        {
+            if (front.volumes[i].plume && front.volumes[i].smoke != null)
+                return true;
+        }
+
+        return false;
     }
 
     Vector3 SpawnPoint(FireFront front)
@@ -576,11 +682,15 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     /// or ignite whatever it overlaps. Its collider stays a trigger so the drift
     /// cast, not a rigid body, decides when the volume hits the room.
     /// </summary>
-    void PrepareSmokeObject(FlammableObject smoke)
+    void PrepareSmokeObject(FlammableObject smoke, bool plume, bool lingers)
     {
         smoke.overrideFireVFX = true;
         smoke.overrideVFXVariant = FlameEngine.FireVFXVariant.OnlySmoke;
-        smoke.fireVFXPrefabOverride = containSmoke ? ContainedSmokePrefab() : null;
+        GameObject plumePrefab = plume ? PlumeSmokePrefab() : null;
+        smoke.fireVFXPrefabOverride = !containSmoke ? null
+            : lingers ? LingeringSmokePrefab()
+            : plumePrefab != null ? plumePrefab
+            : ContainedSmokePrefab();
         smoke.enableFlameVFX = false;
         smoke.embersVFXMultiplier = 0f;
         smoke.embersBurstVFXMultiplier = 0f;
@@ -621,18 +731,25 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         for (int i = 0; i < front.volumes.Count; i++)
         {
             SmokeVolume volume = front.volumes[i];
-            if (volume.smoke == null)
+            if (volume.smoke == null || volume.plume)
                 continue;
 
-            volume.headingRadians += Mathf.Lerp(-turn, turn, Random.value);
-            Vector3 heading = new Vector3(Mathf.Cos(volume.headingRadians), 0f, Mathf.Sin(volume.headingRadians));
             Vector3 from = volume.smoke.transform.position;
+            if (volume.lingers && TowardNeededSmoke(front, volume, from, out Vector3 toward))
+                volume.headingRadians = Mathf.Atan2(toward.z, toward.x);
+            else
+                volume.headingRadians += Mathf.Lerp(-turn, turn, Random.value);
+
+            Vector3 heading = new Vector3(Mathf.Cos(volume.headingRadians), 0f, Mathf.Sin(volume.headingRadians));
             Vector3 desired = heading * driftSpeed + Vector3.up * VerticalSpeed(front, volume, from.y, delta);
             Vector3 position = MoveUntilBlocked(from, desired * delta, front.fire.transform);
             position = StayInOpenAir(front.room, from, position);
             position = KeepUnderCeiling(position);
             if ((new Vector3(position.x - from.x, 0f, position.z - from.z)).sqrMagnitude < 0.0000004f)
+            {
                 volume.headingRadians += Mathf.PI * 0.5f;
+                volume.wanderUntil = Time.time + 1f;
+            }
 
             volume.smoke.transform.position = position;
             volume.distance = Vector3.Distance(position, front.origin);
@@ -750,6 +867,9 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             }
 
             volume.age += Time.deltaTime;
+            if (volume.lingers)
+                UpdateRelease(front, volume);
+
             float target = TargetAlpha(front, volume);
             if (volume.phase == VolumePhase.Growing)
             {
@@ -793,6 +913,174 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             ResetFront(front);
     }
 
+    /// <summary>
+    /// A lingering volume releases particles only while it is in a patch of air
+    /// that holds fewer than Particles Per Cell. They stay where they were put
+    /// for Linger Seconds, so as the volumes wander and bank down they fill
+    /// every patch they reach once, the middle of a room as much as its walls.
+    /// </summary>
+    void UpdateRelease(FireFront front, SmokeVolume volume)
+    {
+        float rate = 0f;
+        if (volume.phase != VolumePhase.Fading && volume.released < particlesPerVolume)
+        {
+            Vector3 position = volume.smoke.transform.position;
+            Vector3Int key = FillKey(position);
+            front.smokeFill.TryGetValue(key, out float filled);
+            if (filled < particlesPerCell)
+            {
+                rate = releaseRate;
+                float step = rate * Time.deltaTime;
+                front.smokeFill[key] = filled + step;
+                volume.released += step;
+
+                float ceiling = CeilingAbove(position);
+                if (!float.IsPositiveInfinity(ceiling))
+                    volume.smoke.SetFireVFXFloat(CeilingProperty, ceiling - LingerCeilingGap);
+            }
+        }
+
+        volume.smoke.SetFireVFXFloat(SpawnRateProperty, rate);
+    }
+
+    static Vector3Int FillKey(Vector3 position)
+    {
+        return new Vector3Int(
+            Mathf.FloorToInt(position.x / FillCellSize),
+            FillBand(position.y),
+            Mathf.FloorToInt(position.z / FillCellSize));
+    }
+
+    static int FillBand(float height)
+    {
+        return Mathf.FloorToInt(height / FillBandHeight);
+    }
+
+    /// <summary>
+    /// Direction from a lingering volume toward the nearest air at its height
+    /// that still needs smoke, following open cells around furniture and
+    /// through doorways. False inside such air, when none is left within
+    /// reach, or when the volume has no particles left to give, so it wanders.
+    /// </summary>
+    bool TowardNeededSmoke(FireFront front, SmokeVolume volume, Vector3 position, out Vector3 direction)
+    {
+        direction = Vector3.zero;
+        RoomAir room = front.room;
+        if (room == null || room.cells == null || room.cells.Length == 0)
+            return false;
+        if (volume.phase == VolumePhase.Fading || volume.released >= particlesPerVolume || Time.time < volume.wanderUntil)
+            return false;
+        if (!room.cellIndex.TryGetValue(ToCell(room, position), out int at))
+            return false;
+
+        int[] field = FillField(front, FillBand(position.y));
+        int steps = field[at];
+        if (steps == 0 || steps == int.MaxValue)
+            return false;
+
+        int next = -1;
+        for (int k = 0; k < Neighbors.Length; k++)
+        {
+            int neighbor = room.links[at * Neighbors.Length + k];
+            if (neighbor >= 0 && field[neighbor] < steps)
+            {
+                steps = field[neighbor];
+                next = neighbor;
+            }
+        }
+
+        if (next < 0)
+            return false;
+
+        direction = CellCenter(room, room.cells[next]) - position;
+        direction.y = 0f;
+        return direction.sqrMagnitude > 0.000001f;
+    }
+
+    /// <summary>
+    /// Steps from every open cell to the nearest one whose patch at this height
+    /// band holds fewer than Particles Per Cell, refreshed every few frames.
+    /// </summary>
+    int[] FillField(FireFront front, int band)
+    {
+        RoomAir room = front.room;
+        int count = room.cells.Length;
+        if (front.fillField.TryGetValue(band, out int[] field) && field.Length == count
+            && front.fillFieldTime.TryGetValue(band, out float built) && Time.time - built < FillFieldSeconds)
+            return field;
+
+        if (field == null || field.Length != count)
+        {
+            field = new int[count];
+            front.fillField[band] = field;
+        }
+        if (front.fillQueue == null || front.fillQueue.Length != count)
+            front.fillQueue = new int[count];
+
+        int[] queue = front.fillQueue;
+        int head = 0;
+        int tail = 0;
+        for (int i = 0; i < count; i++)
+        {
+            front.smokeFill.TryGetValue(new Vector3Int(room.patchX[i], band, room.patchZ[i]), out float filled);
+            if (filled < particlesPerCell)
+            {
+                field[i] = 0;
+                queue[tail++] = i;
+            }
+            else
+            {
+                field[i] = int.MaxValue;
+            }
+        }
+
+        while (head < tail)
+        {
+            int cell = queue[head++];
+            int steps = field[cell] + 1;
+            for (int k = 0; k < Neighbors.Length; k++)
+            {
+                int neighbor = room.links[cell * Neighbors.Length + k];
+                if (neighbor < 0 || field[neighbor] <= steps)
+                    continue;
+
+                field[neighbor] = steps;
+                queue[tail++] = neighbor;
+            }
+        }
+
+        front.fillFieldTime[band] = Time.time;
+        return field;
+    }
+
+    /// <summary>Lays out the open cells as arrays for the fill field.</summary>
+    static void IndexCells(RoomAir room)
+    {
+        int count = room.open.Count;
+        room.cells = new Vector2Int[count];
+        room.links = new int[count * Neighbors.Length];
+        room.patchX = new int[count];
+        room.patchZ = new int[count];
+        room.cellIndex.Clear();
+
+        int n = 0;
+        foreach (Vector2Int cell in room.open)
+        {
+            room.cells[n] = cell;
+            room.cellIndex[cell] = n;
+            n++;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 world = CellCenter(room, room.cells[i]);
+            room.patchX[i] = Mathf.FloorToInt(world.x / FillCellSize);
+            room.patchZ[i] = Mathf.FloorToInt(world.z / FillCellSize);
+            for (int k = 0; k < Neighbors.Length; k++)
+                room.links[i * Neighbors.Length + k] = room.cellIndex.TryGetValue(room.cells[i] + Neighbors[k], out int j) ? j : -1;
+        }
+    }
+
     float TargetAlpha(FireFront front, SmokeVolume volume)
     {
         float strength = Mathf.Lerp(minimumSmokeStrength, 1f, front.flameOutput);
@@ -810,13 +1098,21 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (!volume.smoke.onFire)
             return false;
 
+        if (volume.lingers)
+        {
+            volume.smoke.SetFireVFXFloat(LifetimeProperty, lingerSeconds);
+            volume.smoke.SetFireVFXFloat(SpawnRateProperty, 0f);
+        }
+
         ApplyAlpha(volume);
         return true;
     }
 
     void ApplyAlpha(SmokeVolume volume)
     {
-        volume.smoke.smokeAlpha = Mathf.Max(0f, volume.alpha);
+        float opacity = volume.plume ? (plumeSmokePrefab != null ? plumeOpacity : 1f)
+            : volume.lingers ? lingeringOpacity : 1f;
+        volume.smoke.smokeAlpha = Mathf.Max(0f, volume.alpha) * opacity;
         volume.smoke.smokeColorIntensity = volume.authoredColorIntensity;
         volume.smoke.RefreshSmokeAppearance();
     }
@@ -964,6 +1260,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (room.open.Count == 0)
             return null;
 
+        IndexCells(room);
         if (containSmoke)
             SmokeRoomClipVolumes.SetRooms(front, MeasureRooms(room));
         return room;
@@ -980,6 +1277,32 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         }
 
         return containedSmokePrefab;
+    }
+
+    GameObject LingeringSmokePrefab()
+    {
+        if (lingeringSmokePrefab == null && !loadedLingeringSmokePrefab)
+        {
+            loadedLingeringSmokePrefab = true;
+            lingeringSmokePrefab = Resources.Load<GameObject>(LingeringSmokeResource);
+            if (lingeringSmokePrefab == null)
+                Debug.LogWarning("IgnisSmokeDiffusion could not find Resources/" + LingeringSmokeResource + ", so every volume keeps churning. Build it from Tools > Smoke Containment.", this);
+        }
+
+        return lingeringSmokePrefab;
+    }
+
+    GameObject PlumeSmokePrefab()
+    {
+        if (plumeSmokePrefab == null && !loadedPlumeSmokePrefab)
+        {
+            loadedPlumeSmokePrefab = true;
+            plumeSmokePrefab = Resources.Load<GameObject>(PlumeSmokeResource);
+            if (plumeSmokePrefab == null)
+                Debug.LogWarning("IgnisSmokeDiffusion could not find Resources/" + PlumeSmokeResource + ", so the plume plays the full 1000-particle smoke. Build it from Tools > Smoke Containment.", this);
+        }
+
+        return plumeSmokePrefab;
     }
 
     /// <summary>
@@ -1443,7 +1766,19 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     /// </summary>
     Vector3 KeepUnderCeiling(Vector3 position)
     {
-        float clearance = VolumeTopClearance();
+        float underside = CeilingAbove(position);
+        if (float.IsPositiveInfinity(underside))
+            return position;
+
+        float limit = underside - VolumeTopClearance();
+        if (position.y > limit)
+            position.y = limit;
+        return position;
+    }
+
+    /// <summary>Height of the lowest ceiling or overhang above a point, or infinity when there is none.</summary>
+    float CeilingAbove(Vector3 position)
+    {
         RaycastHit[] hits = Physics.RaycastAll(position, Vector3.up, 8f, obstacleMask, QueryTriggerInteraction.Ignore);
         float underside = float.PositiveInfinity;
         for (int i = 0; i < hits.Length; i++)
@@ -1455,13 +1790,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
                 underside = hits[i].point.y;
         }
 
-        if (float.IsPositiveInfinity(underside))
-            return position;
-
-        float limit = underside - clearance;
-        if (position.y > limit)
-            position.y = limit;
-        return position;
+        return underside;
     }
 
     bool IgnoreSolid(Collider collider)
@@ -1499,6 +1828,9 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         front.flameOutput = 0f;
         front.farthestDistance = 0f;
         front.room = null;
+        front.smokeFill.Clear();
+        front.fillField.Clear();
+        front.fillFieldTime.Clear();
         SmokeRoomClipVolumes.Remove(front);
     }
 

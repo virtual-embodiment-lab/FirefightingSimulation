@@ -1136,6 +1136,20 @@ namespace Ignis
         }
 
         /// <summary>
+        /// Sets a float exposed property on every live emitter that has it.
+        /// Runtime controllers use this for properties their own effect adds.
+        /// </summary>
+        public void SetFireVFXFloat(string propertyName, float value)
+        {
+            for (int i = 0; i < fires.Count; i++)
+            {
+                VisualEffect fireEffect = fires[i];
+                if (fireEffect && fireEffect.HasFloat(propertyName))
+                    fireEffect.SetFloat(propertyName, value);
+            }
+        }
+
+        /// <summary>
         /// Advances every fire emitter on a shared 30 Hz logical clock. VFX Graph's
         /// automatic per-render-frame clock is paused, so a dropped Quest frame no
         /// longer changes the particle path. Late clients backfill at most 3 seconds;

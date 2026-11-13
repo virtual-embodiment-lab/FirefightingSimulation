@@ -1,0 +1,4 @@
+bin/
+obj/
+# The root .gitignore drops Unity-generated *.csproj files; this one is hand-written.
+!StickiesBridge.csproj

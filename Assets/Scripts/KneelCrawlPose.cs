@@ -51,12 +51,15 @@ public class KneelCrawlPose : MonoBehaviour
     private Vector3 _leftHipInPelvis;
     private Vector3 _rightHipInPelvis;
     private Quaternion _pelvisRelativeToRoot;
+    private Quaternion _headToRootRotation;
     private Quaternion _leftToeRelativeToRoot;
     private Quaternion _rightToeRelativeToRoot;
     private float _standingMinHeadHeight;
 
     private bool _kneeling;
     private float _weight;
+    private bool _hasKneelHeading;
+    private Vector3 _kneelForward;
 
     /// <summary>0 standing (plain VRIK) to 1 fully kneeling.</summary>
     public float Weight => _weight;
@@ -80,6 +83,7 @@ public class KneelCrawlPose : MonoBehaviour
         _leftHipInPelvis = pelvisInverse * (r.leftThigh.position - r.pelvis.position);
         _rightHipInPelvis = pelvisInverse * (r.rightThigh.position - r.pelvis.position);
         _pelvisRelativeToRoot = rootInverse * r.pelvis.rotation;
+        _headToRootRotation = Quaternion.Inverse(r.head.rotation) * transform.rotation;
         _leftToeRelativeToRoot = rootInverse * leftToe.rotation;
         _rightToeRelativeToRoot = rootInverse * rightToe.rotation;
         _standingMinHeadHeight = _ik.solver.spine.minHeadHeight;
@@ -106,10 +110,16 @@ public class KneelCrawlPose : MonoBehaviour
     {
         _ik.solver.OnPreUpdate -= UpdatePose;
         _kneeling = false;
+        _hasKneelHeading = false;
         SetWeight(0f);
     }
 
     private void UpdatePose()
+    {
+        EvaluatePose(Time.deltaTime);
+    }
+
+    private void EvaluatePose(float deltaTime)
     {
         Transform head = _ik.solver.spine.headTarget;
         if (head == null)
@@ -118,14 +128,18 @@ public class KneelCrawlPose : MonoBehaviour
         float floor = transform.position.y;
         float headHeight = head.position.y - floor;
         _kneeling = _kneeling ? headHeight < standHeight : headHeight < kneelHeight;
-        SetWeight(Mathf.MoveTowards(_weight, _kneeling ? 1f : 0f, blendTime > 0f ? Time.deltaTime / blendTime : 1f));
+        SetWeight(Mathf.MoveTowards(_weight, _kneeling ? 1f : 0f, blendTime > 0f ? deltaTime / blendTime : 1f));
         if (_weight <= 0f)
+        {
+            _hasKneelHeading = false;
             return;
+        }
 
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
         if (forward.sqrMagnitude < 0.0001f)
             return;
         forward.Normalize();
+        forward = GetKneelForward(head, forward);
         Quaternion heading = Quaternion.LookRotation(forward, Vector3.up);
 
         // Hip joints at thigh height, behind the head by however far the torso needs to lean to reach it,
@@ -143,6 +157,29 @@ public class KneelCrawlPose : MonoBehaviour
         Quaternion footFlip = heading * Quaternion.AngleAxis(180f, Vector3.right);
         PlaceLeg(_leftToeTarget, _leftKneeGoal, pelvis + pelvisRotation * _leftHipInPelvis, footFlip, _leftToeFromAnkle, _leftToeRelativeToRoot, floor, forward);
         PlaceLeg(_rightToeTarget, _rightKneeGoal, pelvis + pelvisRotation * _rightHipInPelvis, footFlip, _rightToeFromAnkle, _rightToeRelativeToRoot, floor, forward);
+    }
+
+    private Vector3 GetKneelForward(Transform head, Vector3 bodyForward)
+    {
+        if (!_hasKneelHeading)
+        {
+            _kneelForward = bodyForward;
+            _hasKneelHeading = true;
+        }
+
+        // The target uses head-bone axes, not headset axes. Match VRIK's calibrated
+        // facing calculation; combining right and forward stays stable when looking down.
+        Quaternion headFrame = head.rotation * _headToRootRotation;
+        Vector3 facing = Vector3.Cross(headFrame * Vector3.right, Vector3.up) + headFrame * Vector3.forward;
+        facing = Vector3.ProjectOnPlane(facing, Vector3.up);
+        if (!float.IsFinite(facing.x) || !float.IsFinite(facing.z) || facing.sqrMagnitude < .0001f)
+            return _kneelForward;
+
+        float angle = Vector3.SignedAngle(_kneelForward, facing, Vector3.up);
+        float allowance = Mathf.Clamp(_ik.solver.spine.maxRootAngle, 0f, 180f);
+        float turn = angle - Mathf.Clamp(angle, -allowance, allowance);
+        _kneelForward = (Quaternion.AngleAxis(turn, Vector3.up) * _kneelForward).normalized;
+        return _kneelForward;
     }
 
     /// <summary>Knee on the floor straight under the hip joint, shin flat behind it, foot stretched back from the ankle.</summary>

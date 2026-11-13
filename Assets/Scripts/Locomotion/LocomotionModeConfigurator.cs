@@ -18,7 +18,8 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 ///    Controllers keep their thumbstick teleport ray, and hands use
 ///    <see cref="HandTeleportGesture"/>.
 ///  - <see cref="Mode.WalkingStick"/>: only the <see cref="ContinuousMoveProvider"/> stays on,
-///    driven by <see cref="HandWalkingStickLocomotion"/> (swing a fist to walk). Every teleport
+///    driven by <see cref="HandWalkingStickLocomotion"/> (swing a fist to walk), plus
+///    <see cref="HandTrackingGrabMoveProvider"/> (pinch and pull while kneeling/crawling). Every teleport
 ///    ray is disabled.
 ///
 /// Components are disabled rather than GameObjects deactivated, because the starter rig's
@@ -47,7 +48,7 @@ public class LocomotionModeConfigurator : MonoBehaviour
         foreach (var provider in GetComponentsInChildren<LocomotionProvider>(true))
         {
             provider.enabled = (teleport && provider is TeleportationProvider)
-                               || (walkingStick && provider is ContinuousMoveProvider);
+                               || (walkingStick && (provider is ContinuousMoveProvider || provider is HandTrackingGrabMoveProvider));
         }
 
         foreach (var climbTeleport in GetComponentsInChildren<ClimbTeleportInteractor>(true))

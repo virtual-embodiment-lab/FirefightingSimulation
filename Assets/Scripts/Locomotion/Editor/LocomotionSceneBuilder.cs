@@ -207,6 +207,10 @@ public static class LocomotionSceneBuilder
         var root = new GameObject("Walking Stick");
         root.transform.SetParent(mediator.transform, false);
         var walkingStick = root.AddComponent<HandWalkingStickLocomotion>();
+        var grabMove = root.AddComponent<HandTrackingGrabMoveProvider>();
+        grabMove.mediator = mediator;
+        grabMove.useGravity = false;
+        grabMove.enableFreeYMovement = false;
 
         var so = new SerializedObject(walkingStick);
         so.FindProperty("moveProvider").objectReferenceValue = moveProvider;

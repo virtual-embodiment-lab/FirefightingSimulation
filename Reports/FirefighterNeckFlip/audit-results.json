@@ -1,0 +1,71 @@
+{
+  "basis_commit": "41a7bacc206e47a58c91fc7fb44eea23afee4b12",
+  "method": "Serialized configuration audit and isolated quaternion math, not a full VRIK/headset reproduction",
+  "checks": {
+    "scene_head_target_parent_is_hmd_camera": true,
+    "normcore_and_vrik_share_avatar_head_target": true,
+    "hmd_driver_respects_tracking_state_and_has_state_reference": true,
+    "head_target_offset_is_unit_quaternion": true,
+    "base_prefab_neutral_head_vs_tracking_offset_angle_degrees": 8.695878390673789,
+    "quaternion_sign_change_orientation_angle_degrees": 0.0
+  },
+  "head_target_offset_xyzw": [
+    0.5,
+    -0.5,
+    -0.5,
+    0.5
+  ],
+  "base_prefab_bind_head_world_xyzw": [
+    -0.5364676526467673,
+    0.460653753814044,
+    0.5364675440725588,
+    -0.4606553439515055
+  ],
+  "isolated_heading_cases": [
+    {
+      "head_yaw_degrees": 0,
+      "standing_root_correction_degrees": 0,
+      "full_kneel_root_correction_for_0_45_90_degree_leans": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "head_yaw_degrees": 45,
+      "standing_root_correction_degrees": 20.0,
+      "full_kneel_root_correction_for_0_45_90_degree_leans": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "head_yaw_degrees": 90,
+      "standing_root_correction_degrees": 65.0,
+      "full_kneel_root_correction_for_0_45_90_degree_leans": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "head_yaw_degrees": 135,
+      "standing_root_correction_degrees": 110.0,
+      "full_kneel_root_correction_for_0_45_90_degree_leans": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "head_yaw_degrees": 180,
+      "standing_root_correction_degrees": 155.0,
+      "full_kneel_root_correction_for_0_45_90_degree_leans": [
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

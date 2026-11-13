@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.XR.Hands;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -14,6 +15,7 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 ///  Move Speed), in the direction the head faces. One swinging fist is enough. A hand that is holding something,
 ///  or spraying the extinguisher (<see cref="HandSprayGesture"/>), never walks. While the extinguisher is held, a
 ///  fist with the free hand sprays, so the free hand walks only until it first opens after the extinguisher is taken.
+///  Crawl: below Crawl Height, pinch and pull either hand to move opposite the pull. Stand up to walk again.
 ///
 ///  Turn: physically turn the body. There is deliberately no turn gesture: an earlier thumbs-up tilt
 ///  gesture misfired while the thumb was still tucking into the fist and spun the view, which caused
@@ -42,6 +44,12 @@ public class HandWalkingStickLocomotion : MonoBehaviour
 
     [Tooltip("Space the XR Hands joint poses are in (the XR Origin's Camera Offset).")]
     [SerializeField] private Transform trackingSpace;
+
+    [Header("Crawling (head height above the rig's floor, meters)")]
+    [Tooltip("Below this height, replace swing walking with pinch-and-pull movement. Matches the avatar's kneeling threshold.")]
+    [SerializeField] private float crawlHeight = 1.0f;
+    [Tooltip("Stand above this height to resume swing walking. The gap prevents flickering between modes.")]
+    [SerializeField] private float standHeight = 1.1f;
 
     [Tooltip("Each hand's Near-Far interactor. A hand that is holding something does not walk.")]
     [SerializeField] private XRBaseInteractor leftHandInteractor;
@@ -86,12 +94,29 @@ public class HandWalkingStickLocomotion : MonoBehaviour
     private HandState _right;
     private float _move;
     private Vector3 _headForward = Vector3.forward;
+    private Transform _floor;
+    private HandTrackingGrabMoveProvider _grabMove;
 
     /// <summary>Walking input, 0 to 1 of the move provider's Move Speed.</summary>
     public float MoveInput => _move;
 
+    /// <summary>Whether low posture currently selects pinch-and-pull instead of swing walking.</summary>
+    public bool IsCrawling { get; private set; }
+
     private void Awake()
     {
+        var origin = GetComponentInParent<XROrigin>();
+        _floor = origin != null ? (origin.Origin != null ? origin.Origin.transform : origin.transform) : trackingSpace;
+        // Existing scenes gain crawling without needing to rebuild their environment or rig.
+        _grabMove = GetComponent<HandTrackingGrabMoveProvider>();
+        if (_grabMove == null)
+            _grabMove = gameObject.AddComponent<HandTrackingGrabMoveProvider>();
+        if (moveProvider != null && moveProvider.mediator != null)
+            _grabMove.mediator = moveProvider.mediator;
+        // The continuous provider continues to handle gravity, including while crawling.
+        _grabMove.useGravity = false;
+        _grabMove.enableFreeYMovement = false;
+
         if (moveProvider != null)
         {
             moveProvider.leftHandMoveInput.inputSourceMode = XRInputValueReader.InputSourceMode.ManualValue;
@@ -101,15 +126,51 @@ public class HandWalkingStickLocomotion : MonoBehaviour
 
     private void OnDisable()
     {
+        IsCrawling = false;
+        if (_grabMove != null)
+            _grabMove.ResetMovementState();
         _left = default;
         _right = default;
         _move = 0f;
         WriteInputs();
     }
 
-    private void Update()
+    private void OnValidate()
     {
-        float deltaTime = Time.deltaTime;
+        crawlHeight = Mathf.Max(0f, crawlHeight);
+        standHeight = Mathf.Max(crawlHeight, standHeight);
+    }
+
+    private void UpdatePosture()
+    {
+        float height = head != null
+            ? (_floor != null ? _floor.InverseTransformPoint(head.position).y : head.localPosition.y)
+            : float.PositiveInfinity;
+        bool crawling = IsCrawling ? height < standHeight : height < crawlHeight;
+        if (crawling == IsCrawling)
+            return;
+
+        IsCrawling = crawling;
+        _left = default;
+        _right = default;
+        _move = 0f;
+        _grabMove.ResetMovementState();
+        WriteInputs();
+    }
+
+    private void Update() => EvaluateMovement(Time.deltaTime);
+
+    private void EvaluateMovement(float deltaTime)
+    {
+        UpdatePosture();
+        if (IsCrawling)
+        {
+            // Stop immediately on crouching; walking's deceleration must not carry into a pull.
+            _move = 0f;
+            WriteInputs();
+            return;
+        }
+
         if (deltaTime <= 0f)
             return;
 

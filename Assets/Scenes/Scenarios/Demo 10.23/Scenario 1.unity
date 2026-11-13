@@ -61690,7 +61690,7 @@ MonoBehaviour:
   smokeTemplate: {fileID: 0}
   muteEmbeddedSmoke: 1
   flameSpeedToSmoke: 1
-  baseSmokeSpeed: 1.05
+  baseSmokeSpeed: 0.5
   riseSpeed: 0.55
   wanderDegreesPerSecond: 16
   fullStrengthSeconds: 8
@@ -61708,11 +61708,23 @@ MonoBehaviour:
   growthSeconds: 30
   fadeSeconds: 8
   fadeDistanceDelay: 1.5
+  keepPlumeAtFire: 1
+  plumeOpacity: 2.5
+  plumeSmokePrefab: {fileID: 0}
+  lingeringSmoke: 1
+  particlesPerCell: 3
+  releaseRate: 10
+  particlesPerVolume: 128
+  lingeringOpacity: 3
+  lingerSeconds: 600
+  lingeringSmokePrefab: {fileID: 0}
   lowestSmokeHeight: 0.8
   bankDownSeconds: 60
   sinkSpeed: 0.15
   containSmoke: 1
   containedSmokePrefab: {fileID: 0}
+  containFlames: 1
+  containedFlamePrefab: {fileID: 0}
   roomBoundaryMask:
     serializedVersion: 2
     m_Bits: 1

@@ -17,11 +17,14 @@ using UnityEngine.SceneManagement;
 /// Ignis smoke particles are large camera-facing quads, so a block that stops
 /// at a wall still draws smoke on the far side of it. With Contain Smoke on,
 /// blocks play Only_smoke_contained, whose shader draws each particle only
-/// inside the room that holds its center. The rooms come from probing the
+/// inside the room that holds its center; a lingering particle is drawn only
+/// inside the room it was released in. The rooms come from probing the
 /// building's own walls, ceilings and floors, so any structure works without
 /// setup. With Contain Flames also on, objects that burn with the Wild flames
 /// play Flame_box_wild_contained, whose flames and embers are clipped to the
-/// room of the object that is burning.
+/// room of the object that is burning. Those spawn Flame Particles of the
+/// plugin's flames, each Flame Brightness times as bright, which looks the same
+/// for much less overdraw up close.
 ///
 /// The first volume of a fire is its plume: it stays over the fire and keeps
 /// churning, so the source of the smoke looks aggressive. It plays
@@ -30,11 +33,35 @@ using UnityEngine.SceneManagement;
 /// of the view and it is the most expensive smoke to draw. The other volumes
 /// play Only_smoke_lingering: each volume heads for the nearest patch of air
 /// that does not hold enough smoke yet, following the open floor around
-/// furniture and through doorways, and leaves particles there that stay for
-/// minutes instead of being replaced every few seconds. The
+/// furniture and through doorways, holds over it while it leaves particles
+/// there, and moves on once the patch is full. The particles stay for minutes
+/// instead of being replaced every few seconds. Each room fills in rings
+/// outward from where its smoke came in, the fire or a doorway, the same in
+/// every open direction. The
 /// smoke fills every room it reaches evenly, from the ceiling down as the
 /// volumes bank down, and the particle count is bounded by the size of the
 /// building rather than by how long the fire burns.
+///
+/// The open air is found on a grid of cells. A doorway is often narrower than
+/// two cells, so a cell whose center sits by a door jamb is moved into the
+/// opening, and cells only join where a volume can pass between them. The
+/// smoke so reaches every room on the fire's floor through its doorways but
+/// never through a wall.
+///
+/// The smoke has an edge that moves out from the fire along those cells at
+/// Front Speed, and smoke is only left behind it. It so spreads with a
+/// direction: across the burning room, out through its doorways, down each
+/// hallway as a line, and into every room the line passes. Over each patch the
+/// smoke layer starts at the ceiling when the edge arrives and deepens from
+/// there. Outside the burning room the edge, the volumes and the deepening all
+/// move at Other Room Speed, and each patch fills only Other Room Smoke of
+/// what it would hold, so the smoke thins and slows as it spreads. Spreading
+/// Volumes of the volumes follow the edge out of the burning room as soon as it
+/// leaves, riding the top of the smoke layer, while the rest fill the burning
+/// room and then deepen the smoke behind the edge. Volumes line up with each
+/// doorway and pass through the middle of it, and the air by a doorway holds
+/// Doorway Smoke, so the smoke funnels through the openings and thins out in
+/// the rooms beyond.
 /// </remarks>
 [DisallowMultipleComponent]
 [DefaultExecutionOrder(-50)]
@@ -60,7 +87,36 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     const float FillBandHeight = 0.8f;
     // Seconds between updates of the field that steers volumes to unfilled air.
     const float FillFieldSeconds = 0.25f;
+    // Volumes head for air the edge of the smoke reaches within this many
+    // seconds, so they wait at the edge instead of wandering behind it.
+    const float FrontLeadSeconds = 4f;
+    // Lingering volumes drift as spheres this share of Body Radius: the size
+    // the open-air grid checks doorways with, so they fit through every
+    // doorway the grid joins rooms by instead of catching on the frame.
+    const float LingeringBodyShare = 0.5f;
+    // Seconds a volume heading somewhere stays down at cruise height after it
+    // runs into a wall, so it passes under a door header into the next room.
+    const float DuckSeconds = 2f;
+    // Spreading volumes keep to this top share of the smoke layer.
+    const float SpreadingLayerDepth = 0.2f;
+    // A volume heading somewhere looks this many cells ahead for the farthest
+    // one it can reach in a straight line, and looks again this often.
+    const int AimCells = 8;
+    const float AimSeconds = 0.25f;
+    // A room fills in rings this wide, measured along the way the smoke
+    // travels, outward from where its smoke came in.
+    const float RingMeters = 1.5f;
+    // A volume slows down within this distance of the air it is filling and
+    // holds there until it is full, then moves on to the next.
+    const float HoldEaseMeters = 0.3f;
+    // Longest a volume holds on one cell before it gives up and wanders.
+    const float HoldSeconds = 2f;
+    // Fill keys carry the height band times this plus the room's slot.
+    const int RoomKeyStride = 128;
     const string ContainedFlameResource = "Fire/Flame_box_wild_contained";
+    // Exposed properties of Flame_box_wild_contained, see ContainedSmokeBuilder.
+    const string FlameShareProperty = "FlameParticleShare";
+    const string FlameBrightnessProperty = "FlameBrightness";
     // Room boxes are measured this far under the ceiling, above door headers,
     // so rays from a room do not leave it through a doorway.
     const float RoomProbeBelowCeiling = 0.25f;
@@ -130,7 +186,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Tooltip("Height above the floor where a volume is released.")]
     public float heightOffset = 1.25f;
 
-    [Tooltip("Sphere radius used to stop a volume on a collider. Triggers are ignored.")]
+    [Tooltip("Sphere radius used to stop a volume on a collider. Triggers are ignored. Lingering volumes use half of it, the size doorways are checked with, so they fit through.")]
     [Min(0.05f)]
     public float bodyRadius = 0.3f;
 
@@ -190,6 +246,27 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Tooltip("Smoke effect for the drifting volumes. Leave empty to use Resources/Smoke/Only_smoke_lingering.")]
     public GameObject lingeringSmokePrefab;
 
+    [Header("Spreading Through The House")]
+    [Tooltip("How fast the edge of the lingering smoke moves out from the fire through the burning room, in meters per second. It follows the open floor, so outside the burning room it runs down a hallway as a line and turns into each room it passes. Smoke is only left behind the edge.")]
+    [Min(0.05f)]
+    public float frontSpeed = 0.75f;
+
+    [Tooltip("How thick the lingering smoke gets in rooms other than the burning one, as a share of Particles Per Cell. Smoke thins out as it spreads away from the fire.")]
+    [Range(0.1f, 1f)]
+    public float otherRoomSmoke = 0.35f;
+
+    [Tooltip("How thick the lingering smoke gets right by a doorway outside the burning room, on both sides of it, as a share of Particles Per Cell. Smoke is drawn to openings and pours through them, so it gathers thicker there and thins as it spreads into the room beyond.")]
+    [Range(0.1f, 1f)]
+    public float doorwaySmoke = 0.8f;
+
+    [Tooltip("How fast smoke moves through rooms other than the burning one, as a share of its speed in the burning room: the drifting volumes, the edge of the smoke and how quickly the smoke layer deepens there. The smoke creeps through the rest of the house.")]
+    [Range(0.1f, 1f)]
+    public float otherRoomSpeed = 0.8f;
+
+    [Tooltip("Share of the drifting volumes that carry smoke on to the rest of the house as soon as the edge of the smoke leaves the burning room. They ride the top of the smoke layer, like the hot layer under the ceiling, and keep up with the edge. The others fill the burning room first, then deepen the smoke elsewhere. Every volume heads for the nearest air that needs smoke, so without this the smoke only leaves the burning room once it is full. Higher spreads through the house sooner and fills the burning room more slowly.")]
+    [Range(0f, 1f)]
+    public float spreadingVolumes = 0.5f;
+
     [Header("Banking Down")]
     [Tooltip("Height above the floor that the lowest smoke volumes settle to once the room has fully banked down. Their Ignis particles reach a little below this. Lower leaves less clear air at the floor.")]
     [Min(0f)]
@@ -215,6 +292,14 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
     [Tooltip("Flame effect whose shader clips flames and embers to the burning object's room. Leave empty to use Resources/Fire/Flame_box_wild_contained.")]
     public GameObject containedFlamePrefab;
+
+    [Tooltip("Share of the Wild flame particles each burning object spawns. Up close the flames cover most of the view and cost several milliseconds a frame. 0.6 with Flame Brightness 1.25 looks the same. Needs Contain Flames.")]
+    [Range(0.1f, 1f)]
+    public float flameParticles = 0.6f;
+
+    [Tooltip("How bright each Wild flame particle is, as a multiple of the plugin's, so fewer flames look as bright. Too high turns the orange edges yellow. Needs Contain Flames.")]
+    [Range(1f, 3f)]
+    public float flameBrightness = 1.25f;
 
     [Tooltip("Layers of the walls, ceilings and floors that bound a room. Generated buildings use Default. Keep furniture and players off these layers so they do not split a room.")]
     public LayerMask roomBoundaryMask = 1;
@@ -245,6 +330,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
     readonly List<FireFront> fronts = new List<FireFront>();
     readonly RaycastHit[] boundaryHits = new RaycastHit[16];
+    readonly RaycastHit[] castHits = new RaycastHit[32];
     Transform blockHolder;
     bool warnedAboutMissingEngine;
     bool loadedContainedSmokePrefab;
@@ -269,12 +355,19 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         public float farthestDistance;
         public float nextMapTime;
         public readonly List<SmokeVolume> volumes = new List<SmokeVolume>();
-        // Lingering particles left so far in each patch of air, keyed by FillKey.
+        // Lingering particles left so far in each patch of air, keyed by PatchKey.
         public readonly Dictionary<Vector3Int, float> smokeFill = new Dictionary<Vector3Int, float>();
         // Per height band: steps from each open cell to the nearest cell whose
         // patch still needs smoke, and when that field was last worked out.
+        // Keyed by FieldKey: one field per band for all air, one for the air
+        // outside the burning room. Also how many cells each field starts from.
         public readonly Dictionary<int, int[]> fillField = new Dictionary<int, int[]>();
         public readonly Dictionary<int, float> fillFieldTime = new Dictionary<int, float>();
+        public readonly Dictionary<int, int> fillFieldSeeds = new Dictionary<int, int>();
+        // Per room, while a field is worked out: nearest air needing smoke.
+        public readonly float[] fillRing = new float[SmokeRoomClipVolumes.MaxRooms + 2];
+        // Lingering volumes released so far, to spread Spreading Volumes evenly.
+        public int lingeringCount;
         public int[] fillQueue;
     }
 
@@ -301,9 +394,23 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         public float released;
         // A stuck volume wanders instead of steering until this time.
         public float wanderUntil;
+        // Heads for air outside the burning room first (see Spreading Volumes).
+        public bool spreads;
+        // Stays down at cruise height until this time (see DuckSeconds).
+        public float duckUntil;
+        // The cell it heads for, and until when (see AimAhead).
+        public int aimCell = -1;
+        public float aimUntil;
+        // The cell it is holding over while it fills, and since when.
+        public int holdCell = -1;
+        public float holdSince;
     }
 
-    /// <summary>Open cells of one room, in meters, keyed from the floor point under the fire.</summary>
+    /// <summary>
+    /// Open cells of the floor the fire is on, in meters, keyed from the floor
+    /// point under the fire. They reach from the burning room through doorways
+    /// into the rest of the house.
+    /// </summary>
     class RoomAir
     {
         public Collider floor;
@@ -312,13 +419,33 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         public float ceilingY;
         public Vector3 origin;
         public readonly HashSet<Vector2Int> open = new HashSet<Vector2Int>();
-        // The open cells as arrays, for the fill field: each cell's index, its
-        // four neighbors (-1 where not open) and the fill patch it lies in.
+        // Where in each open cell a volume fits: usually its center. The grid
+        // can put a doorway cell's center next to a door jamb, so its point is
+        // moved into the opening.
+        public readonly Dictionary<Vector2Int, Vector3> points = new Dictionary<Vector2Int, Vector3>();
+        // Bit k set: a volume can pass from the cell to its neighbor k.
+        public readonly Dictionary<Vector2Int, int> passable = new Dictionary<Vector2Int, int>();
+        // The open cells as arrays, for the fill field: each cell's index and
+        // point, its four neighbors a volume can reach (-1 where none) and the
+        // fill patch it lies in.
         public Vector2Int[] cells;
+        public Vector3[] cellPoints;
         public int[] links;
         public int[] patchX;
         public int[] patchZ;
         public readonly Dictionary<Vector2Int, int> cellIndex = new Dictionary<Vector2Int, int>();
+        // The room (clip box group) each cell is in, and the burning room's.
+        // Without contained smoke there are no rooms and everything counts as
+        // the burning room.
+        public int[] cellGroup;
+        public int fireGroup = -1;
+        // Cells by an opening between two rooms, on either side of it.
+        public bool[] doorway;
+        // How far the smoke travels from the fire to each cell along the open
+        // floor, in meters, with each meter outside the burning room counted
+        // as 1 / Other Room Speed meters because smoke moves slower there.
+        // Divided by Front Speed it is when the edge of the smoke gets there.
+        public float[] spreadMeters;
     }
 
     enum VolumePhase
@@ -512,6 +639,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             if (muteEmbeddedSmoke)
                 MuteEmbeddedSmoke(front);
 
+            // Only the contained Wild flames have these; other flames ignore them.
+            front.fire.SetFireVFXFloat(FlameShareProperty, flameParticles);
+            front.fire.SetFireVFXFloat(FlameBrightnessProperty, flameBrightness);
+
             if (front.room == null && Time.unscaledTime >= front.nextMapTime)
             {
                 front.room = BuildRoom(front);
@@ -613,19 +744,32 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         float authoredAlpha = Mathf.Max(0f, smoke.smokeAlpha);
         float authoredIntensity = Mathf.Max(0f, smoke.smokeColorIntensity);
         smoke.smokeAlpha = 0f;
+        bool spreads = lingers && TakesSpreadingTurn(front);
 
         front.volumes.Add(new SmokeVolume
         {
             smoke = smoke,
             headingRadians = Random.Range(0f, Mathf.PI * 2f),
-            layerDepth = Random.value,
+            // Spreading volumes ride the top of the smoke layer, the way the hot
+            // layer under the ceiling runs ahead through a house. Where the edge
+            // has just arrived that is all the smoke there is, so they keep up
+            // with it, and the other volumes deepen the layer behind them.
+            layerDepth = spreads ? Random.value * SpreadingLayerDepth : Random.value,
             authoredAlpha = authoredAlpha,
             authoredColorIntensity = authoredIntensity,
             spawnFrame = Time.frameCount,
             phase = VolumePhase.Growing,
             plume = plume,
-            lingers = lingers
+            lingers = lingers,
+            spreads = spreads
         });
+    }
+
+    /// <summary>Whether the next lingering volume is one of the Spreading Volumes, so they come evenly spaced.</summary>
+    bool TakesSpreadingTurn(FireFront front)
+    {
+        int index = front.lingeringCount++;
+        return Mathf.FloorToInt((index + 1) * spreadingVolumes) > Mathf.FloorToInt(index * spreadingVolumes);
     }
 
     static bool HasPlume(FireFront front)
@@ -654,7 +798,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (!room.open.Contains(cell))
             cell = NearestOpenCell(room, cell);
 
-        Vector3 position = CellCenter(room, cell);
+        Vector3 position = PointOf(room, cell);
         position.y = CruiseHeight(room);
         position.x += Random.Range(-0.08f, 0.08f);
         position.z += Random.Range(-0.08f, 0.08f);
@@ -719,7 +863,30 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             boxes[i].isTrigger = true;
 
         if (boxes.Length > 0)
+        {
             smoke.flammableColliders = new List<BoxCollider> { boxes[0] };
+            if (lingers)
+                NarrowRelease(boxes[0]);
+        }
+    }
+
+    /// <summary>
+    /// Ignis releases smoke anywhere in the volume's box, which is wider than
+    /// the gap the drift keeps between a volume and a wall. A lingering particle
+    /// stays in the room it was released in, so one released past the wall
+    /// would show on the far side. The box is narrowed to the volume's own
+    /// radius across, half the gap, so every particle starts in its room.
+    /// </summary>
+    void NarrowRelease(BoxCollider box)
+    {
+        float width = bodyRadius * LingeringBodyShare;
+        Vector3 scale = box.transform.lossyScale;
+        Vector3 size = box.size;
+        if (Mathf.Abs(scale.x) > 0.0001f)
+            size.x = Mathf.Min(size.x, width / Mathf.Abs(scale.x));
+        if (Mathf.Abs(scale.z) > 0.0001f)
+            size.z = Mathf.Min(size.z, width / Mathf.Abs(scale.z));
+        box.size = size;
     }
 
     void DriftVolumes(FireFront front)
@@ -735,17 +902,38 @@ public class IgnisSmokeDiffusion : MonoBehaviour
                 continue;
 
             Vector3 from = volume.smoke.transform.position;
-            if (volume.lingers && TowardNeededSmoke(front, volume, from, out Vector3 toward))
+            Vector3 toward = Vector3.zero;
+            bool steering = volume.lingers && TowardNeededSmoke(front, volume, from, out toward);
+            if (steering)
                 volume.headingRadians = Mathf.Atan2(toward.z, toward.x);
             else
                 volume.headingRadians += Mathf.Lerp(-turn, turn, Random.value);
 
+            // Smoke creeps once it has left the burning room.
+            int cell = CellAt(front.room, from);
+            float speed = AwayFromFire(front.room, cell) ? driftSpeed * otherRoomSpeed : driftSpeed;
+
+            // Eases to a stop over the air it is filling.
+            float reach = toward.magnitude;
+            if (steering && reach < HoldEaseMeters)
+                speed *= reach / HoldEaseMeters;
             Vector3 heading = new Vector3(Mathf.Cos(volume.headingRadians), 0f, Mathf.Sin(volume.headingRadians));
-            Vector3 desired = heading * driftSpeed + Vector3.up * VerticalSpeed(front, volume, from.y, delta);
-            Vector3 position = MoveUntilBlocked(from, desired * delta, front.fire.transform);
+            float vertical = front.room != null && Time.time < volume.duckUntil && delta > 0f
+                ? Mathf.Clamp((CruiseHeight(front.room) - from.y) / delta, -riseSpeed, riseSpeed)
+                : VerticalSpeed(front, volume, from.y, cell, delta);
+            Vector3 desired = heading * speed + Vector3.up * vertical;
+            float radius = volume.lingers ? bodyRadius * LingeringBodyShare : bodyRadius;
+            Vector3 position = MoveUntilBlocked(from, desired * delta, front.fire.transform, radius, out bool hitWall);
+
+            // The open air was joined at cruise height, under the door headers.
+            // A volume high in the smoke layer runs into the wall over a
+            // doorway, so it dips to that height to pass and rises again after.
+            if (steering && hitWall && front.room != null && from.y > CruiseHeight(front.room) + 0.1f)
+                volume.duckUntil = Time.time + DuckSeconds;
+
             position = StayInOpenAir(front.room, from, position);
             position = KeepUnderCeiling(position);
-            if ((new Vector3(position.x - from.x, 0f, position.z - from.z)).sqrMagnitude < 0.0000004f)
+            if (speed > 0.05f && (new Vector3(position.x - from.x, 0f, position.z - from.z)).sqrMagnitude < 0.0000004f)
             {
                 volume.headingRadians += Mathf.PI * 0.5f;
                 volume.wanderUntil = Time.time + 1f;
@@ -761,22 +949,26 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     /// <summary>
     /// Upward speed of a volume. Early in the fire every volume rises to just
     /// under the ceiling. As the fire burns, the bottom of the smoke layer comes
-    /// down to Lowest Smoke Height over Bank Down Seconds. Each volume keeps its
-    /// own depth inside the layer, so the layer stays filled from ceiling to
-    /// bottom, and a volume sinks slowly when its place moves below it.
+    /// down to Lowest Smoke Height over Bank Down Seconds, counted over each
+    /// cell from when the edge of the smoke reached it. Each volume keeps its
+    /// own depth inside the layer over its cell, so the layer stays filled from
+    /// ceiling to bottom. A volume sinks slowly when its place moves below it,
+    /// and rises when it drifts on to where the layer is still thin.
     /// </summary>
-    float VerticalSpeed(FireFront front, SmokeVolume volume, float y, float delta)
+    float VerticalSpeed(FireFront front, SmokeVolume volume, float y, int cell, float delta)
     {
         RoomAir room = front.room;
         if (room == null || delta <= 0f)
             return riseSpeed;
 
-        float top = room.ceilingY - VolumeTopClearance();
-        float lowest = Mathf.Min(top, room.floorY + lowestSmokeHeight);
-        float banked = Mathf.Clamp01(front.burnSeconds / bankDownSeconds);
-        float layerBottom = Mathf.Lerp(top, lowest, banked);
-        float target = Mathf.Lerp(top, layerBottom, volume.layerDepth);
-        return Mathf.Clamp((target - y) / delta, -sinkSpeed, riseSpeed);
+        return Mathf.Clamp((LayerHeight(front, volume, cell) - y) / delta, -sinkSpeed, riseSpeed);
+    }
+
+    /// <summary>Height a volume keeps over a cell: its own depth inside the smoke layer there.</summary>
+    float LayerHeight(FireFront front, SmokeVolume volume, int cell)
+    {
+        float top = front.room.ceilingY - VolumeTopClearance();
+        return Mathf.Lerp(top, LayerBottom(front, cell), volume.layerDepth);
     }
 
     /// <summary>
@@ -786,9 +978,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     /// Hitbox can reach the release height, and a volume that starts inside it
     /// would be blocked in every direction.
     /// </summary>
-    Vector3 MoveUntilBlocked(Vector3 position, Vector3 displacement, Transform source)
+    Vector3 MoveUntilBlocked(Vector3 position, Vector3 displacement, Transform source, float radius, out bool hitWall)
     {
-        position = Step(position, displacement, source, out Vector3 hitNormal, out bool hit);
+        position = Step(position, displacement, source, radius, out Vector3 hitNormal, out bool hit);
+        hitWall = hit && Mathf.Abs(hitNormal.y) < 0.5f;
         if (!hit)
             return position;
 
@@ -796,10 +989,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (slide.sqrMagnitude <= 0.0000001f)
             return position;
 
-        return Step(position, slide, source, out _, out _);
+        return Step(position, slide, source, radius, out _, out _);
     }
 
-    Vector3 Step(Vector3 position, Vector3 displacement, Transform source, out Vector3 hitNormal, out bool hit)
+    Vector3 Step(Vector3 position, Vector3 displacement, Transform source, float radius, out Vector3 hitNormal, out bool hit)
     {
         hitNormal = Vector3.up;
         hit = false;
@@ -808,7 +1001,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             return position;
 
         Vector3 direction = displacement / distance;
-        if (Cast(position, direction, distance + CastSkin, source, out RaycastHit castHit))
+        if (Cast(position, direction, distance + CastSkin, source, radius, out RaycastHit castHit))
         {
             hit = true;
             hitNormal = castHit.normal;
@@ -819,13 +1012,14 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         return position + displacement;
     }
 
-    bool Cast(Vector3 position, Vector3 direction, float distance, Transform source, out RaycastHit closest)
+    bool Cast(Vector3 position, Vector3 direction, float distance, Transform source, float radius, out RaycastHit closest)
     {
         closest = default;
-        RaycastHit[] hits = Physics.SphereCastAll(position, bodyRadius, direction, distance, obstacleMask, QueryTriggerInteraction.Ignore);
+        RaycastHit[] hits = castHits;
+        int count = Physics.SphereCastNonAlloc(position, radius, direction, hits, distance, obstacleMask, QueryTriggerInteraction.Ignore);
         float best = float.MaxValue;
         bool found = false;
-        for (int i = 0; i < hits.Length; i++)
+        for (int i = 0; i < count; i++)
         {
             if (IgnoreSolid(hits[i].collider) || hits[i].distance >= best)
                 continue;
@@ -915,9 +1109,11 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
     /// <summary>
     /// A lingering volume releases particles only while it is in a patch of air
-    /// that holds fewer than Particles Per Cell. They stay where they were put
-    /// for Linger Seconds, so as the volumes wander and bank down they fill
-    /// every patch they reach once, the middle of a room as much as its walls.
+    /// that needs smoke: behind the edge of the smoke, inside the smoke layer,
+    /// and holding fewer than its share of Particles Per Cell. They stay where
+    /// they were put for Linger Seconds, so as the volumes wander and bank down
+    /// they fill every patch they reach once, the middle of a room as much as
+    /// its walls.
     /// </summary>
     void UpdateRelease(FireFront front, SmokeVolume volume)
     {
@@ -925,16 +1121,21 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (volume.phase != VolumePhase.Fading && volume.released < particlesPerVolume)
         {
             Vector3 position = volume.smoke.transform.position;
-            Vector3Int key = FillKey(position);
+            int cell = CellAt(front.room, position);
+            int band = FillBand(position.y);
+            Vector3Int key = cell >= 0 ? PatchKey(front.room, cell, band) : FillKey(position);
             front.smokeFill.TryGetValue(key, out float filled);
-            if (filled < particlesPerCell)
+            bool needed = cell >= 0 ? NeedsSmoke(front, cell, band, filled, 0f) : filled < particlesPerCell;
+            if (needed)
             {
                 rate = releaseRate;
                 float step = rate * Time.deltaTime;
                 front.smokeFill[key] = filled + step;
                 volume.released += step;
 
-                float ceiling = CeilingAbove(position);
+                // The measured room height stands in where no ceiling is
+                // overhead, such as when the ceilings are hidden.
+                float ceiling = Mathf.Min(CeilingAbove(position), front.room != null ? front.room.ceilingY : float.PositiveInfinity);
                 if (!float.IsPositiveInfinity(ceiling))
                     volume.smoke.SetFireVFXFloat(CeilingProperty, ceiling - LingerCeilingGap);
             }
@@ -951,6 +1152,16 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             Mathf.FloorToInt(position.z / FillCellSize));
     }
 
+    /// <summary>
+    /// The fill key of a cell's patch at a height band, kept apart per room:
+    /// a patch that straddles a wall is counted once for each room, so smoke
+    /// on one side of the wall does not count as smoke on the other.
+    /// </summary>
+    static Vector3Int PatchKey(RoomAir room, int cell, int band)
+    {
+        return new Vector3Int(room.patchX[cell], band * RoomKeyStride + RingIndex(room, cell), room.patchZ[cell]);
+    }
+
     static int FillBand(float height)
     {
         return Mathf.FloorToInt(height / FillBandHeight);
@@ -959,8 +1170,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     /// <summary>
     /// Direction from a lingering volume toward the nearest air at its height
     /// that still needs smoke, following open cells around furniture and
-    /// through doorways. False inside such air, when none is left within
-    /// reach, or when the volume has no particles left to give, so it wanders.
+    /// through doorways. One of the Spreading Volumes heads for such air
+    /// outside the burning room while there is any. False inside such air,
+    /// when none is left within reach, or when the volume has no particles
+    /// left to give, so it wanders.
     /// </summary>
     bool TowardNeededSmoke(FireFront front, SmokeVolume volume, Vector3 position, out Vector3 direction)
     {
@@ -973,11 +1186,40 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (!room.cellIndex.TryGetValue(ToCell(room, position), out int at))
             return false;
 
-        int[] field = FillField(front, FillBand(position.y));
+        // Steer by the band the volume keeps to in the layer, not the one it
+        // passes through while it rises, sinks or dips under a door header,
+        // or it would turn back for air at that height mid-way.
+        float top = room.ceilingY - VolumeTopClearance();
+        int band = FillBand(Mathf.Min(LayerHeight(front, volume, at), top - 0.05f));
+        int[] field = volume.spreads ? FillField(front, band, true) : null;
+        if (field == null)
+            field = FillField(front, band, false);
         int steps = field[at];
-        if (steps == 0 || steps == int.MaxValue)
+        if (steps == int.MaxValue)
             return false;
 
+        // Over air that needs smoke: hold there until it is full, instead of
+        // wandering off and laying smoke along the first wall it reaches.
+        if (steps == 0)
+        {
+            if (volume.holdCell != at)
+            {
+                volume.holdCell = at;
+                volume.holdSince = Time.time;
+            }
+            else if (Time.time - volume.holdSince > HoldSeconds)
+            {
+                volume.holdCell = -1;
+                volume.wanderUntil = Time.time + 1f;
+                return false;
+            }
+
+            direction = room.cellPoints[at] - position;
+            direction.y = 0f;
+            return true;
+        }
+
+        volume.holdCell = -1;
         int next = -1;
         for (int k = 0; k < Neighbors.Length; k++)
         {
@@ -992,41 +1234,105 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         if (next < 0)
             return false;
 
-        direction = CellCenter(room, room.cells[next]) - position;
+        direction = room.cellPoints[AimAhead(front, volume, position, at, next, field)] - position;
         direction.y = 0f;
         return direction.sqrMagnitude > 0.000001f;
     }
 
     /// <summary>
-    /// Steps from every open cell to the nearest one whose patch at this height
-    /// band holds fewer than Particles Per Cell, refreshed every few frames.
+    /// The farthest cell down the field, up to AimCells on, that a volume can
+    /// reach in a straight clear line. Heading for it lines the volume up with
+    /// a doorway from across the room, so it passes through the middle of the
+    /// opening instead of cutting the corner, catching the frame and sliding
+    /// along the wall beside it. Worked out again every AimSeconds.
     /// </summary>
-    int[] FillField(FireFront front, int band)
+    int AimAhead(FireFront front, SmokeVolume volume, Vector3 position, int at, int next, int[] field)
     {
         RoomAir room = front.room;
         int count = room.cells.Length;
-        if (front.fillField.TryGetValue(band, out int[] field) && field.Length == count
-            && front.fillFieldTime.TryGetValue(band, out float built) && Time.time - built < FillFieldSeconds)
-            return field;
+        if (volume.aimCell >= 0 && volume.aimCell < count && Time.time < volume.aimUntil && field[volume.aimCell] < field[at])
+            return volume.aimCell;
+
+        // The cells were joined at cruise height, under the door headers.
+        float cruise = CruiseHeight(room);
+        float radius = bodyRadius * LingeringBodyShare;
+        Vector3 from = new Vector3(position.x, cruise, position.z);
+        int aim = next;
+        int cell = next;
+        for (int look = 0; look < AimCells; look++)
+        {
+            int ahead = -1;
+            int steps = field[cell];
+            for (int k = 0; k < Neighbors.Length; k++)
+            {
+                int neighbor = room.links[cell * Neighbors.Length + k];
+                if (neighbor >= 0 && field[neighbor] < steps)
+                {
+                    steps = field[neighbor];
+                    ahead = neighbor;
+                }
+            }
+
+            if (ahead < 0)
+                break;
+
+            Vector3 to = room.cellPoints[ahead];
+            to.y = cruise;
+            Vector3 delta = to - from;
+            float distance = delta.magnitude;
+            if (distance > 0.001f && Cast(from, delta / distance, distance, front.fire.transform, radius, out _))
+                break;
+
+            aim = ahead;
+            cell = ahead;
+        }
+
+        volume.aimCell = aim;
+        volume.aimUntil = Time.time + AimSeconds;
+        return aim;
+    }
+
+    /// <summary>
+    /// Steps from every open cell to the nearest one whose patch at this height
+    /// band needs smoke, refreshed every few frames. Air just past the edge of
+    /// the smoke counts too, so idle volumes gather at the edge and fill it as
+    /// it moves on. In each room only the air nearest where the smoke came in,
+    /// within RingMeters of it along the way the smoke travels, counts, so a
+    /// room fills in rings outward from the fire or doorway, the same in every
+    /// open direction, instead of wherever the volumes happen to wander. With
+    /// awayOnly, only air outside the burning room counts, and the result is
+    /// null while none of it needs smoke.
+    /// </summary>
+    int[] FillField(FireFront front, int band, bool awayOnly)
+    {
+        RoomAir room = front.room;
+        int count = room.cells.Length;
+        int key = band * 2 + (awayOnly ? 1 : 0);
+        if (front.fillField.TryGetValue(key, out int[] field) && field.Length == count
+            && front.fillFieldTime.TryGetValue(key, out float built) && Time.time - built < FillFieldSeconds)
+            return awayOnly && front.fillFieldSeeds.TryGetValue(key, out int known) && known == 0 ? null : field;
 
         if (field == null || field.Length != count)
         {
             field = new int[count];
-            front.fillField[band] = field;
+            front.fillField[key] = field;
         }
         if (front.fillQueue == null || front.fillQueue.Length != count)
             front.fillQueue = new int[count];
 
-        int[] queue = front.fillQueue;
-        int head = 0;
-        int tail = 0;
+        // Air that needs smoke, and in each room how far the nearest of it is
+        // from the fire along the way the smoke travels.
+        float[] ring = front.fillRing;
+        for (int g = 0; g < ring.Length; g++)
+            ring[g] = float.PositiveInfinity;
         for (int i = 0; i < count; i++)
         {
-            front.smokeFill.TryGetValue(new Vector3Int(room.patchX[i], band, room.patchZ[i]), out float filled);
-            if (filled < particlesPerCell)
+            front.smokeFill.TryGetValue(PatchKey(room, i, band), out float filled);
+            if ((!awayOnly || AwayFromFire(room, i)) && NeedsSmoke(front, i, band, filled, FrontLeadSeconds))
             {
                 field[i] = 0;
-                queue[tail++] = i;
+                int g = RingIndex(room, i);
+                ring[g] = Mathf.Min(ring[g], SpreadMetersAt(room, i));
             }
             else
             {
@@ -1034,6 +1340,22 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             }
         }
 
+        // Of that, only the ring nearest where the smoke came into each room.
+        int[] queue = front.fillQueue;
+        int head = 0;
+        int tail = 0;
+        for (int i = 0; i < count; i++)
+        {
+            if (field[i] != 0)
+                continue;
+
+            if (SpreadMetersAt(room, i) > ring[RingIndex(room, i)] + RingMeters)
+                field[i] = int.MaxValue;
+            else
+                queue[tail++] = i;
+        }
+
+        int seeds = tail;
         while (head < tail)
         {
             int cell = queue[head++];
@@ -1049,15 +1371,21 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             }
         }
 
-        front.fillFieldTime[band] = Time.time;
-        return field;
+        front.fillFieldTime[key] = Time.time;
+        front.fillFieldSeeds[key] = seeds;
+        return awayOnly && seeds == 0 ? null : field;
     }
 
-    /// <summary>Lays out the open cells as arrays for the fill field.</summary>
+    /// <summary>
+    /// Lays out the open cells as arrays for the fill field. Neighbors are
+    /// linked only where a volume can pass between them, so the field leads
+    /// through doorways and never through a wall.
+    /// </summary>
     static void IndexCells(RoomAir room)
     {
         int count = room.open.Count;
         room.cells = new Vector2Int[count];
+        room.cellPoints = new Vector3[count];
         room.links = new int[count * Neighbors.Length];
         room.patchX = new int[count];
         room.patchZ = new int[count];
@@ -1073,12 +1401,23 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            Vector3 world = CellCenter(room, room.cells[i]);
+            Vector3 world = PointOf(room, room.cells[i]);
+            room.cellPoints[i] = world;
             room.patchX[i] = Mathf.FloorToInt(world.x / FillCellSize);
             room.patchZ[i] = Mathf.FloorToInt(world.z / FillCellSize);
+            room.passable.TryGetValue(room.cells[i], out int mask);
             for (int k = 0; k < Neighbors.Length; k++)
-                room.links[i * Neighbors.Length + k] = room.cellIndex.TryGetValue(room.cells[i] + Neighbors[k], out int j) ? j : -1;
+            {
+                bool linked = (mask & (1 << k)) != 0 && room.cellIndex.TryGetValue(room.cells[i] + Neighbors[k], out int j);
+                room.links[i * Neighbors.Length + k] = linked ? room.cellIndex[room.cells[i] + Neighbors[k]] : -1;
+            }
         }
+    }
+
+    /// <summary>The point in an open cell where a volume fits.</summary>
+    static Vector3 PointOf(RoomAir room, Vector2Int cell)
+    {
+        return room.points.TryGetValue(cell, out Vector3 point) ? point : CellCenter(room, cell);
     }
 
     float TargetAlpha(FireFront front, SmokeVolume volume)
@@ -1200,8 +1539,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             origin = new Vector3(rough.x, floorY, rough.z)
         };
 
+        var probes = new Dictionary<Vector2Int, Vector3?>();
+        var edges = new Dictionary<Vector3Int, bool>();
         Vector2Int start = Vector2Int.zero;
-        if (!IsOpenCell(room, start))
+        if (Probe(room, probes, start) == null)
         {
             bool seeded = false;
             for (int radius = 1; radius <= 4 && !seeded; radius++)
@@ -1214,7 +1555,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
                             continue;
 
                         Vector2Int candidate = new Vector2Int(x, z);
-                        if (!IsOpenCell(room, candidate))
+                        if (Probe(room, probes, candidate) == null)
                             continue;
 
                         start = candidate;
@@ -1227,9 +1568,12 @@ public class IgnisSmokeDiffusion : MonoBehaviour
                 return null;
         }
 
+        // Spread from cell to cell wherever a volume can pass between their
+        // points, so the air reaches through doorways but not through walls.
         var queue = new Queue<Vector2Int>();
         queue.Enqueue(start);
         room.open.Add(start);
+        room.points[start] = probes[start].Value;
         int examined = 0;
         while (queue.Count > 0 && room.open.Count < MaxOpenCells)
         {
@@ -1240,19 +1584,32 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             for (int i = 0; i < Neighbors.Length; i++)
             {
                 Vector2Int next = cell + Neighbors[i];
-                if (room.open.Contains(next))
+                bool known = room.open.Contains(next);
+                if (!known)
+                {
+                    Vector3 world = CellCenter(room, next);
+                    float dx = world.x - room.origin.x;
+                    float dz = world.z - room.origin.z;
+                    if (dx * dx + dz * dz > MaxRoomRadius * MaxRoomRadius)
+                        continue;
+
+                    if (Probe(room, probes, next) == null)
+                        continue;
+                }
+
+                Vector3 point = known ? room.points[next] : probes[next].Value;
+                if (!EdgePassable(room, edges, cell, i, room.points[cell], point))
                     continue;
 
-                Vector3 world = CellCenter(room, next);
-                float dx = world.x - room.origin.x;
-                float dz = world.z - room.origin.z;
-                if (dx * dx + dz * dz > MaxRoomRadius * MaxRoomRadius)
-                    continue;
-
-                if (!IsOpenCell(room, next))
+                room.passable.TryGetValue(cell, out int mask);
+                room.passable[cell] = mask | (1 << i);
+                room.passable.TryGetValue(next, out int nextMask);
+                room.passable[next] = nextMask | (1 << (i ^ 1));
+                if (known)
                     continue;
 
                 room.open.Add(next);
+                room.points[next] = point;
                 queue.Enqueue(next);
             }
         }
@@ -1262,8 +1619,248 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
         IndexCells(room);
         if (containSmoke)
-            SmokeRoomClipVolumes.SetRooms(front, MeasureRooms(room));
+        {
+            List<SmokeRoomClipVolumes.Room> boxes = MeasureRooms(room);
+            SmokeRoomClipVolumes.SetRooms(front, boxes);
+            AssignRoomGroups(room, boxes);
+        }
+        MapSpread(room);
         return room;
+    }
+
+    /// <summary>
+    /// How far smoke travels from the fire to every open cell, along the cells
+    /// a volume can pass between, so the path runs through doorways and down
+    /// hallways. Steps outside the burning room count longer, because smoke
+    /// moves slower there. Steps go diagonally too where both ways around the
+    /// corner are open, so in open space the distance is close to a straight
+    /// line and the edge of the smoke grows round, not as a diamond.
+    /// </summary>
+    void MapSpread(RoomAir room)
+    {
+        const float Diagonal = 1.41421356f;
+        int count = room.cells.Length;
+        room.spreadMeters = new float[count];
+        for (int i = 0; i < count; i++)
+            room.spreadMeters[i] = float.PositiveInfinity;
+
+        Vector2Int fireCell = ToCell(room, room.origin);
+        if (!room.cellIndex.TryGetValue(fireCell, out int start)
+            && !room.cellIndex.TryGetValue(NearestOpenCell(room, fireCell), out start))
+            return;
+
+        // Steps cost several lengths, so a queue that revisits a cell
+        // whenever a shorter way to it turns up finds every shortest path.
+        float awayStep = CellSize / Mathf.Max(0.05f, otherRoomSpeed);
+        var queue = new Queue<int>();
+        room.spreadMeters[start] = 0f;
+        queue.Enqueue(start);
+        while (queue.Count > 0)
+        {
+            int cell = queue.Dequeue();
+            for (int k = 0; k < Neighbors.Length; k++)
+                Relax(room, queue, cell, room.links[cell * Neighbors.Length + k], 1f, awayStep);
+
+            // Neighbors 0 and 1 are +x and -x, 2 and 3 are +z and -z.
+            for (int x = 0; x < 2; x++)
+            {
+                for (int z = 2; z < 4; z++)
+                {
+                    int viaX = room.links[cell * Neighbors.Length + x];
+                    int viaZ = room.links[cell * Neighbors.Length + z];
+                    if (viaX < 0 || viaZ < 0)
+                        continue;
+
+                    int corner = room.links[viaX * Neighbors.Length + z];
+                    if (corner >= 0 && corner == room.links[viaZ * Neighbors.Length + x])
+                        Relax(room, queue, cell, corner, Diagonal, awayStep);
+                }
+            }
+        }
+    }
+
+    void Relax(RoomAir room, Queue<int> queue, int cell, int neighbor, float length, float awayStep)
+    {
+        if (neighbor < 0)
+            return;
+
+        float meters = room.spreadMeters[cell] + length * (AwayFromFire(room, neighbor) ? awayStep : CellSize);
+        if (meters >= room.spreadMeters[neighbor] - 0.001f)
+            return;
+
+        room.spreadMeters[neighbor] = meters;
+        queue.Enqueue(neighbor);
+    }
+
+    /// <summary>Seconds after the fire starts that the edge of its smoke reaches a cell.</summary>
+    float ArrivalSeconds(RoomAir room, int cell)
+    {
+        if (room == null || room.spreadMeters == null || cell < 0)
+            return 0f;
+
+        return room.spreadMeters[cell] / Mathf.Max(0.05f, frontSpeed);
+    }
+
+    /// <summary>
+    /// How far the smoke layer over a cell has banked down, 0 to 1. It starts
+    /// when the edge of the smoke gets there, and away from the burning room
+    /// it deepens Other Room Speed times as fast.
+    /// </summary>
+    float Banked(FireFront front, int cell)
+    {
+        float since = front.burnSeconds - ArrivalSeconds(front.room, cell);
+        float seconds = AwayFromFire(front.room, cell) ? bankDownSeconds / Mathf.Max(0.05f, otherRoomSpeed) : bankDownSeconds;
+        return Mathf.Clamp01(since / seconds);
+    }
+
+    /// <summary>Height of the bottom of the smoke layer over a cell.</summary>
+    float LayerBottom(FireFront front, int cell)
+    {
+        RoomAir room = front.room;
+        float top = room.ceilingY - VolumeTopClearance();
+        float lowest = Mathf.Min(top, room.floorY + lowestSmokeHeight);
+        return Mathf.Lerp(top, lowest, Banked(front, cell));
+    }
+
+    /// <summary>
+    /// Whether a patch of air at a cell and height band should get smoke now:
+    /// it holds less than it should, the edge of the smoke has reached the cell
+    /// (or will within Lead seconds), and the band reaches into the smoke layer.
+    /// </summary>
+    bool NeedsSmoke(FireFront front, int cell, int band, float filled, float lead)
+    {
+        RoomAir room = front.room;
+        if (filled >= FillTarget(room, cell))
+            return false;
+        if (ArrivalSeconds(room, cell) > front.burnSeconds + lead)
+            return false;
+
+        return (band + 1) * FillBandHeight > LayerBottom(front, cell);
+    }
+
+    /// <summary>The cell's open point, worked out once per cell, or null where no volume fits.</summary>
+    Vector3? Probe(RoomAir room, Dictionary<Vector2Int, Vector3?> probes, Vector2Int cell)
+    {
+        if (probes.TryGetValue(cell, out Vector3? known))
+            return known;
+
+        Vector3? point = TryOpenPoint(room, cell, out Vector3 found) ? found : (Vector3?)null;
+        probes[cell] = point;
+        return point;
+    }
+
+    /// <summary>Whether a volume can pass between two neighboring cells, tested once per pair.</summary>
+    bool EdgePassable(RoomAir room, Dictionary<Vector3Int, bool> edges, Vector2Int cell, int direction, Vector3 from, Vector3 to)
+    {
+        // Neighbors are +x, -x, +z, -z: key each pair by its lower cell and axis.
+        Vector2Int low = (direction & 1) == 0 ? cell : cell + Neighbors[direction];
+        var key = new Vector3Int(low.x, low.y, direction >> 1);
+        if (edges.TryGetValue(key, out bool passable))
+            return passable;
+
+        passable = Passable(room, from, to);
+        edges[key] = passable;
+        return passable;
+    }
+
+    /// <summary>
+    /// Which room each open cell is in, from the clip boxes, and which room is
+    /// burning. A cell belongs to the box that holds it in the floor plan, or
+    /// the nearest one, the same rule the smoke shader uses.
+    /// </summary>
+    static void AssignRoomGroups(RoomAir room, List<SmokeRoomClipVolumes.Room> boxes)
+    {
+        int count = room.cells.Length;
+        room.cellGroup = new int[count];
+        for (int i = 0; i < count; i++)
+            room.cellGroup[i] = GroupAt(boxes, room.cellPoints[i]);
+        room.fireGroup = GroupAt(boxes, room.origin);
+
+        // Doorways: cells joined to a cell of another room, and the cells next
+        // to them, so each opening has a patch of air on either side.
+        var opening = new bool[count];
+        for (int i = 0; i < count; i++)
+        {
+            for (int k = 0; k < Neighbors.Length; k++)
+            {
+                int j = room.links[i * Neighbors.Length + k];
+                if (j >= 0 && room.cellGroup[j] != room.cellGroup[i])
+                    opening[i] = true;
+            }
+        }
+
+        room.doorway = new bool[count];
+        for (int i = 0; i < count; i++)
+        {
+            if (!opening[i])
+                continue;
+
+            room.doorway[i] = true;
+            for (int k = 0; k < Neighbors.Length; k++)
+            {
+                int j = room.links[i * Neighbors.Length + k];
+                if (j >= 0)
+                    room.doorway[j] = true;
+            }
+        }
+    }
+
+    static int GroupAt(List<SmokeRoomClipVolumes.Room> boxes, Vector3 point)
+    {
+        int group = -1;
+        float best = float.MinValue;
+        for (int i = 0; i < boxes.Count; i++)
+        {
+            SmokeRoomClipVolumes.Room box = boxes[i];
+            Vector3 forward = new Vector3(-box.right.z, 0f, box.right.x);
+            Vector3 offset = point - box.center;
+            float depth = Mathf.Min(
+                box.halfSize.x - Mathf.Abs(Vector3.Dot(offset, box.right)),
+                box.halfSize.z - Mathf.Abs(Vector3.Dot(offset, forward)));
+            if (depth <= best)
+                continue;
+
+            best = depth;
+            group = box.group;
+        }
+
+        return group;
+    }
+
+    /// <summary>Slot in FireFront.fillRing of the room a cell is in.</summary>
+    static int RingIndex(RoomAir room, int cell)
+    {
+        int group = room.cellGroup != null ? room.cellGroup[cell] : -1;
+        return Mathf.Clamp(group + 1, 0, SmokeRoomClipVolumes.MaxRooms + 1);
+    }
+
+    static float SpreadMetersAt(RoomAir room, int cell)
+    {
+        return room.spreadMeters != null ? room.spreadMeters[cell] : 0f;
+    }
+
+    /// <summary>Whether a cell lies in a room other than the burning one.</summary>
+    static bool AwayFromFire(RoomAir room, int cell)
+    {
+        return room != null && room.cellGroup != null && room.fireGroup >= 0 && cell >= 0 && room.cellGroup[cell] != room.fireGroup;
+    }
+
+    /// <summary>
+    /// Particles a patch of air holds when full: fewer away from the burning
+    /// room, but more by a doorway, where smoke pours through the opening.
+    /// </summary>
+    float FillTarget(RoomAir room, int cell)
+    {
+        if (!AwayFromFire(room, cell))
+            return particlesPerCell;
+
+        bool doorway = room.doorway != null && room.doorway[cell];
+        return particlesPerCell * (doorway ? Mathf.Max(doorwaySmoke, otherRoomSmoke) : otherRoomSmoke);
+    }
+
+    static int CellAt(RoomAir room, Vector3 position)
+    {
+        return room != null && room.cellIndex.TryGetValue(ToCell(room, position), out int cell) ? cell : -1;
     }
 
     GameObject ContainedSmokePrefab()
@@ -1594,10 +2191,70 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             ceilingY = ceilingHit.point.y;
         }
 
+        // Rooms are told apart just under the ceiling, above the door headers.
+        // With the ceilings hidden for a cutaway view, or only a roof far
+        // overhead, a guessed height can fall below the door headers and join
+        // every room through its doorways, so the walls give the height instead.
+        if ((!foundCeiling || ceilingY - floorY > 4f) && TryFindWallTop(floorHit.point, floorY, out float wallTop)
+            && (!foundCeiling || wallTop < ceilingY))
+            ceilingY = wallTop;
+
         if (ceilingY - floorY < 0.8f)
             ceilingY = floorY + 2.4f;
 
         return true;
+    }
+
+    /// <summary>
+    /// Height of the walls around a floor point: the highest height at which
+    /// rays in most directions still meet the walls they meet at head height.
+    /// False when too few walls are found around the point.
+    /// </summary>
+    bool TryFindWallTop(Vector3 floorPoint, float floorY, out float top)
+    {
+        const int Directions = 8;
+        const float Step = 0.1f;
+        top = 0f;
+        var directions = new Vector3[Directions];
+        var reach = new float[Directions];
+        int walls = 0;
+        Vector3 head = new Vector3(floorPoint.x, floorY + 1.2f, floorPoint.z);
+        for (int i = 0; i < Directions; i++)
+        {
+            float angle = i * Mathf.PI * 2f / Directions;
+            directions[i] = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+            bool wall = BoundaryHit(head, directions[i], out RaycastHit hit) && Mathf.Abs(hit.normal.y) < 0.3f;
+            reach[i] = wall ? hit.distance : -1f;
+            if (wall)
+                walls++;
+        }
+
+        if (walls < 3)
+            return false;
+
+        bool found = false;
+        for (float y = floorY + 1.8f; y <= floorY + 8f; y += Step)
+        {
+            Vector3 point = new Vector3(floorPoint.x, y, floorPoint.z);
+            int still = 0;
+            for (int i = 0; i < Directions; i++)
+            {
+                if (reach[i] >= 0f && BoundaryHit(point, directions[i], out RaycastHit hit) && Mathf.Abs(hit.distance - reach[i]) < 0.3f)
+                    still++;
+            }
+
+            if (still * 2 >= walls)
+            {
+                top = y;
+                found = true;
+            }
+            else if (found)
+            {
+                break;
+            }
+        }
+
+        return found;
     }
 
     static float ShellScore(RaycastHit hit, bool floor)
@@ -1625,52 +2282,119 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         return collider.name == "Hitbox";
     }
 
-    bool IsOpenCell(RoomAir room, Vector2Int cell)
+    /// <summary>
+    /// Where in a cell a volume fits: over an interior floor, with nothing
+    /// solid around it at cruise height. The center is tried first. Failing
+    /// that, points up to half a cell away are tried with the volume's full
+    /// radius, so a doorway still opens when the grid puts a cell's center
+    /// right next to a door jamb, and the point lands where a volume fits
+    /// through.
+    /// </summary>
+    bool TryOpenPoint(RoomAir room, Vector2Int cell, out Vector3 point)
     {
         Vector3 center = CellCenter(room, cell);
+        point = center;
+        if (OpenAt(room, center, bodyRadius * 0.75f))
+            return true;
+
+        for (int i = 0; i < NudgeOffsets.Length; i++)
+        {
+            Vector3 candidate = center + new Vector3(NudgeOffsets[i].x, 0f, NudgeOffsets[i].y);
+            if (!OpenAt(room, candidate, bodyRadius))
+                continue;
+
+            point = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    // Offsets tried inside a blocked cell, nearest first, a quarter cell apart.
+    static readonly Vector2[] NudgeOffsets = BuildNudgeOffsets();
+
+    static Vector2[] BuildNudgeOffsets()
+    {
+        var offsets = new List<Vector2>();
+        float step = CellSize * 0.25f;
+        for (int z = -2; z <= 2; z++)
+        {
+            for (int x = -2; x <= 2; x++)
+            {
+                if (x != 0 || z != 0)
+                    offsets.Add(new Vector2(x * step, z * step));
+            }
+        }
+
+        offsets.Sort((a, b) => a.sqrMagnitude.CompareTo(b.sqrMagnitude));
+        return offsets.ToArray();
+    }
+
+    bool OpenAt(RoomAir room, Vector3 point, float radius)
+    {
         float high = room.ceilingY - 0.05f;
         float drop = high - room.floorY;
         if (drop < bodyRadius)
             return false;
 
-        RaycastHit[] hits = Physics.RaycastAll(new Vector3(center.x, high, center.z), Vector3.down, drop + 3f, obstacleMask, QueryTriggerInteraction.Ignore);
-        bool onInteriorFloor = false;
+        Collider[] overlaps = Physics.OverlapSphere(new Vector3(point.x, CruiseHeight(room), point.z), radius, obstacleMask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < overlaps.Length; i++)
+        {
+            if (Blocks(room, overlaps[i]))
+                return false;
+        }
+
+        RaycastHit[] hits = Physics.RaycastAll(new Vector3(point.x, high, point.z), Vector3.down, drop + 3f, obstacleMask, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < hits.Length; i++)
         {
             Collider hit = hits[i].collider;
             if (hit == null || SkipShell(hit))
                 continue;
-            if (hit.name.IndexOf("floor", System.StringComparison.OrdinalIgnoreCase) < 0)
-                continue;
-
-            onInteriorFloor = true;
-            break;
+            if (hit.name.IndexOf("floor", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
         }
 
-        if (!onInteriorFloor)
-            return false;
+        return false;
+    }
 
-        float sampleY = CruiseHeight(room);
-        Collider[] overlaps = Physics.OverlapSphere(new Vector3(center.x, sampleY, center.z), bodyRadius * 0.75f, obstacleMask, QueryTriggerInteraction.Ignore);
-        for (int i = 0; i < overlaps.Length; i++)
+    /// <summary>
+    /// Whether a volume can pass in a straight line between two points at
+    /// cruise height. A thin sweep finds the wall between two cells on either
+    /// side of it, and leaves a doorway open.
+    /// </summary>
+    bool Passable(RoomAir room, Vector3 from, Vector3 to)
+    {
+        float y = CruiseHeight(room);
+        from.y = y;
+        to.y = y;
+        Vector3 delta = to - from;
+        float distance = delta.magnitude;
+        if (distance < 0.0001f)
+            return true;
+
+        RaycastHit[] hits = Physics.SphereCastAll(from, bodyRadius * 0.5f, delta / distance, distance, obstacleMask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < hits.Length; i++)
         {
-            Collider collider = overlaps[i];
-            if (collider == null)
-                continue;
-            if (collider == room.floor || collider == room.ceiling)
-                continue;
-            if (collider.name.IndexOf("floor", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                continue;
-            if (collider.name.IndexOf("ceiling", System.StringComparison.OrdinalIgnoreCase) >= 0)
-                continue;
-
-            if (IgnoreSolid(collider))
-                continue;
-
-            return false;
+            if (Blocks(room, hits[i].collider))
+                return false;
         }
 
         return true;
+    }
+
+    /// <summary>Colliders that keep smoke out: anything solid but the floor and ceiling.</summary>
+    bool Blocks(RoomAir room, Collider collider)
+    {
+        if (collider == null)
+            return false;
+        if (collider == room.floor || collider == room.ceiling)
+            return false;
+        if (collider.name.IndexOf("floor", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return false;
+        if (collider.name.IndexOf("ceiling", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return false;
+
+        return !IgnoreSolid(collider);
     }
 
     float CruiseHeight(RoomAir room)
@@ -1831,6 +2555,8 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         front.smokeFill.Clear();
         front.fillField.Clear();
         front.fillFieldTime.Clear();
+        front.fillFieldSeeds.Clear();
+        front.lingeringCount = 0;
         SmokeRoomClipVolumes.Remove(front);
     }
 
@@ -1863,7 +2589,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             Gizmos.color = new Color(0.4f, 0.85f, 1f, 0.35f);
             foreach (Vector2Int cell in room.open)
             {
-                Vector3 center = CellCenter(room, cell);
+                Vector3 center = PointOf(room, cell);
                 center.y = CruiseHeight(room);
                 Gizmos.DrawWireCube(center, new Vector3(CellSize * 0.85f, 0.05f, CellSize * 0.85f));
             }

@@ -15,21 +15,27 @@
 //   Only_smoke_plume.prefab         PlumeCapacity particles instead of 1000. The
 //                                   plume over the fire plays it. Up close every
 //                                   plume particle covers most of the view, so
-//                                   the count sets most of its cost.
+//                                   the count sets most of its cost. Its
+//                                   particles are clipped to the room the plume
+//                                   sits in, wherever they drift.
 //   Only_smoke_lingering.vfx        the same clipped smoke, but each particle is
 //   Only_smoke_lingering.prefab     released once and then lingers: it lives
 //                                   as long as SmokeLifetime and churns slowly in
 //                                   place where it was released, so a drifting
 //                                   volume leaves smoke along its path.
 //                                   SmokeSpawnRate starts and stops the release;
-//                                   SmokeCeiling caps how high it goes.
+//                                   SmokeCeiling caps how high it goes. Each
+//                                   particle is clipped to the room it was
+//                                   released in, wherever it drifts.
 //
 // Flames (Tools > Smoke Containment > Build Contained Flames):
 //   ContainedFlame.shadergraph      draws an additive flame or ember the same way
 //                                   the Flame_box_wild outputs do, and hides the
 //                                   part of it outside the burning object's room.
 //   Flame_box_wild_contained.vfx    a copy of Flame_box_wild.vfx whose Flames and
-//                                   Embers outputs use that Shader Graph.
+//                                   Embers outputs use that Shader Graph. Its
+//                                   Flames spawn FlameParticleShare of the usual
+//                                   particles, FlameBrightness times as bright.
 //   Flame_box_wild_contained.prefab a copy of the Wild prefab that plays it.
 //
 // The originals are untouched, so other scenes keep their smoke and fire.
@@ -119,6 +125,15 @@ static class ContainedSmokeBuilder
     const string EmbersSystemTitle = "Embers";
     // FlammableObject sets Box to the emission box of the burning object.
     const string FlameBoxParameter = "Box";
+    // Up close the flames cover most of the view, and each fire runs 10,000 to
+    // 15,000 of them. 60% of them with their color 1.25 times as bright cover the
+    // same area with nearly the same orange edges and saturated core, and cost
+    // about 40% less. Fewer, or brighter, turns the edges yellow.
+    // IgnisSmokeDiffusion can override both.
+    const string FlameShareProperty = "FlameParticleShare";
+    const string FlameBrightnessProperty = "FlameBrightness";
+    const float FlameShare = 0.6f;
+    const float FlameBrightness = 1.25f;
 
     const string MainTextureName = "MainTexture";
     const string FlipbookSizeName = "FlipbookSize";
@@ -162,10 +177,13 @@ static class ContainedSmokeBuilder
             SmokeTexture(), new Vector2(8f, 8f));
     }
 
-    /// <summary>Feeds a smoke output's room input from the room search at the particle's center.</summary>
-    static void LinkSmokeRoom(VFXGraph graph, VFXContext composed, Vector2 position)
+    /// <summary>
+    /// Feeds a smoke output's room input from the room search at a point of the
+    /// particle: its center, or for lingering smoke the point it was released.
+    /// </summary>
+    static void LinkSmokeRoom(VFXGraph graph, VFXContext composed, Vector2 position, string attribute = "position")
     {
-        LinkSlots(AttributeNode(graph, "position", position).outputSlots[0],
+        LinkSlots(AttributeNode(graph, attribute, position).outputSlots[0],
             RoomSearch(graph, composed, ParticleRoomName, "SmokeParticleRoom", position));
     }
 
@@ -195,8 +213,12 @@ static class ContainedSmokeBuilder
         var resource = CopyVfx(SourceVfxPath, OutputFolder, LingeringVfxPath);
         var graph = resource.GetOrCreateGraph();
 
+        // A lingering particle belongs to the room it was released in. Its
+        // release speed carries it up to half a meter before the tether pulls
+        // it back, so near a wall its center can drift through it, and the room
+        // at its center would draw it on the far side.
         ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
-            (composed, position) => LinkSmokeRoom(graph, composed, position));
+            (composed, position) => LinkSmokeRoom(graph, composed, position, "targetPosition"));
         MakeSmokeLinger(graph);
 
         WriteVfx(graph, resource, LingeringVfxPath);
@@ -215,8 +237,13 @@ static class ContainedSmokeBuilder
         var resource = CopyVfx(SourceVfxPath, OutputFolder, PlumeVfxPath);
         var graph = resource.GetOrCreateGraph();
 
+        // The plume churns over the fire, which can stand next to a wall, and
+        // its particles rise and drift for seconds, through that wall too. They
+        // all belong to the room the plume sits in, the way flames belong to
+        // the burning object's room, so none shows on the far side.
         ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
-            (composed, position) => LinkSmokeRoom(graph, composed, position));
+            (composed, position) => LinkParameterField(graph, SmokeBoxParameter, "center",
+                RoomSearch(graph, composed, ParticleRoomName, "SmokeParticleRoom", position)));
         SystemContext<VFXBasicInitialize>(graph, SmokeSystemTitle).GetData().SetSettingValue("capacity", PlumeCapacity);
 
         WriteVfx(graph, resource, PlumeVfxPath);
@@ -257,7 +284,66 @@ static class ContainedSmokeBuilder
                 (composed, position) => LinkFlameRoom(graph, composed, position));
         }
 
+        TrimFlames(graph);
         WriteVfx(graph, resource, FlameVfxPath);
+    }
+
+    /// <summary>
+    /// Spawns FlameParticleShare of the Flames system's particles and makes
+    /// each FlameBrightness times as bright, so the fire looks the same for
+    /// less overdraw. Embers are left as they are.
+    /// </summary>
+    static void TrimFlames(VFXGraph graph)
+    {
+        var init = SystemContext<VFXBasicInitialize>(graph, FlamesSystemTitle);
+        var output = SystemContext<VFXAbstractComposedParticleOutput>(graph, FlamesSystemTitle);
+        int bursts = 0;
+        foreach (var spawner in graph.children.OfType<VFXBasicSpawner>().Where(s => s.outputContexts.Contains(init)).ToList())
+        {
+            foreach (var burst in spawner.children.OfType<VFXSpawnerBurst>().ToList())
+            {
+                ScaleSlot(graph, Slot(burst, "Count"), FlameShareProperty, FlameShare, spawner.position + new Vector2(-420f, 240f));
+                bursts++;
+            }
+        }
+        if (bursts == 0)
+            throw new InvalidOperationException("The Flames system has no burst spawner to scale.");
+
+        ScaleSlot(graph, Slot(output, ParticleColorName), FlameBrightnessProperty, FlameBrightness, output.position + new Vector2(-420f, 360f));
+    }
+
+    /// <summary>
+    /// Multiplies whatever feeds a slot by an exposed float. A slot fed one
+    /// component at a time, like a burst's minimum and maximum count, has each
+    /// component scaled.
+    /// </summary>
+    static void ScaleSlot(VFXGraph graph, VFXSlot target, string property, float defaultValue, Vector2 position)
+    {
+        var source = target.LinkedSlots.FirstOrDefault();
+        if (source == null && target.children.Any(c => c.HasLink(true)))
+        {
+            int row = 0;
+            foreach (var component in target.children.ToList())
+                ScaleSlot(graph, component, property, defaultValue, position + new Vector2(0f, 80f * row++));
+            return;
+        }
+
+        var scale = ScriptableObject.CreateInstance<UnityEditor.VFX.Operator.Multiply>();
+        scale.position = position;
+        graph.AddChild(scale);
+        scale.SetOperandType(0, target.property.type);
+        if (source != null)
+        {
+            target.UnlinkAll(true);
+            LinkSlots(source, scale.inputSlots[0]);
+        }
+        else
+        {
+            scale.inputSlots[0].value = target.value;
+        }
+
+        LinkExposedFloat(graph, property, defaultValue, scale.inputSlots[1]);
+        LinkSlots(scale.outputSlots[0], target);
     }
 
     [MenuItem("Tools/Smoke Containment/Steps/Flames 3 Build Prefab")]

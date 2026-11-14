@@ -23155,17 +23155,17 @@ MonoBehaviour:
   needsOwnSort: 1
   needsOwnAabbBuffer: 0
   m_Topology:
-    rid: 5556633007960883516
+    rid: 5556633016324587755
   m_Shading:
-    rid: 5556633007960883517
+    rid: 5556633016324587756
   references:
     version: 2
     RefIds:
-    - rid: 5556633007960883516
+    - rid: 5556633016324587755
       type: {class: ParticleTopologyPlanarPrimitive, ns: UnityEditor.VFX, asm: Unity.VisualEffectGraph.Editor}
       data:
         primitiveType: 1
-    - rid: 5556633007960883517
+    - rid: 5556633016324587756
       type: {class: ParticleShadingShaderGraph, ns: UnityEditor.VFX, asm: Unity.VisualEffectGraph.Editor}
       data:
         shaderGraph: {fileID: 4333940904281232215, guid: 56a1ab4ec88815e4887ccd600b181b0b, type: 3}
@@ -24529,7 +24529,7 @@ MonoBehaviour:
   m_InputSlots: []
   m_OutputSlots:
   - {fileID: 8926484042661618229}
-  attribute: position
+  attribute: targetPosition
   location: 0
   mask: xyz
 --- !u!114 &8926484042661618229
@@ -24563,7 +24563,7 @@ MonoBehaviour:
       m_SerializableObject: 
     m_Space: -1
   m_Property:
-    name: Position
+    name: Target Position
     m_serializedType:
       m_SerializableType: UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0,
         Culture=neutral, PublicKeyToken=null

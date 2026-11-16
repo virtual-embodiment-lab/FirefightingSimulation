@@ -28,6 +28,11 @@
 //                                   particle is clipped to the room it was
 //                                   released in, wherever it drifts.
 //
+//   In all three, each smoke card faces the point between the eyes, with its
+//   up on the world's up (SmokeCardFacing.hlsl), instead of taking the
+//   camera's up. In the headset, turning or tilting the head leaves the
+//   smoke where it is.
+//
 // Flames (Tools > Smoke Containment > Build Contained Flames):
 //   ContainedFlame.shadergraph      draws an additive flame or ember the same way
 //                                   the Flame_box_wild outputs do, and hides the
@@ -147,6 +152,9 @@ static class ContainedSmokeBuilder
     const string ParticleRoomName = "ParticleRoom";
     const string OwnerRoomName = "OwnerRoom";
     const string RoomSelectHlslPath = "Assets/Shaders/SmokeContainment/SmokeRoomSelect.hlsl";
+    // Turns the smoke cards toward the viewer without following the head's
+    // rotation, in place of each output's Orient block. See FaceHeadUpright.
+    const string CardFacingHlslPath = "Assets/Shaders/SmokeContainment/SmokeCardFacing.hlsl";
 
     [MenuItem("Tools/Smoke Containment/Build Contained Smoke")]
     public static void BuildAll()
@@ -196,6 +204,7 @@ static class ContainedSmokeBuilder
 
         ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
             (composed, position) => LinkSmokeRoom(graph, composed, position));
+        FaceHeadUpright(graph);
 
         WriteVfx(graph, resource, VfxPath);
     }
@@ -220,6 +229,7 @@ static class ContainedSmokeBuilder
         ConvertOutput(graph, SmokeSystemTitle, shaderGraph, ShaderGraphPath, SmokeTexture(), new Vector2(8f, 8f),
             (composed, position) => LinkSmokeRoom(graph, composed, position, "targetPosition"));
         MakeSmokeLinger(graph);
+        FaceHeadUpright(graph);
 
         WriteVfx(graph, resource, LingeringVfxPath);
     }
@@ -245,6 +255,7 @@ static class ContainedSmokeBuilder
             (composed, position) => LinkParameterField(graph, SmokeBoxParameter, "center",
                 RoomSearch(graph, composed, ParticleRoomName, "SmokeParticleRoom", position)));
         SystemContext<VFXBasicInitialize>(graph, SmokeSystemTitle).GetData().SetSettingValue("capacity", PlumeCapacity);
+        FaceHeadUpright(graph);
 
         WriteVfx(graph, resource, PlumeVfxPath);
     }
@@ -926,6 +937,51 @@ static class ContainedSmokeBuilder
 
         LinkSlots(search.outputSlots[0], Slot(context, slotName));
         return search.inputSlots[0];
+    }
+
+    /// <summary>
+    /// Replaces the Orient block of every output in the graph with a Custom
+    /// HLSL block that runs SmokeCardFacing.hlsl. The block faces each card
+    /// toward the point between the eyes and keeps its up on the world's up.
+    /// With Orient, the cards took their up from the camera, which in the
+    /// headset is the head, so pitching or rolling the head turned every card
+    /// with it.
+    /// </summary>
+    static void FaceHeadUpright(VFXGraph graph)
+    {
+        int replaced = 0;
+        foreach (var output in graph.children.OfType<VFXAbstractParticleOutput>().ToList())
+        {
+            foreach (var orient in output.children.OfType<Orient>().ToList())
+            {
+                int index = output.GetIndex(orient);
+                bool enabled = orient.enabled;
+                RemoveBlock(output, orient);
+
+                var facing = ScriptableObject.CreateInstance<UnityEditor.VFX.Block.CustomHLSL>();
+                facing.SetSettingValue("m_HLSLCode",
+                    "#include \"" + CardFacingHlslPath + "\"\n" +
+                    "void FaceHeadUpright(inout VFXAttributes attributes)\n" +
+                    "{\n" +
+                    "    float3 axisX, axisY, axisZ;\n" +
+                    "    SmokeCardAxes(attributes.position, axisX, axisY, axisZ);\n" +
+                    "    attributes.axisX = axisX;\n" +
+                    "    attributes.axisY = axisY;\n" +
+                    "    attributes.axisZ = axisZ;\n" +
+                    "}\n");
+                output.AddChild(facing, index);
+                facing.ResyncSlots(true);
+                if (!enabled)
+                    facing.activationSlot.value = false;
+                if (facing.inputSlots.Count != 0)
+                    throw new InvalidOperationException("The card facing block has " + facing.inputSlots.Count + " inputs; expected none.");
+                replaced++;
+            }
+        }
+
+        if (replaced == 0)
+            throw new InvalidOperationException("No Orient block to replace with the card facing block.");
+        Debug.Log("[ContainedSmoke] Replaced " + replaced + " Orient blocks with " + CardFacingHlslPath);
     }
 
     static void LinkAttribute(VFXGraph graph, VFXContext context, string attribute, string slotName, Vector2 position)

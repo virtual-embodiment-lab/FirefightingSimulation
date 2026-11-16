@@ -6,9 +6,13 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 /// A hinged door that swings open or shut when the local player's hand touches it.
 /// RoomGeneration puts this on the front door's hinge pivot. When connected, the open/closed state is
 /// shared through Normcore so every player sees the same door; offline it just toggles locally.
+/// A touch is measured against the door's mesh, not a collider: HazardTagging adds, resizes and removes
+/// colliders on the house's objects, and the door has to keep working through all of it.
 /// </summary>
 public class TouchDoor : RealtimeComponent<DoorStateModel>
 {
+    [Tooltip("The door's mesh. A hand within Touch Distance of it counts as a touch. RoomGeneration sets it; if empty, the first mesh under the hinge is used.")]
+    public MeshFilter doorPanel;
     [Tooltip("How far the door swings open around its hinge, in degrees. Positive swings it into the house.")]
     public float openAngle = 90f;
     [Tooltip("How fast the door swings, in degrees per second.")]
@@ -20,7 +24,6 @@ public class TouchDoor : RealtimeComponent<DoorStateModel>
 
     private bool isOpen;
     private Quaternion closedRotation;
-    private Collider doorCollider;
     private XRBaseInteractor[] interactors = new XRBaseInteractor[0];
     private float nextInteractorSearchTime;
     private float nextTouchTime;
@@ -29,7 +32,21 @@ public class TouchDoor : RealtimeComponent<DoorStateModel>
     private void Awake()
     {
         closedRotation = transform.localRotation;
-        doorCollider = GetComponentInChildren<Collider>();
+
+        if (doorPanel == null || doorPanel.sharedMesh == null)
+            doorPanel = FindDoorPanel();
+        if (doorPanel == null)
+            Debug.LogWarning($"TouchDoor on {name} has no door mesh under it, so it can't be touched open.", this);
+    }
+
+    private MeshFilter FindDoorPanel()
+    {
+        foreach (MeshFilter meshFilter in GetComponentsInChildren<MeshFilter>(true))
+        {
+            if (meshFilter.sharedMesh != null)
+                return meshFilter;
+        }
+        return null;
     }
 
     private void Update()
@@ -43,7 +60,7 @@ public class TouchDoor : RealtimeComponent<DoorStateModel>
 
     private bool TouchStarted()
     {
-        if (doorCollider == null || !doorCollider.enabled) return false;
+        if (doorPanel == null || !doorPanel.gameObject.activeInHierarchy) return false;
 
         // The player rig can spawn after the house (e.g. once the network connects), so look for hands every couple of seconds
         if (Time.time >= nextInteractorSearchTime)
@@ -57,8 +74,7 @@ public class TouchDoor : RealtimeComponent<DoorStateModel>
         {
             if (!IsLocalHand(interactor)) continue;
 
-            Vector3 handPosition = interactor.transform.position;
-            if ((doorCollider.ClosestPoint(handPosition) - handPosition).sqrMagnitude <= touchDistance * touchDistance)
+            if (IsNearDoor(interactor.transform.position))
             {
                 touching = true;
                 break;
@@ -70,6 +86,16 @@ public class TouchDoor : RealtimeComponent<DoorStateModel>
         wasTouching = touching;
         if (started) nextTouchTime = Time.time + touchCooldown;
         return started;
+    }
+
+    // Whether a point is within touchDistance of the door's mesh box. The box is clamped in the mesh's own
+    // space and the distance measured in the world, so it follows the door as it swings and stays exact
+    // for the door's non-uniform scale
+    private bool IsNearDoor(Vector3 handPosition)
+    {
+        Transform panel = doorPanel.transform;
+        Vector3 closest = doorPanel.sharedMesh.bounds.ClosestPoint(panel.InverseTransformPoint(handPosition));
+        return (panel.TransformPoint(closest) - handPosition).sqrMagnitude <= touchDistance * touchDistance;
     }
 
     // Hand interactors on this player's own rig. Sockets (holsters, racks) aren't hands, and remote players'

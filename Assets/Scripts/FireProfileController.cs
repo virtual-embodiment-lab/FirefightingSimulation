@@ -68,6 +68,26 @@ public class FireProfileController : MonoBehaviour
     public FlammableObject flammableObject;
     [Tooltip("Local fire volume used by hazard tracking and Ignis VFX placement. Assigned automatically.")]
     public BoxCollider collider; // parent collider that determines ability to be touched/tracked in our hazard system
+
+    /// <summary>
+    /// What the object's BoxCollider was before this controller was added. The controller resizes it and
+    /// makes it a trigger, so HazardTagging uses this to put the object back when it clears hazards: a
+    /// collider that came with the object (a door, window or lamp prefab) is restored and kept, and one that
+    /// was only added for the fire is removed.
+    /// </summary>
+    [System.Serializable]
+    public struct OriginalBoxCollider
+    {
+        public bool recorded;     // False on controllers added before this was tracked; their collider is left alone
+        public bool addedForFire; // The object had no BoxCollider; [RequireComponent] added one for the fire
+        public bool isTrigger;
+        public Vector3 center;
+        public Vector3 size;
+    }
+
+    [SerializeField, HideInInspector] private OriginalBoxCollider originalBoxCollider;
+    public OriginalBoxCollider OriginalCollider => originalBoxCollider;
+
     private float lastWaterHitTime = float.NegativeInfinity;
     private float reigniteAttemptTime = -1f;
     private NetworkedFireState networkedFireState;
@@ -76,6 +96,27 @@ public class FireProfileController : MonoBehaviour
     public bool WillReignite => willReignite;
     public float LastWaterHitTime => lastWaterHitTime;
     public float ReigniteAttemptTime => reigniteAttemptTime;
+
+    /// <summary>
+    /// Adds a FireProfileController to target, first noting what its BoxCollider was so it can be put back
+    /// later (see OriginalBoxCollider). Use this instead of AddComponent for anything HazardTagging may clear.
+    /// </summary>
+    public static FireProfileController AddTo(GameObject target)
+    {
+        BoxCollider existing = target.GetComponent<BoxCollider>();
+        OriginalBoxCollider original = new OriginalBoxCollider
+        {
+            recorded = true,
+            addedForFire = existing == null,
+            isTrigger = existing != null && existing.isTrigger,
+            center = existing != null ? existing.center : Vector3.zero,
+            size = existing != null ? existing.size : Vector3.one
+        };
+
+        FireProfileController controller = target.AddComponent<FireProfileController>();
+        controller.originalBoxCollider = original;
+        return controller;
+    }
 
     // Automatically runs in the Editor when the script is added
     void Reset()

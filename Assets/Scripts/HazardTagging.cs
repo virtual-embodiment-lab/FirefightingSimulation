@@ -89,6 +89,11 @@ public class HazardTagging : MonoBehaviour
             if (child.name.StartsWith("Floor_") || child.name.StartsWith("Room_") || child.name.StartsWith("Teleport Area") || child.name.StartsWith("Hitbox"))
                 continue;
 
+            // Skip the front door's hinge: it's an empty pivot, and a fire profile would hang a 1 m box and
+            // a solid Hitbox off it at floor level. The door itself under it is still tagged
+            if (child.GetComponent<TouchDoor>() != null)
+                continue;
+
             child.gameObject.tag = "Possible Hazard";
             possibleHazards.Add(child.gameObject);
 
@@ -297,7 +302,8 @@ public class HazardTagging : MonoBehaviour
         {
             if (child.GetComponent<FireProfileController>() == null)
             {
-                child.AddComponent<FireProfileController>();
+                // AddTo notes the object's own BoxCollider first, so RemoveFireProfiles can put it back
+                FireProfileController.AddTo(child);
             }
         }
     }
@@ -309,10 +315,12 @@ public class HazardTagging : MonoBehaviour
         {
             if (child == null) continue;
 
-            // Remove the Controller
+            // Remove the Controller, after reading what the object's BoxCollider was before it
             FireProfileController fireProfile = child.GetComponent<FireProfileController>();
+            FireProfileController.OriginalBoxCollider originalCollider = default;
             if (fireProfile != null)
             {
+                originalCollider = fireProfile.OriginalCollider;
                 DestroyImmediate(fireProfile);
             }
 
@@ -337,11 +345,22 @@ public class HazardTagging : MonoBehaviour
                 DestroyImmediate(hitbox.gameObject);
             }
 
-            // Remove the BoxCollider that we created
+            // Remove the BoxCollider only if it was added for the fire. One that came with the object (the
+            // front door, a window, a lamp) is put back the way it was, solid again. A controller added
+            // before this was tracked has no record, so its collider is left as it is rather than guessed at
             BoxCollider collider = child.GetComponent<BoxCollider>();
-            if (collider != null)
+            if (collider != null && originalCollider.recorded)
             {
-                DestroyImmediate(collider);
+                if (originalCollider.addedForFire)
+                {
+                    DestroyImmediate(collider);
+                }
+                else
+                {
+                    collider.isTrigger = originalCollider.isTrigger;
+                    collider.center = originalCollider.center;
+                    collider.size = originalCollider.size;
+                }
             }
         }
     }

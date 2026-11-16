@@ -1896,7 +1896,8 @@ public class RoomGeneration : MonoBehaviour
         hingeBody.useGravity = false;
 
         hinge.AddComponent<RealtimeView>();
-        hinge.AddComponent<TouchDoor>();
+        TouchDoor touchDoor = hinge.AddComponent<TouchDoor>();
+        touchDoor.doorPanel = door.GetComponentInChildren<MeshFilter>();
     }
 
     void SpawnWall(Vector3 tilePos, Vector2Int dir, Transform parent, bool isInterior, float startHeight = 0f, float customHeight = -1f, float customWidth = 1.0f)
@@ -2773,7 +2774,7 @@ public class RoomGeneration : MonoBehaviour
         mc.sharedMesh = combinedMesh;
 
         // Add a FireProfileController and a BoxCollider so that walls, floors, and ceilings can be flammable
-        FireProfileController fireController = parent.AddComponent<FireProfileController>();
+        FireProfileController fireController = FireProfileController.AddTo(parent);
 
         // Grab the collider from the controller
         BoxCollider fireBox = fireController.collider;

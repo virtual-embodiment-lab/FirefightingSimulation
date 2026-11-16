@@ -641,7 +641,7 @@ public class RoomDecoration : MonoBehaviour
 
         FireProfileController fireController = furniture.GetComponent<FireProfileController>();
         if (fireController == null)
-            fireController = furniture.AddComponent<FireProfileController>();
+            fireController = FireProfileController.AddTo(furniture); // notes the prefab's own collider so HazardTagging can restore it
 
         // RequireComponent guarantees a BoxCollider on root
         BoxCollider fireBox = fireController.collider != null ? fireController.collider : furniture.GetComponent<BoxCollider>();

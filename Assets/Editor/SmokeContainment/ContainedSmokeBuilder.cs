@@ -27,8 +27,14 @@
 //                                   SmokeCeiling caps how high it goes. Each
 //                                   particle is clipped to the room it was
 //                                   released in, wherever it drifts.
+//   Window_smoke_vent.vfx           a copy of the window smoke plume
+//                                   (Assets/VFX/WindowSmokePlume.vfx): smoke
+//                                   pushed out of a thin box and turned upward.
+//                                   IgnisSmokeDiffusion vents the burning room's
+//                                   smoke out of its windows with it. It is
+//                                   outside the house, so it is not clipped.
 //
-//   In all three, each smoke card faces the point between the eyes, with its
+//   In all four, each smoke card faces the point between the eyes, with its
 //   up on the world's up (SmokeCardFacing.hlsl), instead of taking the
 //   camera's up. In the headset, turning or tilting the head leaves the
 //   smoke where it is.
@@ -87,6 +93,8 @@ static class ContainedSmokeBuilder
 
     const string LingeringVfxPath = OutputFolder + "/Only_smoke_lingering.vfx";
     const string LingeringPrefabPath = OutputFolder + "/Only_smoke_lingering.prefab";
+    const string WindowVentSourcePath = "Assets/VFX/WindowSmokePlume.vfx";
+    const string WindowVentVfxPath = OutputFolder + "/Window_smoke_vent.vfx";
     // Exposed properties IgnisSmokeDiffusion sets on each lingering volume.
     const string SpawnRateProperty = "SmokeSpawnRate";
     const string LifetimeProperty = "SmokeLifetime";
@@ -166,7 +174,8 @@ static class ContainedSmokeBuilder
         BuildLingeringPrefab();
         BuildPlumeVfx();
         BuildPlumePrefab();
-        Debug.Log("[ContainedSmoke] Built " + ShaderGraphPath + ", " + VfxPath + ", " + PrefabPath + ", " + LingeringVfxPath + ", " + LingeringPrefabPath + ", " + PlumeVfxPath + " and " + PlumePrefabPath);
+        BuildWindowVentVfx();
+        Debug.Log("[ContainedSmoke] Built " + ShaderGraphPath + ", " + VfxPath + ", " + PrefabPath + ", " + LingeringVfxPath + ", " + LingeringPrefabPath + ", " + PlumeVfxPath + ", " + PlumePrefabPath + " and " + WindowVentVfxPath);
     }
 
     [MenuItem("Tools/Smoke Containment/Build Contained Flames")]
@@ -264,6 +273,15 @@ static class ContainedSmokeBuilder
     public static void BuildPlumePrefab()
     {
         WritePrefab(SourcePrefabPath, OutputFolder, PlumePrefabPath, PlumeVfxPath);
+    }
+
+    [MenuItem("Tools/Smoke Containment/Steps/Smoke 8 Build Window Vent VFX")]
+    public static void BuildWindowVentVfx()
+    {
+        var resource = CopyVfx(WindowVentSourcePath, OutputFolder, WindowVentVfxPath);
+        var graph = resource.GetOrCreateGraph();
+        FaceHeadUpright(graph);
+        WriteVfx(graph, resource, WindowVentVfxPath);
     }
 
     [MenuItem("Tools/Smoke Containment/Steps/Flames 1 Build Shader Graph")]

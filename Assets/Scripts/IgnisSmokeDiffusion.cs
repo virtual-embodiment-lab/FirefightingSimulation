@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Ignis;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 
 /// <summary>
 /// Keeps Ignis drawing the existing fire, and releases the plugin's OnlySmoke
@@ -62,6 +63,12 @@ using UnityEngine.SceneManagement;
 /// doorway and pass through the middle of it, and the air by a doorway holds
 /// Doorway Smoke, so the smoke funnels through the openings and thins out in
 /// the rooms beyond.
+///
+/// The burning room's windows are its flow path out. Once the smoke layer
+/// over a window has banked down past its top, smoke pours out of the window's
+/// upper part, deeper and stronger as the layer deepens, and turns upward
+/// outside (Window_smoke_vent). Only the burning room's windows vent; the
+/// rooms the smoke spreads to keep theirs shut.
 /// </remarks>
 [DisallowMultipleComponent]
 [DefaultExecutionOrder(-50)]
@@ -122,6 +129,55 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     const float RoomProbeBelowCeiling = 0.25f;
     const float RoomProbeRange = 40f;
     const float MinRoomHalfSize = 0.25f;
+    const string WindowVentResource = "Smoke/Window_smoke_vent";
+    // A window vents through its upper part only, at most this share of its
+    // height: below the neutral plane, fresh air flows in instead.
+    const float VentHeightShare = 0.5f;
+    // The strip smoke leaves a window from: this share of the window's width,
+    // never thinner than VentMinStrip, VentStripDepth deep, just outside the glass.
+    const float VentWidthShare = 0.9f;
+    const float VentMinStrip = 0.1f;
+    const float VentStripDepth = 0.12f;
+    // How far either side of a window is checked for the room it belongs to.
+    const float VentSideProbe = 0.4f;
+    // The vent graph keeps only smoke released inside its Spread sphere, which
+    // Ignis uses for the part of an object the fire has reached. Left at its
+    // default, around the world origin, it drops every particle. It is
+    // centered on the strip, this much wider than the strip's farthest corner.
+    const float VentSpreadMargin = 0.5f;
+    // RoomGeneration puts each room's furniture and windows under a GameObject
+    // named Room_<n> [type].
+    const string GeneratedRoomPrefix = "Room_";
+    // Seconds a window takes to vent at the strength the smoke layer calls for.
+    const float VentRampSeconds = 2f;
+    const float VentTurbulence = 0.65f;
+    // The vent effect thins out beyond the first distance and is not drawn
+    // beyond the second, in meters from the camera.
+    const float VentThinDistance = 15f;
+    const float VentCullDistance = 60f;
+    // Exposed properties of Window_smoke_vent. WindowSmokePlumeController
+    // drives the same graph and explains each one.
+    static readonly int VentBoxCenterId = Shader.PropertyToID("Box_center");
+    static readonly int VentBoxSizeId = Shader.PropertyToID("Box_size");
+    static readonly int VentRotationId = Shader.PropertyToID("Rotation");
+    static readonly int VentSpreadCenterId = Shader.PropertyToID("Spread_center");
+    static readonly int VentSpreadRadiusId = Shader.PropertyToID("Spread_radius");
+    static readonly int VentSmokeRateId = Shader.PropertyToID("SmokeVFXMultiplier");
+    static readonly int VentAlphaId = Shader.PropertyToID("SmokeAlpha");
+    static readonly int VentParticleSizeId = Shader.PropertyToID("SmokeParticleSize");
+    static readonly int VentColorId = Shader.PropertyToID("SmokeColor");
+    static readonly int VentLaunchId = Shader.PropertyToID("WindForce");
+    static readonly int VentLaunchScaleId = Shader.PropertyToID("WindMultiplier");
+    static readonly int VentDragId = Shader.PropertyToID("FlameSpeed");
+    static readonly int VentTurbulenceId = Shader.PropertyToID("FlameLiveliness");
+    static readonly int VentTurbulenceSpeedId = Shader.PropertyToID("FlameLivelinessSpeed");
+    static readonly int VentLifetimeId = Shader.PropertyToID("FlameLength");
+    static readonly int VentThinDistanceId = Shader.PropertyToID("LODMaxDist");
+    static readonly int VentCullDistanceId = Shader.PropertyToID("CullingDist");
+    static readonly int VentParticleShareId = Shader.PropertyToID("FireParticleMultiplier");
+    static readonly int VentFlamesId = Shader.PropertyToID("FireVFXMultiplier");
+    static readonly int VentEmbersId = Shader.PropertyToID("EmbersVFXMultiplier");
+    static readonly int VentEmberBurstsId = Shader.PropertyToID("EmbersBurstVFXMultiplier");
 
     static readonly Vector2Int[] Neighbors =
     {
@@ -253,15 +309,15 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
     [Tooltip("How thick the lingering smoke gets in rooms other than the burning one, as a share of Particles Per Cell. Smoke thins out as it spreads away from the fire.")]
     [Range(0.1f, 1f)]
-    public float otherRoomSmoke = 0.35f;
+    public float otherRoomSmoke = 0.25f;
 
     [Tooltip("How thick the lingering smoke gets right by a doorway outside the burning room, on both sides of it, as a share of Particles Per Cell. Smoke is drawn to openings and pours through them, so it gathers thicker there and thins as it spreads into the room beyond.")]
     [Range(0.1f, 1f)]
-    public float doorwaySmoke = 0.8f;
+    public float doorwaySmoke = 0.6f;
 
     [Tooltip("How fast smoke moves through rooms other than the burning one, as a share of its speed in the burning room: the drifting volumes, the edge of the smoke and how quickly the smoke layer deepens there. The smoke creeps through the rest of the house.")]
     [Range(0.1f, 1f)]
-    public float otherRoomSpeed = 0.8f;
+    public float otherRoomSpeed = 0.6f;
 
     [Tooltip("Share of the drifting volumes that carry smoke on to the rest of the house as soon as the edge of the smoke leaves the burning room. They ride the top of the smoke layer, like the hot layer under the ceiling, and keep up with the edge. The others fill the burning room first, then deepen the smoke elsewhere. Every volume heads for the nearest air that needs smoke, so without this the smoke only leaves the burning room once it is full. Higher spreads through the house sooner and fills the burning room more slowly.")]
     [Range(0f, 1f)]
@@ -279,6 +335,48 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Tooltip("Speed, in meters per second, at which a volume sinks when the growing layer moves its place below it.")]
     [Min(0f)]
     public float sinkSpeed = 0.15f;
+
+    [Header("Venting Through Windows")]
+    [Tooltip("Pushes smoke out of the windows of each burning room once its smoke layer has banked down past the top of the window, the way hot smoke finds its way out of the room on fire. The rooms the smoke spreads to do not vent. Needs Contain Smoke.")]
+    public bool ventThroughWindows = true;
+
+    [Tooltip("Objects whose name starts with this are windows. Generated houses name theirs Window(Clone).")]
+    public string windowName = "Window";
+
+    [Tooltip("How far, in meters, the smoke layer reaches down past the top of a window when the window vents at full strength. Smoke leaves through the window's upper part only, at most its top half.")]
+    [Min(0.05f)]
+    public float ventFullDepth = 0.6f;
+
+    [Tooltip("How much smoke a window releases at full strength, as Ignis's smoke multiplier.")]
+    [Min(0f)]
+    public float ventSmokeRate = 2.5f;
+
+    [Tooltip("How opaque the smoke leaving a window is, as Ignis's smoke alpha.")]
+    [Min(0f)]
+    public float ventOpacity = 2f;
+
+    [Tooltip("Size of the smoke particles leaving a window, as Ignis's particle size.")]
+    [Min(0.01f)]
+    public float ventParticleSize = 1.1f;
+
+    [Tooltip("How much lighter the smoke outside is than the smoke in the room, as a multiple of the Plugin Smoke Appearance color. Above 1 for daylight on the smoke.")]
+    [Min(0f)]
+    public float ventBrightness = 1f;
+
+    [Tooltip("Speed, in meters per second, at which smoke leaves the window before it turns upward.")]
+    [Min(0f)]
+    public float ventOutwardSpeed = 1.8f;
+
+    [Tooltip("How quickly smoke that left a window turns upward. Higher turns it up closer to the wall.")]
+    [Min(0.05f)]
+    public float ventRise = 1.1f;
+
+    [Tooltip("Longest a particle that left a window lives, in seconds. Most live shorter.")]
+    [Min(0.1f)]
+    public float ventLifetime = 6f;
+
+    [Tooltip("Smoke effect for the windows. Leave empty to use Resources/Smoke/Window_smoke_vent.")]
+    public VisualEffectAsset windowVentEffect;
 
     [Header("Wall Containment")]
     [Tooltip("Draws each smoke particle only inside the room it belongs to, so smoke never shows through a wall, ceiling or floor. The smoke's size, motion and spread are unchanged.")]
@@ -336,6 +434,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     bool loadedContainedSmokePrefab;
     bool loadedLingeringSmokePrefab;
     bool loadedPlumeSmokePrefab;
+    bool loadedWindowVentEffect;
     float nextDiscoveryTime;
 
     class FireFront
@@ -369,6 +468,29 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         // Lingering volumes released so far, to spread Spreading Volumes evenly.
         public int lingeringCount;
         public int[] fillQueue;
+        // The burning room's windows that vent its smoke, found for ventRoom.
+        public readonly List<WindowVent> vents = new List<WindowVent>();
+        public RoomAir ventRoom;
+    }
+
+    /// <summary>A window of the burning room, and the smoke leaving through it.</summary>
+    class WindowVent
+    {
+        public Transform window;
+        public VisualEffect effect;
+        // The open cell just inside the window, whose smoke layer it vents.
+        public int cell;
+        // Level and pointing out of the house, and its heading in degrees.
+        public Vector3 outward;
+        public float yaw;
+        // Middle of the window's outer face.
+        public Vector3 face;
+        public float width;
+        public float height;
+        public float top;
+        // How far the smoke layer reaches down the window, and how strongly it vents, 0 to 1.
+        public float depth;
+        public float strength;
     }
 
     class SmokeVolume
@@ -439,6 +561,8 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         // the burning room.
         public int[] cellGroup;
         public int fireGroup = -1;
+        // The rooms' clip boxes, to tell which room a point is in.
+        public List<SmokeRoomClipVolumes.Room> boxes;
         // Cells by an opening between two rooms, on either side of it.
         public bool[] doorway;
         // How far the smoke travels from the fire to each cell along the open
@@ -544,9 +668,11 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             }
 
             AdvanceFront(fronts[i]);
-            if (!fronts[i].burning && fronts[i].volumes.Count == 0)
+            UpdateVents(fronts[i]);
+            if (!fronts[i].burning && fronts[i].volumes.Count == 0 && VentsQuiet(fronts[i]))
             {
                 RestoreEmbeddedSmoke(fronts[i]);
+                ReleaseVents(fronts[i]);
                 fronts.RemoveAt(i);
             }
         }
@@ -1623,6 +1749,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             List<SmokeRoomClipVolumes.Room> boxes = MeasureRooms(room);
             SmokeRoomClipVolumes.SetRooms(front, boxes);
             AssignRoomGroups(room, boxes);
+            room.boxes = boxes;
         }
         MapSpread(room);
         return room;
@@ -1861,6 +1988,299 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     static int CellAt(RoomAir room, Vector3 position)
     {
         return room != null && room.cellIndex.TryGetValue(ToCell(room, position), out int cell) ? cell : -1;
+    }
+
+    /// <summary>
+    /// Finds the burning room's windows once its air is measured: windows on
+    /// the fire's floor whose inside is in the burning room and whose outside
+    /// is in no room, so outside the house. Each gets a vent effect, quiet
+    /// until the smoke layer reaches it. Windows of other rooms do not vent.
+    /// Rooms joined by an opening with no door header share their air, so they
+    /// count as one burning room; in a generated house, a window must also be
+    /// in the same generated room as the burning object.
+    /// </summary>
+    void FindVents(FireFront front)
+    {
+        ReleaseVents(front);
+        RoomAir room = front.room;
+        front.ventRoom = room;
+        if (!ventThroughWindows || room == null || room.boxes == null || room.fireGroup < 0 || string.IsNullOrEmpty(windowName))
+            return;
+
+        VisualEffectAsset effect = WindowVentEffect();
+        if (effect == null)
+            return;
+
+        Transform fireRoom = GeneratedRoom(front.fire.transform);
+        MeshFilter[] meshes = Object.FindObjectsByType<MeshFilter>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (int i = 0; i < meshes.Length; i++)
+        {
+            MeshFilter mesh = meshes[i];
+            if (mesh.sharedMesh == null || !mesh.name.StartsWith(windowName, System.StringComparison.Ordinal))
+                continue;
+
+            Transform windowRoom = GeneratedRoom(mesh.transform);
+            if (fireRoom != null && windowRoom != null && windowRoom != fireRoom)
+                continue;
+
+            if (TryMeasureWindow(room, mesh, out WindowVent vent))
+            {
+                vent.effect = CreateVentEffect(effect);
+                front.vents.Add(vent);
+            }
+        }
+    }
+
+    /// <summary>
+    /// A window's size, and which way is out, from its mesh. Its thinnest
+    /// level side runs through the wall; out is the side in no room.
+    /// </summary>
+    bool TryMeasureWindow(RoomAir room, MeshFilter mesh, out WindowVent vent)
+    {
+        vent = null;
+        Transform window = mesh.transform;
+        Bounds bounds = mesh.sharedMesh.bounds;
+        Vector3 center = window.TransformPoint(bounds.center);
+        if (center.y <= room.floorY || center.y >= room.ceilingY)
+            return false;
+
+        Vector3 sideX = window.TransformVector(new Vector3(bounds.size.x, 0f, 0f));
+        Vector3 sideZ = window.TransformVector(new Vector3(0f, 0f, bounds.size.z));
+        bool wideX = sideX.sqrMagnitude >= sideZ.sqrMagnitude;
+        Vector3 across = wideX ? sideX : sideZ;
+        Vector3 through = wideX ? sideZ : sideX;
+        float thickness = through.magnitude;
+        through.y = 0f;
+        if (through.sqrMagnitude < 0.000001f)
+            return false;
+        through.Normalize();
+
+        float reach = thickness * 0.5f + VentSideProbe;
+        int inside = RoomOf(room.boxes, center - through * reach);
+        int outside = RoomOf(room.boxes, center + through * reach);
+        if (outside == room.fireGroup && inside < 0)
+            through = -through;
+        else if (inside != room.fireGroup || outside >= 0)
+            return false;
+
+        int cell = NearestCellIn(room, center - through * reach, room.fireGroup);
+        if (cell < 0)
+            return false;
+
+        float height = window.TransformVector(new Vector3(0f, bounds.size.y, 0f)).magnitude;
+        vent = new WindowVent
+        {
+            window = window,
+            cell = cell,
+            outward = through,
+            yaw = Quaternion.LookRotation(through).eulerAngles.y,
+            face = center + through * (thickness * 0.5f),
+            width = across.magnitude,
+            height = height,
+            top = center.y + height * 0.5f
+        };
+        return true;
+    }
+
+    /// <summary>The generated room an object is in, or null outside a generated house.</summary>
+    static Transform GeneratedRoom(Transform transform)
+    {
+        for (; transform != null; transform = transform.parent)
+        {
+            if (transform.name.StartsWith(GeneratedRoomPrefix, System.StringComparison.Ordinal))
+                return transform;
+        }
+
+        return null;
+    }
+
+    /// <summary>The room a point is in, or -1 when it is in none, such as outside the house.</summary>
+    static int RoomOf(List<SmokeRoomClipVolumes.Room> boxes, Vector3 point)
+    {
+        for (int i = 0; i < boxes.Count; i++)
+        {
+            SmokeRoomClipVolumes.Room box = boxes[i];
+            Vector3 forward = new Vector3(-box.right.z, 0f, box.right.x);
+            Vector3 offset = point - box.center;
+            if (Mathf.Abs(Vector3.Dot(offset, box.right)) < box.halfSize.x &&
+                Mathf.Abs(Vector3.Dot(offset, forward)) < box.halfSize.z)
+                return box.group;
+        }
+
+        return -1;
+    }
+
+    /// <summary>The open cell of a room nearest a point, across the floor, or -1 when the room has none.</summary>
+    static int NearestCellIn(RoomAir room, Vector3 point, int group)
+    {
+        int nearest = -1;
+        float nearestDistance = float.MaxValue;
+        for (int i = 0; i < room.cells.Length; i++)
+        {
+            if (room.cellGroup[i] != group)
+                continue;
+
+            Vector3 offset = room.cellPoints[i] - point;
+            offset.y = 0f;
+            if (offset.sqrMagnitude >= nearestDistance)
+                continue;
+
+            nearestDistance = offset.sqrMagnitude;
+            nearest = i;
+        }
+
+        return nearest;
+    }
+
+    /// <summary>
+    /// A vent effect at the world origin with no rotation, the way Ignis places
+    /// its own effects, so the graph's local space is world space.
+    /// </summary>
+    VisualEffect CreateVentEffect(VisualEffectAsset asset)
+    {
+        var holder = new GameObject("Window Smoke Vent");
+        holder.transform.SetParent(blockHolder, false);
+        holder.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+        VisualEffect effect = holder.AddComponent<VisualEffect>();
+        effect.visualEffectAsset = asset;
+        return effect;
+    }
+
+    /// <summary>
+    /// Vents the burning room's smoke out of its windows. A window starts once
+    /// the edge of the smoke has reached it and the layer has banked down past
+    /// its top. Smoke leaves through the part of the window the layer covers,
+    /// at most its top half, and more strongly as the layer deepens and the
+    /// fire grows. When the fire goes out, the windows stop over Fade Seconds.
+    /// </summary>
+    void UpdateVents(FireFront front)
+    {
+        if (front.room != null && front.room != front.ventRoom)
+            FindVents(front);
+
+        for (int i = front.vents.Count - 1; i >= 0; i--)
+        {
+            WindowVent vent = front.vents[i];
+            if (vent.window == null || vent.effect == null)
+            {
+                ReleaseVent(vent);
+                front.vents.RemoveAt(i);
+                continue;
+            }
+
+            float target = front.burning && ventThroughWindows ? VentStrength(front, vent) : 0f;
+            float seconds = target > vent.strength ? VentRampSeconds : fadeSeconds;
+            vent.strength = Mathf.MoveTowards(vent.strength, target, Time.deltaTime / Mathf.Max(0.01f, seconds));
+            ApplyVent(vent);
+        }
+    }
+
+    float VentStrength(FireFront front, WindowVent vent)
+    {
+        RoomAir room = front.room;
+        if (room == null || room != front.ventRoom || ArrivalSeconds(room, vent.cell) > front.burnSeconds)
+            return 0f;
+
+        float depth = Mathf.Min(vent.top - LayerBottom(front, vent.cell), vent.height * VentHeightShare);
+        if (depth <= 0f)
+            return 0f;
+
+        vent.depth = depth;
+        return Mathf.Clamp01(depth / ventFullDepth) * Mathf.Lerp(minimumSmokeStrength, 1f, front.flameOutput);
+    }
+
+    /// <summary>
+    /// Puts the vent's thin strip just outside the window, across its top and
+    /// as deep as the smoke layer reaches down it, and launches the smoke
+    /// straight out of it. The effect simulates in world space, so moving the
+    /// strip leaves the smoke already released where it is.
+    /// </summary>
+    void ApplyVent(WindowVent vent)
+    {
+        float strip = Mathf.Max(VentMinStrip, vent.depth);
+        Vector3 center = vent.face + vent.outward * (VentStripDepth * 0.5f);
+        center.y = vent.top - strip * 0.5f;
+        var size = new Vector3(vent.width * VentWidthShare, strip, VentStripDepth);
+
+        VisualEffect effect = vent.effect;
+        Color color = smokeColor * (smokeColorIntensity * ventBrightness);
+        SetVent(effect, VentBoxCenterId, center);
+        SetVent(effect, VentBoxSizeId, size);
+        SetVent(effect, VentRotationId, new Vector3(0f, vent.yaw, 0f));
+        SetVent(effect, VentSpreadCenterId, center);
+        SetVent(effect, VentSpreadRadiusId, size.magnitude * 0.5f + VentSpreadMargin);
+        SetVent(effect, VentLaunchId, vent.outward * ventOutwardSpeed);
+        SetVent(effect, VentLaunchScaleId, 1f);
+        SetVent(effect, VentDragId, ventRise);
+        SetVent(effect, VentTurbulenceId, VentTurbulence);
+        SetVent(effect, VentTurbulenceSpeedId, VentTurbulence);
+        // The graph's smoke lives 2 to 6 seconds times this.
+        SetVent(effect, VentLifetimeId, ventLifetime / 6f);
+        SetVent(effect, VentParticleSizeId, ventParticleSize);
+        SetVent(effect, VentThinDistanceId, VentThinDistance);
+        SetVent(effect, VentCullDistanceId, VentCullDistance);
+        // The plugin's particle multiplier also gates its smoke, so it stays at
+        // one, and the flames and embers the graph also holds stay off.
+        SetVent(effect, VentParticleShareId, 1f);
+        SetVent(effect, VentFlamesId, 0f);
+        SetVent(effect, VentEmbersId, 0f);
+        SetVent(effect, VentEmberBurstsId, 0f);
+        if (effect.HasVector4(VentColorId))
+            effect.SetVector4(VentColorId, new Vector4(color.r, color.g, color.b, 1f));
+        SetVent(effect, VentSmokeRateId, ventSmokeRate * vent.strength);
+        SetVent(effect, VentAlphaId, ventOpacity * vent.strength);
+    }
+
+    static void SetVent(VisualEffect effect, int property, float value)
+    {
+        if (effect.HasFloat(property))
+            effect.SetFloat(property, value);
+    }
+
+    static void SetVent(VisualEffect effect, int property, Vector3 value)
+    {
+        if (effect.HasVector3(property))
+            effect.SetVector3(property, value);
+    }
+
+    static bool VentsQuiet(FireFront front)
+    {
+        for (int i = 0; i < front.vents.Count; i++)
+        {
+            if (front.vents[i].strength > 0f)
+                return false;
+        }
+
+        return true;
+    }
+
+    static void ReleaseVent(WindowVent vent)
+    {
+        if (vent.effect != null)
+            Destroy(vent.effect.gameObject);
+        vent.effect = null;
+    }
+
+    void ReleaseVents(FireFront front)
+    {
+        for (int i = 0; i < front.vents.Count; i++)
+            ReleaseVent(front.vents[i]);
+
+        front.vents.Clear();
+        front.ventRoom = null;
+    }
+
+    VisualEffectAsset WindowVentEffect()
+    {
+        if (windowVentEffect == null && !loadedWindowVentEffect)
+        {
+            loadedWindowVentEffect = true;
+            windowVentEffect = Resources.Load<VisualEffectAsset>(WindowVentResource);
+            if (windowVentEffect == null)
+                Debug.LogWarning("IgnisSmokeDiffusion could not find Resources/" + WindowVentResource + ", so no smoke vents out of the windows. Build it from Tools > Smoke Containment.", this);
+        }
+
+        return windowVentEffect;
     }
 
     GameObject ContainedSmokePrefab()
@@ -2567,6 +2987,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
 
         front.volumes.Clear();
         RestoreEmbeddedSmoke(front);
+        ReleaseVents(front);
         ResetFront(front);
     }
 

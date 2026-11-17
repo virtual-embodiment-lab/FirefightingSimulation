@@ -45,6 +45,30 @@ float3 SmokeWorldUp()
 #endif
 }
 
+// The Quest's budget for smoke right around the viewer, set as a global by
+// QuestPerformanceSettings; all zero (off) anywhere else. A smoke card is
+// meters wide, so every card within a few meters of the eyes covers the whole
+// view, and inside a smoke layer dozens of them stack up on every pixel.
+//   x: a card is drawn at most this many times as wide as its distance from
+//      the viewer, so a close card covers a bounded part of the view. 0 = off.
+//   y: cards closer than this are not drawn at all. 0 = off.
+float4 _SmokeNearBudget;
+
+void SmokeNearBudget(float3 position, inout float size, inout float alpha)
+{
+    if (_SmokeNearBudget.x <= 0.0 && _SmokeNearBudget.y <= 0.0)
+        return;
+
+    float away = length(position - SmokeViewerPosition());
+    if (_SmokeNearBudget.x > 0.0)
+        size = min(size, _SmokeNearBudget.x * away);
+    if (away < _SmokeNearBudget.y)
+    {
+        size = 0.0;
+        alpha = 0.0;
+    }
+}
+
 // Card axes for a particle at position: Z points from the viewer to the card,
 // X runs level with the floor, and Y is as close to the world's up as a card
 // facing the viewer can be. Only a card almost straight above or below the

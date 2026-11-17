@@ -8127,7 +8127,8 @@ MonoBehaviour:
   m_Children:
   - {fileID: 8926484042661616176}
   - {fileID: 8926484042661616178}
-  - {fileID: 8926484042661618237}
+  - {fileID: 8926484042661618241}
+  - {fileID: 8926484042661618239}
   m_UIPosition: {x: 6415, y: 1717}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
@@ -23248,10 +23249,11 @@ MonoBehaviour:
   m_Children:
   - {fileID: 8926484042661618187}
   - {fileID: 8926484042661618190}
-  - {fileID: 8926484042661618235}
+  - {fileID: 8926484042661618237}
   - {fileID: 8926484042661618195}
   - {fileID: 8926484042661618198}
   - {fileID: 8926484042661618201}
+  - {fileID: 8926484042661618235}
   m_UIPosition: {x: 4055, y: 1787}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
@@ -23302,17 +23304,17 @@ MonoBehaviour:
   needsOwnSort: 1
   needsOwnAabbBuffer: 0
   m_Topology:
-    rid: 4951722463200280724
+    rid: 4951722484756906365
   m_Shading:
-    rid: 4951722463200280725
+    rid: 4951722484756906366
   references:
     version: 2
     RefIds:
-    - rid: 4951722463200280724
+    - rid: 4951722484756906365
       type: {class: ParticleTopologyPlanarPrimitive, ns: UnityEditor.VFX, asm: Unity.VisualEffectGraph.Editor}
       data:
         primitiveType: 1
-    - rid: 4951722463200280725
+    - rid: 4951722484756906366
       type: {class: ParticleShadingShaderGraph, ns: UnityEditor.VFX, asm: Unity.VisualEffectGraph.Editor}
       data:
         shaderGraph: {fileID: 4333940904281232215, guid: 56a1ab4ec88815e4887ccd600b181b0b, type: 3}
@@ -24819,12 +24821,12 @@ MonoBehaviour:
   m_ActivationSlot: {fileID: 8926484042661618236}
   m_BlockName: Custom HLSL
   m_HLSLCode: "#include \"Assets/Shaders/SmokeContainment/SmokeCardFacing.hlsl\"\nvoid
-    FaceHeadUpright(inout VFXAttributes attributes)\n{\n    float3 axisX, axisY,
-    axisZ;\n    SmokeCardAxes(attributes.position, axisX, axisY, axisZ);\n    attributes.axisX
-    = axisX;\n    attributes.axisY = axisY;\n    attributes.axisZ = axisZ;\n}\n"
+    KeepNearSmokeCheap(inout VFXAttributes attributes)\n{\n    float size = attributes.size;\n   
+    float alpha = attributes.alpha;\n    SmokeNearBudget(attributes.position, size,
+    alpha);\n    attributes.size = size;\n    attributes.alpha = alpha;\n}\n"
   m_ShaderFile: {fileID: 0}
   m_AvailableFunction:
-    selection: FaceHeadUpright
+    selection: KeepNearSmokeCheap
     selectedIndex: 0
 --- !u!114 &8926484042661618236
 MonoBehaviour:
@@ -24873,7 +24875,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UIIgnoredErrors: []
-  m_Parent: {fileID: 8926484042661616170}
+  m_Parent: {fileID: 8926484042661618186}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
   m_UICollapsed: 0
@@ -24912,6 +24914,136 @@ MonoBehaviour:
   m_MasterSlot: {fileID: 8926484042661618238}
   m_MasterData:
     m_Owner: {fileID: 8926484042661618237}
+    m_Value:
+      m_Type:
+        m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: True
+    m_Space: -1
+  m_Property:
+    name: _vfx_enabled
+    m_serializedType:
+      m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+  m_Direction: 0
+  m_LinkedSlots: []
+--- !u!114 &8926484042661618239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 833c3541f2af4b28b080abc2cd1a804d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIIgnoredErrors: []
+  m_Parent: {fileID: 8926484042661616170}
+  m_Children: []
+  m_UIPosition: {x: 0, y: 0}
+  m_UICollapsed: 0
+  m_UISuperCollapsed: 0
+  m_InputSlots: []
+  m_OutputSlots: []
+  m_Disabled: 0
+  m_ActivationSlot: {fileID: 8926484042661618240}
+  m_BlockName: Custom HLSL
+  m_HLSLCode: "#include \"Assets/Shaders/SmokeContainment/SmokeCardFacing.hlsl\"\nvoid
+    KeepNearSmokeCheap(inout VFXAttributes attributes)\n{\n    float size = attributes.size;\n   
+    float alpha = attributes.alpha;\n    SmokeNearBudget(attributes.position, size,
+    alpha);\n    attributes.size = size;\n    attributes.alpha = alpha;\n}\n"
+  m_ShaderFile: {fileID: 0}
+  m_AvailableFunction:
+    selection: KeepNearSmokeCheap
+    selectedIndex: 0
+--- !u!114 &8926484042661618240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4c11ff25089a324daf359f4b0629b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIIgnoredErrors: []
+  m_Parent: {fileID: 0}
+  m_Children: []
+  m_UIPosition: {x: 0, y: 0}
+  m_UICollapsed: 1
+  m_UISuperCollapsed: 0
+  m_MasterSlot: {fileID: 8926484042661618240}
+  m_MasterData:
+    m_Owner: {fileID: 8926484042661618239}
+    m_Value:
+      m_Type:
+        m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
+      m_SerializableObject: True
+    m_Space: -1
+  m_Property:
+    name: _vfx_enabled
+    m_serializedType:
+      m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+        PublicKeyToken=b77a5c561934e089
+  m_Direction: 0
+  m_LinkedSlots: []
+--- !u!114 &8926484042661618241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 833c3541f2af4b28b080abc2cd1a804d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIIgnoredErrors: []
+  m_Parent: {fileID: 8926484042661616170}
+  m_Children: []
+  m_UIPosition: {x: 0, y: 0}
+  m_UICollapsed: 0
+  m_UISuperCollapsed: 0
+  m_InputSlots: []
+  m_OutputSlots: []
+  m_Disabled: 0
+  m_ActivationSlot: {fileID: 8926484042661618242}
+  m_BlockName: Custom HLSL
+  m_HLSLCode: "#include \"Assets/Shaders/SmokeContainment/SmokeCardFacing.hlsl\"\nvoid
+    FaceHeadUpright(inout VFXAttributes attributes)\n{\n    float3 axisX, axisY,
+    axisZ;\n    SmokeCardAxes(attributes.position, axisX, axisY, axisZ);\n    attributes.axisX
+    = axisX;\n    attributes.axisY = axisY;\n    attributes.axisZ = axisZ;\n}\n"
+  m_ShaderFile: {fileID: 0}
+  m_AvailableFunction:
+    selection: FaceHeadUpright
+    selectedIndex: 0
+--- !u!114 &8926484042661618242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4c11ff25089a324daf359f4b0629b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIIgnoredErrors: []
+  m_Parent: {fileID: 0}
+  m_Children: []
+  m_UIPosition: {x: 0, y: 0}
+  m_UICollapsed: 1
+  m_UISuperCollapsed: 0
+  m_MasterSlot: {fileID: 8926484042661618242}
+  m_MasterData:
+    m_Owner: {fileID: 8926484042661618241}
     m_Value:
       m_Type:
         m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,

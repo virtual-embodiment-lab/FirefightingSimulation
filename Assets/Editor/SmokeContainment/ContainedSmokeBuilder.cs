@@ -37,7 +37,8 @@
 //   In all four, each smoke card faces the point between the eyes, with its
 //   up on the world's up (SmokeCardFacing.hlsl), instead of taking the
 //   camera's up. In the headset, turning or tilting the head leaves the
-//   smoke where it is.
+//   smoke where it is. A last block applies the Quest's budget for smoke
+//   right around the viewer (SmokeNearBudget), which is off elsewhere.
 //
 // Flames (Tools > Smoke Containment > Build Contained Flames):
 //   ContainedFlame.shadergraph      draws an additive flame or ember the same way
@@ -970,6 +971,9 @@ static class ContainedSmokeBuilder
         int replaced = 0;
         foreach (var output in graph.children.OfType<VFXAbstractParticleOutput>().ToList())
         {
+            if (output.children.OfType<Orient>().Any())
+                KeepNearSmokeCheap(output);
+
             foreach (var orient in output.children.OfType<Orient>().ToList())
             {
                 int index = output.GetIndex(orient);
@@ -1000,6 +1004,34 @@ static class ContainedSmokeBuilder
         if (replaced == 0)
             throw new InvalidOperationException("No Orient block to replace with the card facing block.");
         Debug.Log("[ContainedSmoke] Replaced " + replaced + " Orient blocks with " + CardFacingHlslPath);
+    }
+
+    /// <summary>
+    /// Appends a Custom HLSL block, after every other block of the output, that
+    /// applies the Quest's near-viewer smoke budget (SmokeNearBudget in
+    /// SmokeCardFacing.hlsl). It does nothing unless QuestPerformanceSettings
+    /// sets the budget, so the PC look is unchanged.
+    /// </summary>
+    static void KeepNearSmokeCheap(VFXAbstractParticleOutput output)
+    {
+        // VFX Graph treats an attribute as written only where the code assigns
+        // it, as in attributes.size = ...; passed straight to a function, it is
+        // read only and the change is dropped.
+        var budget = ScriptableObject.CreateInstance<UnityEditor.VFX.Block.CustomHLSL>();
+        budget.SetSettingValue("m_HLSLCode",
+            "#include \"" + CardFacingHlslPath + "\"\n" +
+            "void KeepNearSmokeCheap(inout VFXAttributes attributes)\n" +
+            "{\n" +
+            "    float size = attributes.size;\n" +
+            "    float alpha = attributes.alpha;\n" +
+            "    SmokeNearBudget(attributes.position, size, alpha);\n" +
+            "    attributes.size = size;\n" +
+            "    attributes.alpha = alpha;\n" +
+            "}\n");
+        output.AddChild(budget);
+        budget.ResyncSlots(true);
+        if (budget.inputSlots.Count != 0)
+            throw new InvalidOperationException("The near smoke budget block has " + budget.inputSlots.Count + " inputs; expected none.");
     }
 
     static void LinkAttribute(VFXGraph graph, VFXContext context, string attribute, string slotName, Vector2 position)

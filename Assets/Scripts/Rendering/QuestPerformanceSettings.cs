@@ -1,12 +1,23 @@
 using System.Collections.Generic;
 using Ignis;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.XR;
 
 /// <summary>
 /// Applies standalone Quest rendering budgets at startup. Only runs in Android
 /// player builds, so PC / Quest Link sessions keep their current look.
 /// </summary>
+/// <remarks>
+/// Every scene gets one: on Android it installs itself when a scene has none,
+/// so a newly generated scene cannot lose it. An installed one leaves the fire
+/// alone, since IgnisSmokeDiffusion already budgets the flames it contains;
+/// only one placed in a scene by hand applies the fire budget below.
+///
+/// Launching the app with the intent extra perf (log or probe) also starts
+/// QuestPerfProbe, which writes frame timings to logcat.
+/// </remarks>
 [DisallowMultipleComponent]
 public sealed class QuestPerformanceSettings : MonoBehaviour
 {
@@ -15,15 +26,43 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float foveationLevel = 0.5f;
 
     [Header("OAVA Fire VFX")]
+    [Tooltip("Switches the fire to the budget below. Off on the copy installed automatically.")]
+    [SerializeField] private bool applyFireBudget = true;
     [SerializeField] private FlameEngine flameEngine;
-
     [Tooltip("Lively is OAVA's lightweight textured flame (~6.6k particles per fire vs ~31.6k for Wild).")]
     [SerializeField] private FlameEngine.FireVFXVariant fireVariant = FlameEngine.FireVFXVariant.Lively;
-
     [SerializeField, Range(0.1f, 1f)] private float fireParticleMultiplier = 0.6f;
     [SerializeField, Min(5f)] private float flameCullDistance = 40f;
 
+    [Header("Smoke And Flames Up Close")]
+    [Tooltip("A smoke card is drawn at most this many times as wide as its distance from the eyes, so a card right at the face covers part of the view instead of all of it. Inside a smoke layer dozens of such cards stack on every pixel. 0 leaves the smoke as on PC.")]
+    [SerializeField, Min(0f)] private float smokeNearCardWidth;
+    [Tooltip("Smoke cards closer to the eyes than this, in meters, are not drawn. 0 draws them all.")]
+    [SerializeField, Min(0f)] private float smokeNearSkip;
+    [Tooltip("Share of the contained Wild flame particles on Quest, in place of IgnisSmokeDiffusion's Flame Particles. 0 keeps that value.")]
+    [SerializeField, Range(0f, 1f)] private float questFlameParticles;
+    [Tooltip("Flame brightness on Quest, so fewer flames look as bright, in place of IgnisSmokeDiffusion's Flame Brightness. 0 keeps that value.")]
+    [SerializeField, Range(0f, 3f)] private float questFlameBrightness;
+
+    [Header("Post Processing")]
+    [Tooltip("Turns Bloom off in the scene's volumes. Without HDR almost nothing is bright enough to bloom, but its blur passes still cost several full-screen draws.")]
+    [SerializeField] private bool disableBloom;
+
+    private static readonly int SmokeNearBudgetId = Shader.PropertyToID("_SmokeNearBudget");
     private readonly List<XRDisplaySubsystem> displays = new();
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void InstallIfMissing()
+    {
+        if (Application.platform != RuntimePlatform.Android || FindAnyObjectByType<QuestPerformanceSettings>() != null)
+            return;
+
+        // Inactive while it is set up, so Awake sees the fire budget turned off.
+        var host = new GameObject("Quest Performance Settings");
+        host.SetActive(false);
+        host.AddComponent<QuestPerformanceSettings>().applyFireBudget = false;
+        host.SetActive(true);
+    }
 
     private void Awake()
     {
@@ -33,7 +72,14 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
             return;
         }
 
-        ApplyFireBudget();
+        if (applyFireBudget)
+            ApplyFireBudget();
+        ApplyCloseUpBudget();
+        if (disableBloom)
+            DisableBloom();
+        BudgetThermalCameras();
+        DisableEmptyAnimators();
+        QuestPerfProbe.StartIfRequested(gameObject);
     }
 
     private void Update()
@@ -52,6 +98,95 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
         engine.fireVFXVariant = fireVariant;
         engine.globalFireVFXMultiplier = fireParticleMultiplier;
         engine.flameLodCullDistance = flameCullDistance;
+    }
+
+    /// <summary>
+    /// Limits what smoke and flames cost right in front of the eyes, where they
+    /// cover the whole view: the smoke effects read the near budget as a global
+    /// (SmokeNearBudget in SmokeCardFacing.hlsl), and the contained flames take
+    /// their particle share and brightness from IgnisSmokeDiffusion.
+    /// </summary>
+    private void ApplyCloseUpBudget()
+    {
+        Shader.SetGlobalVector(SmokeNearBudgetId, new Vector4(smokeNearCardWidth, smokeNearSkip, 0f, 0f));
+
+        if (questFlameParticles <= 0f && questFlameBrightness <= 0f)
+            return;
+
+        foreach (IgnisSmokeDiffusion diffusion in FindObjectsByType<IgnisSmokeDiffusion>(FindObjectsSortMode.None))
+        {
+            if (questFlameParticles > 0f)
+                diffusion.flameParticles = questFlameParticles;
+            if (questFlameBrightness > 0f)
+                diffusion.flameBrightness = questFlameBrightness;
+        }
+    }
+
+    private static void DisableBloom()
+    {
+        foreach (Volume volume in FindObjectsByType<Volume>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            VolumeProfile profile = volume.HasInstantiatedProfile() ? volume.profile : volume.sharedProfile;
+            if (profile != null && profile.TryGet(out Bloom bloom))
+                bloom.active = false;
+        }
+    }
+
+    /// <summary>
+    /// Gives every TIC camera a TicCameraBudget. Without one it renders the
+    /// whole scene again every frame, whether or not its screen is in view.
+    /// </summary>
+    private static void BudgetThermalCameras()
+    {
+        Renderer[] renderers = null;
+        foreach (ThermalTemperatureDisplay display in FindObjectsByType<ThermalTemperatureDisplay>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            Camera camera = display.GetComponent<Camera>();
+            if (camera == null || camera.GetComponent<TicCameraBudget>() != null)
+                continue;
+
+            renderers ??= FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            camera.gameObject.AddComponent<TicCameraBudget>().Screen = FindScreen(renderers, camera.targetTexture);
+        }
+    }
+
+    /// <summary>The renderer that shows a render texture, if any.</summary>
+    private static Renderer FindScreen(Renderer[] renderers, Texture shown)
+    {
+        if (shown == null)
+            return null;
+
+        var ids = new List<int>();
+        foreach (Renderer renderer in renderers)
+        {
+            foreach (Material material in renderer.sharedMaterials)
+            {
+                if (material == null)
+                    continue;
+
+                material.GetTexturePropertyNameIDs(ids);
+                foreach (int id in ids)
+                {
+                    if (material.GetTexture(id) == shown)
+                        return renderer;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Imported furniture models carry Animators with no controller. They do
+    /// nothing but still cost an update each frame.
+    /// </summary>
+    private static void DisableEmptyAnimators()
+    {
+        foreach (Animator animator in FindObjectsByType<Animator>(FindObjectsSortMode.None))
+        {
+            if (animator.runtimeAnimatorController == null)
+                animator.enabled = false;
+        }
     }
 
     private bool TryApplyFoveation()

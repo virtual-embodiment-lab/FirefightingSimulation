@@ -34,8 +34,17 @@ public sealed class HazardTemperature : MonoBehaviour
     private static readonly int TemperatureId = Shader.PropertyToID("_Temperature");
     private static readonly int TemperatureCelsiusId = Shader.PropertyToID("_TemperatureCelsius");
     private const float CoolingRateScale = 0.09f;
+    // A renderer with no property block shows the thermal shaders' defaults,
+    // which are ambient: no heat and 21 C.
+    private const float AmbientCelsius = 21f;
+    // Smallest change in heat worth writing to the renderers again.
+    private const float TemperatureStep = 0.002f;
 
     private MaterialPropertyBlock propertyBlock;
+    // The heat the renderers show now, so unchanged heat is not written again.
+    private float shownTemperature;
+    private float shownCelsius = AmbientCelsius;
+    private bool forceApply;
     private FireProfileController fireProfile;
     private FlammableObject flammableObject;
     private Renderer[] renderers;
@@ -72,6 +81,14 @@ public sealed class HazardTemperature : MonoBehaviour
     private void Update()
     {
         bool burning = IsBurning;
+
+        // Most hazards sit cold the whole session: nothing to heat, cool or show.
+        if (!burning && temperature <= 0f && radiantTarget <= 0f)
+        {
+            directHeatSource = false;
+            hasRadiantHeatOrigin = false;
+            return;
+        }
         if (burning)
             directHeatSource = true;
 
@@ -95,6 +112,8 @@ public sealed class HazardTemperature : MonoBehaviour
         fireProfile = GetComponent<FireProfileController>();
         flammableObject = GetComponent<FlammableObject>();
         renderers = GetComponentsInChildren<Renderer>(true);
+        // Renderers found now may lack the block the others got while hot.
+        forceApply = shownTemperature > 0f;
         CacheThermalBounds();
     }
 
@@ -144,11 +163,28 @@ public sealed class HazardTemperature : MonoBehaviour
         return 1f;
     }
 
+    /// <summary>
+    /// Shows the heat on the TIC by writing it to every renderer's property
+    /// block, only when it changed. Each write is a native call per renderer,
+    /// and a renderer with a property block drops out of URP's SRP Batcher, so
+    /// a cold object never gets one: the thermal shaders already show ambient.
+    /// </summary>
     private void ApplyTemperature()
     {
         if (renderers == null)
             return;
 
+        float shown = Mathf.Clamp01(temperature);
+        float celsius = EstimatedCelsius;
+        bool reachedEnd = shown != shownTemperature && (shown <= 0f || shown >= 1f);
+        if (!forceApply && !reachedEnd &&
+            Mathf.Abs(shown - shownTemperature) < TemperatureStep &&
+            Mathf.Abs(celsius - shownCelsius) < 0.5f)
+            return;
+
+        forceApply = false;
+        shownTemperature = shown;
+        shownCelsius = celsius;
         propertyBlock ??= new MaterialPropertyBlock();
         foreach (Renderer targetRenderer in renderers)
         {
@@ -156,8 +192,8 @@ public sealed class HazardTemperature : MonoBehaviour
                 continue;
 
             targetRenderer.GetPropertyBlock(propertyBlock);
-            propertyBlock.SetFloat(TemperatureId, Mathf.Clamp01(temperature));
-            propertyBlock.SetFloat(TemperatureCelsiusId, EstimatedCelsius);
+            propertyBlock.SetFloat(TemperatureId, shown);
+            propertyBlock.SetFloat(TemperatureCelsiusId, celsius);
             targetRenderer.SetPropertyBlock(propertyBlock);
         }
     }

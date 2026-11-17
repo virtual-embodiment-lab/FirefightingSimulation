@@ -20,6 +20,12 @@ public sealed class TicCameraBudget : MonoBehaviour
     private Camera ticCamera;
     private int frameInterval = 1;
 
+    /// <summary>The TIC display, for a budget added at runtime (QuestPerformanceSettings).</summary>
+    public Renderer Screen
+    {
+        set => screen = value;
+    }
+
     private void Awake()
     {
         ticCamera = GetComponent<Camera>();

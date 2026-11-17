@@ -51,12 +51,17 @@ public static class HandGrip
     /// <summary>Fist or pinch. Pass the previous result so a closed hand stays closed until it clearly loosens.</summary>
     public static bool IsClosed(XRHand hand, bool wasClosed)
     {
-        float fist = wasClosed ? k_FistExit : k_FistEnter;
         float pinch = wasClosed ? k_PinchExit : k_PinchEnter;
-        return (Straightness(hand, XRHandJointID.IndexProximal, XRHandJointID.IndexIntermediate, XRHandJointID.IndexDistal, XRHandJointID.IndexTip) <= fist &&
-                Straightness(hand, XRHandJointID.MiddleProximal, XRHandJointID.MiddleIntermediate, XRHandJointID.MiddleDistal, XRHandJointID.MiddleTip) <= fist &&
-                Straightness(hand, XRHandJointID.RingProximal, XRHandJointID.RingIntermediate, XRHandJointID.RingDistal, XRHandJointID.RingTip) <= fist) ||
-               ThumbToIndex(hand) <= pinch;
+        return IsFist(hand, wasClosed) || ThumbToIndex(hand) <= pinch;
+    }
+
+    /// <summary>Fist only (index, middle and ring curled); a pinch does not count. Pass the previous result for hysteresis.</summary>
+    public static bool IsFist(XRHand hand, bool wasFist)
+    {
+        float fist = wasFist ? k_FistExit : k_FistEnter;
+        return Straightness(hand, XRHandJointID.IndexProximal, XRHandJointID.IndexIntermediate, XRHandJointID.IndexDistal, XRHandJointID.IndexTip) <= fist &&
+               Straightness(hand, XRHandJointID.MiddleProximal, XRHandJointID.MiddleIntermediate, XRHandJointID.MiddleDistal, XRHandJointID.MiddleTip) <= fist &&
+               Straightness(hand, XRHandJointID.RingProximal, XRHandJointID.RingIntermediate, XRHandJointID.RingDistal, XRHandJointID.RingTip) <= fist;
     }
 
     /// <summary>A loose pinch or a loose grab. Pass the previous result so it stays closed until the hand clearly loosens.</summary>

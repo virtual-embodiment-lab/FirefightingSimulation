@@ -19,7 +19,7 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 ///    <see cref="HandTeleportGesture"/>.
 ///  - <see cref="Mode.WalkingStick"/>: only the <see cref="ContinuousMoveProvider"/> stays on,
 ///    driven by <see cref="HandWalkingStickLocomotion"/> (swing a fist to walk), plus
-///    <see cref="HandTrackingGrabMoveProvider"/> (pinch and pull while kneeling/crawling). Every teleport
+///    <see cref="HandTrackingGrabMoveProvider"/> (grab and pull with one hand while kneeling/crawling). Every teleport
 ///    ray is disabled.
 ///
 /// Components are disabled rather than GameObjects deactivated, because the starter rig's

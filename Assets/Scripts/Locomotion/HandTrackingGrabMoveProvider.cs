@@ -6,38 +6,37 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 
 /// <summary>
 /// Hand-tracking equivalent of the XR Interaction Toolkit Grab Move Provider.
-/// A pinch anchors the selected hand in the world while the XR Origin moves
-/// opposite the hand motion. When both hands pinch, their midpoint drives the
-/// translation.
+/// A grab (a closed fist, see <see cref="HandGrip.IsFist"/>; a pinch does not count)
+/// anchors the hand in the world while the XR Origin moves opposite the hand motion.
+///
+/// Only one hand drives at a time. The first hand to grab keeps control until it opens;
+/// the other hand is ignored meanwhile. If the other hand is still grabbing when the first
+/// lets go, it takes over from where it is, so crawling hand over hand never jumps.
+///
 /// Adapted from feature/grab-to-move for low-posture locomotion. The companion
 /// walking-stick component owns posture selection; its move provider supplies gravity.
+/// Settings are editable once this component is on the Walking Stick object in the scene;
+/// otherwise the walking stick adds it at runtime with these defaults.
 /// </summary>
 [AddComponentMenu("XR/Locomotion/Hand Tracking Grab Move Provider", 11)]
 public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
 {
+    const int k_NoHand = 0;
+    const int k_LeftHand = 1;
+    const int k_RightHand = 2;
+
+    [Header("Speed")]
     [SerializeField]
-    [Tooltip("The ratio of actual movement distance to hand movement distance.")]
+    [Tooltip("Crawl speed: how far the player moves per meter the grabbing hand is pulled. Higher is faster.")]
     [Min(0f)]
     float m_MoveFactor = 4.5f;
 
     [SerializeField]
-    [Tooltip("Thumb-to-index distance required to begin a pinch, in meters.")]
-    [Min(0.005f)]
-    float m_PinchStartDistance = 0.035f;
+    [Tooltip("Maximum player movement that can be applied in one frame, in meters. Set to zero for no limit.")]
+    [Min(0f)]
+    float m_MaxMovementPerFrame = 0.4f;
 
-    [SerializeField]
-    [Tooltip("Thumb-to-index distance at which a pinch is released, in meters.")]
-    [Min(0.005f)]
-    float m_PinchReleaseDistance = 0.05f;
-
-    [SerializeField]
-    [Tooltip("When enabled, both pinching hands drive movement from their midpoint.")]
-    bool m_UseBothHands = true;
-
-    [SerializeField]
-    [Tooltip("Allows this provider to be disabled without removing the hand-tracking setup.")]
-    bool m_CanMove = true;
-
+    [Header("Feel")]
     [SerializeField]
     [Tooltip("Tracking movement smaller than this distance is ignored to prevent hand jitter from moving the player.")]
     [Min(0f)]
@@ -49,21 +48,21 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
     float m_HandPositionSmoothing = 0.02f;
 
     [SerializeField]
-    [Tooltip("Maximum player movement that can be applied in one frame. Set to zero for no limit.")]
-    [Min(0f)]
-    float m_MaxMovementPerFrame = 0.4f;
-
-    [SerializeField]
     [Tooltip("Ignore movement that would move the player backward relative to the headset. Disable if intentional backward locomotion is needed.")]
     bool m_PreventBackwardMovement = false;
+
+    [SerializeField]
+    [Tooltip("Allows this provider to be disabled without removing the hand-tracking setup.")]
+    bool m_CanMove = true;
 
     readonly List<XRHandSubsystem> m_HandSubsystems = new List<XRHandSubsystem>();
     readonly List<XRBaseInteractor> m_HandInteractors = new List<XRBaseInteractor>();
 
     XRHandSubsystem m_HandSubsystem;
     Transform m_InteractorSearchRoot;
-    bool m_LeftPinching;
-    bool m_RightPinching;
+    bool m_LeftGrabbing;
+    bool m_RightGrabbing;
+    int m_ActiveHand;
     bool m_HasPreviousPosition;
     int m_PreviousActiveHandMask;
     Vector3 m_PreviousHandPosition;
@@ -109,8 +108,6 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
     void OnValidate()
     {
         m_MoveFactor = Mathf.Max(0f, m_MoveFactor);
-        m_PinchStartDistance = Mathf.Max(0.005f, m_PinchStartDistance);
-        m_PinchReleaseDistance = Mathf.Max(m_PinchStartDistance, m_PinchReleaseDistance);
         m_HandMovementDeadzone = Mathf.Max(0f, m_HandMovementDeadzone);
         m_HandPositionSmoothing = Mathf.Max(0f, m_HandPositionSmoothing);
         m_MaxMovementPerFrame = Mathf.Max(0f, m_MaxMovementPerFrame);
@@ -131,49 +128,39 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
 
         RefreshHandInteractors(xrOrigin.transform);
 
-        var leftTracked = TryGetAvailablePinchingHandPose(
+        var leftGrabbing = TryGetAvailableGrabbingHandPose(
             subsystem.leftHand,
             InteractorHandedness.Left,
-            ref m_LeftPinching,
+            ref m_LeftGrabbing,
             out var leftPosition);
-        var rightTracked = TryGetAvailablePinchingHandPose(
+        var rightGrabbing = TryGetAvailableGrabbingHandPose(
             subsystem.rightHand,
             InteractorHandedness.Right,
-            ref m_RightPinching,
+            ref m_RightGrabbing,
             out var rightPosition);
 
-        var activeHandMask = 0;
-        Vector3 currentHandPosition;
+        // One hand at a time: the hand in control keeps it until it lets go. Only then can
+        // the other hand (if it is grabbing) take over; both hands never drive together.
+        if ((m_ActiveHand == k_LeftHand && !leftGrabbing) || (m_ActiveHand == k_RightHand && !rightGrabbing))
+            m_ActiveHand = k_NoHand;
+        if (m_ActiveHand == k_NoHand)
+            m_ActiveHand = leftGrabbing ? k_LeftHand : rightGrabbing ? k_RightHand : k_NoHand;
 
-        if (m_UseBothHands && leftTracked && rightTracked)
-        {
-            activeHandMask = 3;
-            currentHandPosition = (leftPosition + rightPosition) * 0.5f;
-        }
-        else if (leftTracked)
-        {
-            activeHandMask = 1;
-            currentHandPosition = leftPosition;
-        }
-        else if (rightTracked)
-        {
-            activeHandMask = 2;
-            currentHandPosition = rightPosition;
-        }
-        else
+        if (m_ActiveHand == k_NoHand)
         {
             ResetMovementState();
             return Vector3.zero;
         }
 
-        return ComputePull(currentHandPosition, activeHandMask, xrOrigin.transform, Time.deltaTime, out attemptingMove);
+        var currentHandPosition = m_ActiveHand == k_LeftHand ? leftPosition : rightPosition;
+        return ComputePull(currentHandPosition, m_ActiveHand, xrOrigin.transform, Time.deltaTime, out attemptingMove);
     }
 
     Vector3 ComputePull(Vector3 currentHandPosition, int activeHandMask, Transform origin, float deltaTime, out bool attemptingMove)
     {
         attemptingMove = false;
-        // Re-anchor when a pinch begins or when the active hand combination changes.
-        // This prevents a jump if one hand is lost while both hands are pinching.
+        // Re-anchor when a grab begins or when control passes to the other hand,
+        // so the hand taking over starts from where it is instead of jumping.
         if (!m_HasPreviousPosition || activeHandMask != m_PreviousActiveHandMask)
         {
             m_HasPreviousPosition = true;
@@ -265,23 +252,23 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
         m_HandInteractors.AddRange(xrOrigin.GetComponentsInChildren<XRBaseInteractor>(true));
     }
 
-    bool TryGetAvailablePinchingHandPose(
+    bool TryGetAvailableGrabbingHandPose(
         XRHand hand,
         InteractorHandedness handedness,
-        ref bool wasPinching,
+        ref bool wasGrabbing,
         out Vector3 handPosition)
     {
         var handSide = handedness == InteractorHandedness.Left ? Handedness.Left : Handedness.Right;
         if (HandHasSelection(handedness) || HandSprayGesture.IsSprayingWith(handSide))
         {
-            // A pinch used to hold an object must not also act as a locomotion grab.
+            // A hand holding an object or spraying must not also act as a locomotion grab.
             // Clear the anchor so releasing the object cannot reuse a stale pull position.
-            wasPinching = false;
+            wasGrabbing = false;
             handPosition = default;
             return false;
         }
 
-        return TryGetPinchingHandPose(hand, ref wasPinching, out handPosition);
+        return TryGetGrabbingHandPose(hand, ref wasGrabbing, out handPosition);
     }
 
     bool HandHasSelection(InteractorHandedness handedness)
@@ -296,30 +283,21 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
         return false;
     }
 
-    bool TryGetPinchingHandPose(XRHand hand, ref bool wasPinching, out Vector3 handPosition)
+    static bool TryGetGrabbingHandPose(XRHand hand, ref bool wasGrabbing, out Vector3 handPosition)
     {
         handPosition = default;
         if (!hand.isTracked)
         {
-            wasPinching = false;
+            wasGrabbing = false;
             return false;
         }
 
-        var thumbTip = hand.GetJoint(XRHandJointID.ThumbTip);
-        var indexTip = hand.GetJoint(XRHandJointID.IndexTip);
-        if (!thumbTip.TryGetPose(out var thumbPose) || !indexTip.TryGetPose(out var indexPose))
-        {
-            wasPinching = false;
-            return false;
-        }
-
-        var pinchDistance = Vector3.Distance(thumbPose.position, indexPose.position);
-        var threshold = wasPinching ? m_PinchReleaseDistance : m_PinchStartDistance;
-        wasPinching = pinchDistance <= threshold;
-        if (!wasPinching)
+        // A closed fist, shared with the walking stick and holster so "grab" means the same everywhere.
+        wasGrabbing = HandGrip.IsFist(hand, wasGrabbing);
+        if (!wasGrabbing)
             return false;
 
-        // Palm movement is steadier than the two fingertips after a pinch begins.
+        // The palm moves steadily with the whole fist; fall back to the wrist.
         if (hand.GetJoint(XRHandJointID.Palm).TryGetPose(out var palmPose))
         {
             handPosition = palmPose.position;
@@ -332,14 +310,15 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
             return true;
         }
 
-        handPosition = (thumbPose.position + indexPose.position) * 0.5f;
-        return true;
+        wasGrabbing = false;
+        return false;
     }
 
     internal void ResetMovementState()
     {
-        m_LeftPinching = false;
-        m_RightPinching = false;
+        m_LeftGrabbing = false;
+        m_RightGrabbing = false;
+        m_ActiveHand = k_NoHand;
         m_HasPreviousPosition = false;
         m_PreviousActiveHandMask = 0;
         m_PreviousHandPosition = default;

@@ -15,7 +15,8 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 ///  Move Speed), in the direction the head faces. One swinging fist is enough. A hand that is holding something,
 ///  or spraying the extinguisher (<see cref="HandSprayGesture"/>), never walks. While the extinguisher is held, a
 ///  fist with the free hand sprays, so the free hand walks only until it first opens after the extinguisher is taken.
-///  Crawl: below Crawl Height, pinch and pull either hand to move opposite the pull. Stand up to walk again.
+///  Crawl: below Crawl Height, grab (make a fist) and pull to move opposite the pull, one hand at a time
+///  (<see cref="HandTrackingGrabMoveProvider"/>). Stand up to walk again.
 ///
 ///  Turn: physically turn the body. There is deliberately no turn gesture: an earlier thumbs-up tilt
 ///  gesture misfired while the thumb was still tucking into the fist and spun the view, which caused
@@ -46,7 +47,7 @@ public class HandWalkingStickLocomotion : MonoBehaviour
     [SerializeField] private Transform trackingSpace;
 
     [Header("Crawling (head height above the rig's floor, meters)")]
-    [Tooltip("Below this height, replace swing walking with pinch-and-pull movement. Matches the avatar's kneeling threshold.")]
+    [Tooltip("Below this height, replace swing walking with grab-and-pull movement. Matches the avatar's kneeling threshold.")]
     [SerializeField] private float crawlHeight = 1.0f;
     [Tooltip("Stand above this height to resume swing walking. The gap prevents flickering between modes.")]
     [SerializeField] private float standHeight = 1.1f;
@@ -100,7 +101,7 @@ public class HandWalkingStickLocomotion : MonoBehaviour
     /// <summary>Walking input, 0 to 1 of the move provider's Move Speed.</summary>
     public float MoveInput => _move;
 
-    /// <summary>Whether low posture currently selects pinch-and-pull instead of swing walking.</summary>
+    /// <summary>Whether low posture currently selects grab-and-pull instead of swing walking.</summary>
     public bool IsCrawling { get; private set; }
 
     private void Awake()

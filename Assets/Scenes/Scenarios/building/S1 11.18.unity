@@ -61841,7 +61841,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   growthSeconds: 30
-  fadeSeconds: 8
+  fadeSeconds: 20
+  lingeringFadeSeconds: 180
   fadeDistanceDelay: 1.5
   keepPlumeAtFire: 1
   plumeOpacity: 2.5

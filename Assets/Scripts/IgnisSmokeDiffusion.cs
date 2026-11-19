@@ -261,6 +261,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Min(0f)]
     public float fadeSeconds = 8f;
 
+    [Tooltip("Seconds the lingering smoke takes to fade away after its fire goes out: it thins out the whole time and is gone at the end. 0 fades it over Fade Seconds, like the plume.")]
+    [Min(0f)]
+    public float lingeringFadeSeconds = 0f;
+
     [Tooltip("Extra fade delay, in seconds, given to the volume that has traveled farthest.")]
     [Min(0f)]
     public float fadeDistanceDelay = 1.5f;
@@ -1258,8 +1262,12 @@ public class IgnisSmokeDiffusion : MonoBehaviour
                 }
                 else
                 {
-                    float progress = fadeSeconds <= 0f ? 1f : Mathf.Clamp01(elapsed / fadeSeconds);
-                    volume.alpha = DispersingAlpha(volume.fadeStartAlpha, progress);
+                    bool slow = volume.lingers && lingeringFadeSeconds > 0f;
+                    float seconds = slow ? lingeringFadeSeconds : fadeSeconds;
+                    float progress = seconds <= 0f ? 1f : Mathf.Clamp01(elapsed / seconds);
+                    volume.alpha = slow
+                        ? LingeringFadeAlpha(volume.fadeStartAlpha, progress)
+                        : DispersingAlpha(volume.fadeStartAlpha, progress);
                     if (progress >= 1f)
                     {
                         ReleaseVolume(volume);
@@ -1623,6 +1631,18 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         volume.smoke.smokeAlpha = Mathf.Max(0f, volume.alpha) * opacity;
         volume.smoke.smokeColorIntensity = volume.authoredColorIntensity;
         volume.smoke.RefreshSmokeAppearance();
+    }
+
+    /// <summary>
+    /// The lingering smoke's slow fade after the fire is out: it falls with the
+    /// square of the time left, so it thins quickly at first and then lingers
+    /// as a faint haze. The room looks clear about two thirds of the way in;
+    /// a straight line would keep it thick for longer.
+    /// </summary>
+    static float LingeringFadeAlpha(float startingAlpha, float progress)
+    {
+        float left = 1f - Mathf.Clamp01(progress);
+        return Mathf.Max(0f, startingAlpha) * left * left;
     }
 
     static float DispersingAlpha(float startingAlpha, float progress)

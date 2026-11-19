@@ -287,6 +287,22 @@ slower", and be "a little thinner" away from the fire, building up gradually.
   1.0 * 0.38 = 0.38 m/s, was 0.75 * 0.6 = 0.45).
 Build 8 has it; not measured on the headset.
 
+## Session 2, part 5: smoke lingers after the fire goes out
+
+The user (2026-11-19): the smoke "pretty much fades away instantly" once the
+fire is out; it should linger and fade slowly, "gone after 3 minutes", not
+necessarily realistic.
+- New `lingeringFadeSeconds` (0 = old behavior): the lingering room smoke
+  fades over this many seconds instead of `fadeSeconds`, along
+  `LingeringFadeAlpha` (alpha times the square of the time left). The plume
+  and window vents still use `fadeSeconds`.
+- S1 11.18: lingeringFadeSeconds 180, fadeSeconds 8 -> 20 (plume and vents).
+- Editor test: at +41 s the room was still thick and the plume gone; at
+  +117 s nearly clear. A linear curve was tried to stretch it closer to
+  3 minutes, but the user had watched the square curve and said it "was
+  fading fine. doesn't have to be exactly 3 minutes", so the square stays.
+- Fade only, no change to the burning look; no APK built for it yet.
+
 ## Next steps
 
 At the stove the frame was ~35 FPS before part 3; the fire adds about 10 ms of room

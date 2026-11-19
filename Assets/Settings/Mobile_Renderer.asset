@@ -24,8 +24,9 @@ MonoBehaviour:
     probeSamplingDebugMesh: {fileID: 0}
     probeSamplingDebugTexture: {fileID: 0}
     probeVolumeBlendStatesCS: {fileID: 0}
-  m_RendererFeatures: []
-  m_RendererFeatureMap: 
+  m_RendererFeatures:
+  - {fileID: 5660036335119661574}
+  m_RendererFeatureMap: 067a9c020f7d8c4e
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 0}
@@ -35,7 +36,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294963199
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -51,3 +52,24 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &5660036335119661574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00f1d3babaa154842bea76593cb27612, type: 3}
+  m_Name: LowResSmoke
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  smokeLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  farSceneryLayer:
+    serializedVersion: 2
+    m_Bits: 16384
+  resolutionScale: 0.35
+  compositeShader: {fileID: 4800000, guid: ff10fe625fdf80d41af152c21c0ebf66, type: 3}

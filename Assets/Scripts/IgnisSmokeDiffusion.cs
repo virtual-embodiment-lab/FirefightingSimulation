@@ -276,6 +276,10 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Tooltip("Smoke effect for the plume over the fire. Leave empty to use Resources/Smoke/Only_smoke_plume.")]
     public GameObject plumeSmokePrefab;
 
+    [Tooltip("Size of the plume's particles, as a multiple of Smoke Particle Size. Up close every plume particle covers much of the view, so the GPU time grows with the square of this. Smaller reads as a narrower, more defined column. QuestPerformanceSettings lowers it on Quest. (The plume always runs full: even a fifth of its smoke rate still fills its 250 particles, so size is the lever.)")]
+    [Range(0.2f, 1f)]
+    public float plumeParticleSize = 1f;
+
     [Tooltip("The drifting volumes leave smoke behind them that lingers where it was put, instead of churning out new smoke all the time. A volume only adds smoke where the air does not hold enough yet, so the rooms fill evenly. Needs Contain Smoke. Off, every volume churns like the plume.")]
     public bool lingeringSmoke = true;
 
@@ -866,6 +870,9 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         smoke.name = "IgnisSmoke_" + front.fire.name + "_" + front.volumes.Count + (plume ? "_Plume" : "");
         smoke.gameObject.SetActive(true);
         PrepareSmokeObject(smoke, plume, lingers);
+        // Ignis passes this to the effect when the volume ignites, after this.
+        if (plume)
+            smoke.smokeParticleSize *= plumeParticleSize;
 
         float authoredAlpha = Mathf.Max(0f, smoke.smokeAlpha);
         float authoredIntensity = Mathf.Max(0f, smoke.smokeColorIntensity);
@@ -889,6 +896,30 @@ public class IgnisSmokeDiffusion : MonoBehaviour
             lingers = lingers,
             spreads = spreads
         });
+    }
+
+    /// <summary>
+    /// Changes Plume Particle Size, for the plumes already burning too. Their
+    /// particles take the new size as they are replaced, within seconds.
+    /// </summary>
+    public void SetPlumeParticleSize(float particleSize)
+    {
+        particleSize = Mathf.Clamp(particleSize, 0.2f, 1f);
+        for (int f = 0; f < fronts.Count; f++)
+        {
+            List<SmokeVolume> volumes = fronts[f].volumes;
+            for (int i = 0; i < volumes.Count; i++)
+            {
+                FlammableObject smoke = volumes[i].smoke;
+                if (!volumes[i].plume || smoke == null)
+                    continue;
+
+                smoke.smokeParticleSize = smoke.smokeParticleSize / plumeParticleSize * particleSize;
+                smoke.SetFireVFXFloat("SmokeParticleSize", smoke.smokeParticleSize);
+            }
+        }
+
+        plumeParticleSize = particleSize;
     }
 
     /// <summary>Whether the next lingering volume is one of the Spreading Volumes, so they come evenly spaced.</summary>

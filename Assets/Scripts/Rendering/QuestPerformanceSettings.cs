@@ -43,11 +43,22 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float questFlameParticles;
     [Tooltip("Flame brightness on Quest, so fewer flames look as bright, in place of IgnisSmokeDiffusion's Flame Brightness. 0 keeps that value.")]
     [SerializeField, Range(0f, 3f)] private float questFlameBrightness;
+    [Tooltip("Size of the plume's particles on Quest, in place of IgnisSmokeDiffusion's Plume Particle Size: a narrower, more defined column over the fire that costs far less up close. 0 keeps that value.")]
+    [SerializeField, Range(0f, 1f)] private float questPlumeParticleSize = 0.4f;
+
+    [Header("Smoke Resolution")]
+    [Tooltip("Draws the house smoke at a lower resolution than the rest of the frame (LowResSmokeFeature on the Quest renderer), so up close it fills far fewer pixels. Soft smoke looks nearly the same.")]
+    [SerializeField] private bool lowResSmoke = true;
+    [Tooltip("Width and height of the smoke as a share of the frame's. 0 keeps the renderer feature's own setting.")]
+    [SerializeField, Range(0f, 1f)] private float smokeResolution;
+    [Tooltip("Scene objects, by name, whose renderers move to the FarScenery layer, which the low-resolution smoke's depth-only copy of the scene leaves out. Only scenery that can never stand in front of the smoke: the skyline. Not the neighbor houses, which can hide the smoke venting from a window. Objects with a collider are left alone.")]
+    [SerializeField] private string[] farSceneryRoots = { "Silhouettes" };
 
     [Header("Post Processing")]
     [Tooltip("Turns Bloom off in the scene's volumes. Without HDR almost nothing is bright enough to bloom, but its blur passes still cost several full-screen draws.")]
     [SerializeField] private bool disableBloom;
 
+    private const string FarSceneryLayer = "FarScenery";
     private static readonly int SmokeNearBudgetId = Shader.PropertyToID("_SmokeNearBudget");
     private readonly List<XRDisplaySubsystem> displays = new();
 
@@ -75,6 +86,7 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
         if (applyFireBudget)
             ApplyFireBudget();
         ApplyCloseUpBudget();
+        ApplySmokeResolution();
         if (disableBloom)
             DisableBloom();
         BudgetThermalCameras();
@@ -110,7 +122,7 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
     {
         Shader.SetGlobalVector(SmokeNearBudgetId, new Vector4(smokeNearCardWidth, smokeNearSkip, 0f, 0f));
 
-        if (questFlameParticles <= 0f && questFlameBrightness <= 0f)
+        if (questFlameParticles <= 0f && questFlameBrightness <= 0f && questPlumeParticleSize <= 0f)
             return;
 
         foreach (IgnisSmokeDiffusion diffusion in FindObjectsByType<IgnisSmokeDiffusion>(FindObjectsSortMode.None))
@@ -119,6 +131,42 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
                 diffusion.flameParticles = questFlameParticles;
             if (questFlameBrightness > 0f)
                 diffusion.flameBrightness = questFlameBrightness;
+            if (questPlumeParticleSize > 0f)
+                diffusion.SetPlumeParticleSize(questPlumeParticleSize);
+        }
+    }
+
+    private void ApplySmokeResolution()
+    {
+        LowResSmokeFeature.LowRes = true;
+        if (smokeResolution > 0f)
+            LowResSmokeFeature.ScaleOverride = smokeResolution;
+
+        if (!lowResSmoke)
+            return;
+
+        if (GetComponent<LowResSmokeEffects>() == null)
+            gameObject.AddComponent<LowResSmokeEffects>();
+        MoveFarScenery();
+    }
+
+    private void MoveFarScenery()
+    {
+        int layer = LayerMask.NameToLayer(FarSceneryLayer);
+        if (layer < 0 || farSceneryRoots == null)
+            return;
+
+        foreach (string rootName in farSceneryRoots)
+        {
+            GameObject root = string.IsNullOrEmpty(rootName) ? null : GameObject.Find(rootName);
+            if (root == null)
+                continue;
+
+            foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer.GetComponent<Collider>() == null)
+                    renderer.gameObject.layer = layer;
+            }
         }
     }
 

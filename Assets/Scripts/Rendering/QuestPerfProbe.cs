@@ -24,11 +24,14 @@ public sealed class QuestPerfProbe : MonoBehaviour
 {
     const float LogSeconds = 2f;
     // Each probe step settles for this long, then is measured for this long.
-    const float SettleSeconds = 2f;
+    // A plume change reaches only new particles, which replace the old ones
+    // within a few seconds.
+    const float SettleSeconds = 4f;
     const float MeasureSeconds = 4f;
     // Time for the smoke to build around the fire before measuring.
     const float ProbeStartSeconds = 30f;
-    const int ProbeRounds = 2;
+    // Two rounds agreed to about 1 FPS; one keeps the run under 3 minutes.
+    const int ProbeRounds = 1;
 
     readonly FrameTiming[] timings = new FrameTiming[1];
     readonly List<XRDisplaySubsystem> displays = new List<XRDisplaySubsystem>();
@@ -71,24 +74,107 @@ public sealed class QuestPerfProbe : MonoBehaviour
     }
 
     // Measured standing in the burning room, where the frame rate drops: what
-    // each kind of fire effect costs, and what each candidate budget saves.
+    // each Quest budget saves over the one before it (the skyline left out of
+    // the smoke's depth copy, smoke at 0.35, plume at 0.4), and what each kind
+    // of fire effect still costs. Runs 1 and 2 (2026-11-19, in
+    // APK_OPTIMIZATION_NOTES.md) found no difference from lamp shadows or 8-bit
+    // smoke, so those are no longer measured.
     static readonly Step[] Steps =
     {
         new Step { label = "baseline", apply = p => null },
-        new Step { label = "smoke-cap-1.5", apply = p => p.WithSmokeNearBudget(1.5f, 0f) },
+        new Step { label = "skyline-in-depth-copy", apply = p => p.WithFarSceneryInDepthCopy() },
+        new Step { label = "smoke-scale-0.5", apply = p => p.WithSmokeScale(0.5f) },
+        new Step { label = "plume-size-0.6", apply = p => p.WithPlumeSize(0.6f) },
         new Step { label = "baseline", apply = p => null },
+        new Step { label = "smoke-scale-0.25", apply = p => p.WithSmokeScale(0.25f) },
         new Step { label = "smoke-cap-1.0", apply = p => p.WithSmokeNearBudget(1f, 0f) },
         new Step { label = "baseline", apply = p => null },
-        new Step { label = "smoke-cap-0.6", apply = p => p.WithSmokeNearBudget(0.6f, 0f) },
-        new Step { label = "baseline", apply = p => null },
         new Step { label = "no-plume", apply = p => p.HideEffects("Only_smoke_plume") },
+        new Step { label = "no-room-smoke", apply = p => p.HideEffects("Only_smoke") },
+        new Step { label = "no-vent", apply = p => p.HideEffects("Window_smoke") },
+        new Step { label = "no-flames", apply = p => p.HideEffects("Flame_box") },
+        new Step { label = "no-fire-effects", apply = p => p.All(p.HideEffects("Only_smoke"), p.HideEffects("Window_smoke"), p.HideEffects("Flame_box")) },
         new Step { label = "baseline", apply = p => null },
-        new Step { label = "flames-0.35", apply = p => p.WithFlames(0.35f, 1.55f) },
-        new Step { label = "baseline", apply = p => null },
-        new Step { label = "cap-1.0+flames+foveation", apply = p => p.All(p.WithSmokeNearBudget(1f, 0f), p.WithFlames(0.35f, 1.55f), p.WithFoveation(1f)) },
-        new Step { label = "baseline", apply = p => null },
-        new Step { label = "cap-0.6+flames+foveation", apply = p => p.All(p.WithSmokeNearBudget(0.6f, 0f), p.WithFlames(0.35f, 1.55f), p.WithFoveation(1f)) },
+        // What the low-resolution pass costs by itself, without smoke to draw.
+        new Step { label = "lowres-pass-empty", apply = p => p.All(p.HideEffects("Only_smoke"), p.HideEffects("Window_smoke"), p.HideEffects("Flame_box"), p.WithLowResDebug(true, false, false)) },
     };
+
+    System.Action WithFarSceneryInDepthCopy()
+    {
+        LowResSmokeFeature.SkipFarScenery = false;
+        return () => LowResSmokeFeature.SkipFarScenery = true;
+    }
+
+    System.Action WithLowResDebug(bool forceOn, bool skipOccluders, bool skipComposite)
+    {
+        LowResSmokeFeature.DebugForceOn = forceOn;
+        LowResSmokeFeature.DebugSkipOccluders = skipOccluders;
+        LowResSmokeFeature.DebugSkipComposite = skipComposite;
+        return () =>
+        {
+            LowResSmokeFeature.DebugForceOn = false;
+            LowResSmokeFeature.DebugSkipOccluders = false;
+            LowResSmokeFeature.DebugSkipComposite = false;
+        };
+    }
+
+    /// <summary>The plume's particle size as a multiple of the scene's Smoke Particle Size.</summary>
+    System.Action WithPlumeSize(float particleSize)
+    {
+        var changed = new List<(IgnisSmokeDiffusion diffusion, float size)>();
+        foreach (IgnisSmokeDiffusion diffusion in FindObjectsByType<IgnisSmokeDiffusion>(FindObjectsSortMode.None))
+        {
+            changed.Add((diffusion, diffusion.plumeParticleSize));
+            diffusion.SetPlumeParticleSize(particleSize);
+        }
+
+        return () =>
+        {
+            foreach (var (diffusion, size) in changed)
+                if (diffusion != null)
+                    diffusion.SetPlumeParticleSize(size);
+        };
+    }
+
+    System.Action WithoutPointLightShadows()
+    {
+        var changed = new List<(Light light, LightShadows shadows)>();
+        foreach (Light light in FindObjectsByType<Light>(FindObjectsSortMode.None))
+        {
+            if (light.type == LightType.Directional || light.shadows == LightShadows.None)
+                continue;
+            changed.Add((light, light.shadows));
+            light.shadows = LightShadows.None;
+        }
+
+        return () =>
+        {
+            foreach (var (light, shadows) in changed)
+                if (light != null)
+                    light.shadows = shadows;
+        };
+    }
+
+    System.Action WithLowResSmoke(bool lowRes)
+    {
+        bool before = LowResSmokeFeature.LowRes;
+        LowResSmokeFeature.LowRes = lowRes;
+        return () => LowResSmokeFeature.LowRes = before;
+    }
+
+    System.Action WithSmokeHighPrecision(bool highPrecision)
+    {
+        bool before = LowResSmokeFeature.HighPrecision;
+        LowResSmokeFeature.HighPrecision = highPrecision;
+        return () => LowResSmokeFeature.HighPrecision = before;
+    }
+
+    System.Action WithSmokeScale(float scale)
+    {
+        float before = LowResSmokeFeature.ScaleOverride;
+        LowResSmokeFeature.ScaleOverride = scale;
+        return () => LowResSmokeFeature.ScaleOverride = before;
+    }
 
     System.Action All(params System.Action[] undos)
     {

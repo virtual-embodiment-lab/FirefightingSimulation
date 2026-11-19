@@ -85,21 +85,132 @@ Not on this branch / still elsewhere:
 - The user's other uncommitted edits (Base.unity, Bed/Cabinets/Couch prefabs,
   deleted Base occlusion data) were left out on purpose.
 
-## Next step: decision pending
+## Session 2 (2026-11-19): low-resolution smoke
 
-At the fire the frame is ~110 ms and must reach 13.9 ms. Options put to the user:
-1. **Half-resolution fire/smoke pass** (closest to the PC look): render the
-   smoke and flame VFX into a half-res offscreen target in their own URP
-   RenderGraph pass (XR multiview: Tex2DArray, 2 slices; needs a depth copy for
-   occlusion and premultiplied blending for the composite), excluding them from
-   the main transparent pass by layer. ~4x cheaper fill. Alone likely 30-40 FPS
-   up close; pair with a mild card cap (1.0) and foveation that rises only when
-   the fire fills the view (adaptive, from frame time).
-2. **Lighter smoke on Quest only**: cap ~0.6, fewer plume particles with more
-   opacity (a Quest plume prefab with lower capacity, chosen by
-   QuestPerformanceSettings), lighter room smoke near the viewer. Quick, but up
-   close the smoke reads thinner/puffier than on PC.
-Recommendation given: both, half-res pass first. Then CPU profiling.
+The decision above (half-res pass vs lighter smoke) was settled for the
+half-res pass: it keeps the approved look. State found at the start: no fire or
+smoke work was uncommitted. The working tree held only the user's own edits
+(their "apk optimization" build renamed the app in ProjectSettings, Base.unity,
+Bed/Cabinets/Couch prefabs, deleted Base occlusion data), line-ending-only
+changes on several assets, and build leftovers. All of those are left alone.
+
+What was built (Quest only; PC renders exactly as before):
+- `LowResSmokeFeature` (URP RenderGraph renderer feature on `Mobile_Renderer`):
+  before the main pass, it draws the opaque scene depth-only into a small
+  depth buffer, then the smoke against it with the normal depth test, into a
+  half-resolution RGBA16F texture (premultiplied color + opacity; blend state
+  overridden to SrcAlpha/OneMinusSrcAlpha, One/OneMinusSrcAlpha). After the
+  transparents (where the Ignis smoke drew before: smoke queue 3010 sorts after
+  flames and hose water at 3000), `Hidden/LowResSmoke/Composite` lays it over
+  the frame in one full-screen draw (Blend One OneMinusSrcAlpha). Both passes
+  keep the main pass one native render pass (the composite declares the same
+  color/depth attachments and foveation as URP's transparent pass). Statics for
+  tuning: `LowRes` (false = old full-res path), `ScaleOverride`,
+  `HighPrecision` (default true), `HasSmoke`.
+- Layer 12 `LowResSmoke`; `Mobile_Renderer` Transparent Layer Mask leaves it out.
+- `LowResSmokeEffects` (added by QuestPerformanceSettings on Android): every
+  0.25 s moves VisualEffects playing Only_smoke_plume / _lingering /
+  _contained / Window_smoke_vent onto the layer (not ones with a collider) and
+  sets `HasSmoke` while any is visible; nothing runs when there is no smoke.
+- `QuestPerformanceSettings`: `lowResSmoke` (default on), `smokeResolution`
+  (0 = the feature's 0.5).
+- Flames stay full resolution: Flame_box_wild_contained mixes additive flames
+  with an alpha-blended Steam output in one renderer, so one blend override
+  cannot fit both.
+
+Rejected on the way (do not retry): depth slices composited at fixed depths.
+The plume's 4x cards behind the stove were drawn over the stove and its flames.
+A per-pixel scene depth is required; the depth-only prepass at low res is it.
+
+Checked in the editor (same frame, 1280x960, S1 11.18 at the stove): the
+half-res RGBA16F smoke matches the full-res smoke to about 1% in every region,
+and the stove, grates, counters and flames stay in front of it. 8-bit
+(R8G8B8A8_SRGB) comes out about 3% lighter and slightly warm (rounding of many
+faint layers), hence 16-bit by default.
+
+Plume dialed back on Quest (user, 2026-11-19: "i don't think the plume needs
+to be that intense"): `IgnisSmokeDiffusion.plumeParticleSize` (default 1, PC
+unchanged; `SetPlumeParticleSize` also updates a burning plume) and
+`QuestPerformanceSettings.questPlumeParticleSize` = 0.6. In the editor 0.6
+reads as a defined, billowing column over the stove with the flames visible;
+1.0 is a uniform wall. The plume's smoke rate is no lever: at a fifth of it the
+plume still holds 249 of its 250 particles.
+
+Also found: 8 room lamps (`lamp_light`, point, intensity 0.2, range 10) cast
+soft shadows (32 shadow maps a frame after URP drops 16). Measured: turning
+them off changes nothing on the headset, so they stay.
+
+### Headset runs (2.2 m from the stove, probe view; FPS from the probe, GPU ms from VrApi App=)
+
+Run 1 (build 1: half-res 0.5, plume as on PC):
+full-res smoke (old path) 13 FPS; half-res 0.5 ~18; 0.35 ~23; 0.25 ~25;
+no room smoke 33; no flames +1.5; no fire effects at all 67 (GPU 11.8 ms,
+CPU-bound: main thread ~10.7 ms). 8-bit vs 16-bit, window vent, lamp shadows:
+no difference.
+
+Run 2 (build 2: + plume 0.6 + pass flags matched to URP's):
+| step | FPS | GPU ms |
+|---|---|---|
+| baseline (half-res 0.5, plume 0.6) | 25-27 | 29-37 |
+| plume as on PC (1.0) | 23 | 37 |
+| plume 0.4 | 27 | 30 |
+| smoke 0.35 / 0.25 | 29 / 31 | 31 / 26 |
+| smoke full-res (old path) | 12 | 71 |
+| no plume | 30 | 26 |
+| no flames | 29 | 30 |
+| no room smoke (vent + flames remain) | 37 | 22 |
+| no fire effects | 67 | 10.5 |
+| pass with nothing to draw | 47 | 18 |
+
+Rough split of the ~25 ms the fire adds at the stove: depth-only scene copy
+~4.6, composite ~2, flames ~3.5, window vent ~2, lingering smoke ~6, plume ~7.
+(`lowres-no-composite` came out at 44 FPS, too fast to be additive: the smoke
+draws seem to be dropped when nothing reads the texture. Don't trust that step.)
+Run 2 was hands-free: the headset sat on the desk with `prox_close` while
+Quest Link was in front; run 1's first attempt was blocked by the lock/account
+screen, which only the user can clear.
+
+Run 3 (build 3, the "quick wins" the user approved): the skyline
+(`ENVIRONMENT/Silhouettes`, 252 renderers, 1.34M tris, no colliders) moves to
+layer 14 `FarScenery` on Quest (`QuestPerformanceSettings.farSceneryRoots`),
+which the depth-only copy skips (`LowResSmokeFeature.farSceneryLayer`); smoke
+at 0.35 (feature asset); plume 0.4 (`questPlumeParticleSize`). The neighbor
+houses (674k tris) stay in the copy: from the street they can stand in front of
+the smoke venting from a window. In the editor 0.35 matches full res except a
+slightly stair-stepped smoke edge along counter and stove tops.
+| step | FPS |
+|---|---|
+| baseline (all three) | 27.4 at the start, 24-25 later |
+| skyline back in the copy | 25.0 |
+| smoke at 0.5 | 22.0 |
+| plume at 0.6 | 23.7 |
+| smoke at 0.25 / near cap 1.0 | 27.8 / 27.0 |
+| no plume / no room smoke / no flames | 27.3 / 35.2 / 30.0 |
+| no fire effects | 67.3 |
+| pass with nothing to draw | 50.5 (GPU 16.1 ms; run 2: 17.8) |
+The steps inside the run add up to ~5 FPS for the three changes, but the
+baseline only matches run 2's: the smoke and fire grow during each run, so
+compare steps within a run, not baselines across builds. From frame times at
+the stove now: lingering room smoke ~8 ms, flames ~6.7, the pass itself ~5
+(depth copy ~3, composite ~2), plume ~3.4.
+
+The user played build 3 in the headset (2026-11-19): "the narrower plume feels
+pretty good", they did not notice the stair-stepped edge, and overall "much
+much better than before". This state is committed as the fallback point.
+
+## Next steps
+
+To reach 72 FPS at the stove the fire must fit in ~3.5 ms of GPU (the scene
+alone is ~10.5 ms) and the CPU must drop too (67 FPS with no fire at all).
+1. Card-smoke tuning left: flames to low resolution (needs a flames-only
+   effect: the Wild effect mixes additive flames with alpha steam), the
+   neighbor houses out of the depth copy while the viewer is inside the house,
+   smoke 0.25, near cap. Maybe 30-35 FPS at the stove.
+2. CPU: profile a development build (main thread ~10.5 ms with no fire).
+3. Only a cheaper kind of room smoke (not dozens of stacked cards around the
+   viewer, e.g. one analytic smoke layer per room on Quest, keeping the Ignis
+   plume and vent) gets near 72 up close. That changes the approved lingering
+   smoke look: the user decides.
 
 ## Tools and how-to
 
@@ -120,6 +231,15 @@ Recommendation given: both, half-res pass first. Then CPU profiling.
 - Capture: `adb logcat -c`, then `adb logcat -v time VrApi:I Unity:I *:S > log`
   while it runs. VrApi lines give FPS, `App=` (GPU ms), `Fov=` (foveation).
   Unity's own GPU timer reads 0 on this setup; use VrApi.
+- Building from the MCP: call `BuildPipeline.BuildPlayer` directly in the
+  command (about 1.5-3 min; the call reports the build's warnings as an
+  "error", read the logged result). `EditorApplication.delayCall` from a
+  command never fires. Back up `ProjectSettings.asset` first and copy it back
+  after; Unity also leaves or drops two XR `preloadedAssets` lines around builds.
+- Editor captures: `RenderPipeline.SubmitRenderRequest(Camera.main, new
+  StandardRequest { destination = rt })` (Unity_Camera_Capture fails on the XR
+  camera). In Play mode the editor uses Mobile_RPAsset, so the feature runs.
+- Never edit a .cs while the editor plays (the MCP locks until Stop).
 - Unity MCP `Unity_RunCommand`: no System.Reflection, no HashSet; Normcore/XRI
   types only via `System.Type.GetType`; a VFX change set via a global takes
   effect the next frame (output blocks run once per frame).

@@ -248,9 +248,48 @@ found no fire: Normcore could not connect yet (Wi-Fi), and the scenario's fire
 start waits on the multiplayer quorum. Check for the "holding the view" line
 before trusting a run.
 
+## Session 2, part 3: thicker, lower smoke in the burning room
+
+The user (2026-11-19): "we need more smoke in the main room where the fire is.
+the fire is too easy to see through the smoke, and the smoke is too high off
+the ground." Changed (S1 11.18 scene values on IgnisSmokeDiffusion, PC and
+Quest alike):
+- `lowestSmokeHeight` 0.8 -> 0.3 m, now for the burning room only; the new
+  `otherRoomLowestSmokeHeight` keeps the other rooms at 0.8.
+- `particlesPerCell` 3 -> 4 and `lingeringOpacity` 3 -> 4.5 in the burning
+  room. Other rooms keep about the same density: `otherRoomSmoke`
+  0.25 -> 0.125 and `doorwaySmoke` 0.6 -> 0.3 (fewer, more opaque particles).
+- Quest only: `questPlumeOpacity` 4 (Plume Opacity 2.5 on PC), so the 0.4-size
+  plume hides the fire again; opacity costs no GPU time.
+In the editor after 100 s: from 2.2 m standing the flames are mostly veiled,
+from the back of the room the fire barely shows and the smoke reaches nearly
+to the floor; crouched at 0.9 m the stove front is still visible under the
+layer. Build 7 has it; its Quest cost was not measured (more particles, lower
+down, so expect some FPS below run 6's ~35 at the stove).
+
+## Session 2, part 4: spottier flames, faster burning room, slower house
+
+The user tried build 7 (2026-11-19): the flames "look a little too full ... can
+we make it a little more spotty?"; the smoke should fill the burning room "a
+little quicker, and then spread through the rest of the house a little
+slower", and be "a little thinner" away from the fire, building up gradually.
+- Flames (Quest only): `questFlameParticles` 0.3 and `questFlameBrightness` 1
+  (PC keeps IgnisSmokeDiffusion's 0.6 and 1.25). At low resolution the 0.6
+  share blurred into a solid sheet; the fire also grows over the stove's front
+  within ~30 s. 0.25-0.35 gives separate tongues with gaps, less washed out.
+- New `otherRoomStartShare` / `otherRoomBuildUpSeconds` (off by default): away
+  from the burning room a patch may hold only Start Share of its smoke when
+  the smoke edge arrives, growing to all of it over Build Up Seconds
+  (`BuildUp` in `NeedsSmoke`). S1 11.18: 0.3 and 180 s.
+- S1 11.18 timing: frontSpeed 0.75 -> 1.0, bankDownSeconds 60 -> 45,
+  releaseRate 10 -> 13, spreadingVolumes 0.5 -> 0.35 (more volumes fill the
+  burning room first), otherRoomSpeed 0.6 -> 0.38 (edge in other rooms
+  1.0 * 0.38 = 0.38 m/s, was 0.75 * 0.6 = 0.45).
+Build 8 has it; not measured on the headset.
+
 ## Next steps
 
-At the stove the frame is now ~35 FPS; the fire adds about 10 ms of room
+At the stove the frame was ~35 FPS before part 3; the fire adds about 10 ms of room
 smoke (plume ~4, lingering ~6), ~4 ms of flames and ~4 ms of the rest.
 1. Smoke and flames at 0.25 instead of 0.35: +8 FPS (43). Softer, and the
    occlusion stair-steps get coarser: the user should judge it in the headset.

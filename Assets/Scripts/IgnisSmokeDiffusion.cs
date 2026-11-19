@@ -319,6 +319,14 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     [Range(0.1f, 1f)]
     public float doorwaySmoke = 0.6f;
 
+    [Tooltip("How thick the lingering smoke in the other rooms starts out, as a share of Other Room Smoke. Each place builds up from this to its full thickness over Other Room Build Up Seconds after the smoke reaches it, so the rest of the house thickens gradually. 1 fills it at once.")]
+    [Range(0.05f, 1f)]
+    public float otherRoomStartShare = 1f;
+
+    [Tooltip("Seconds the smoke in the other rooms takes, from when it reaches a place, to build up from Other Room Start Share to its full thickness. 0 fills it at once.")]
+    [Min(0f)]
+    public float otherRoomBuildUpSeconds = 0f;
+
     [Tooltip("How fast smoke moves through rooms other than the burning one, as a share of its speed in the burning room: the drifting volumes, the edge of the smoke and how quickly the smoke layer deepens there. The smoke creeps through the rest of the house.")]
     [Range(0.1f, 1f)]
     public float otherRoomSpeed = 0.6f;
@@ -328,9 +336,13 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     public float spreadingVolumes = 0.5f;
 
     [Header("Banking Down")]
-    [Tooltip("Height above the floor that the lowest smoke volumes settle to once the room has fully banked down. Their Ignis particles reach a little below this. Lower leaves less clear air at the floor.")]
+    [Tooltip("Height above the floor that the lowest smoke volumes settle to once the burning room has fully banked down. Their Ignis particles reach a little below this. Lower leaves less clear air at the floor.")]
     [Min(0f)]
     public float lowestSmokeHeight = 1.0f;
+
+    [Tooltip("The same as Lowest Smoke Height, for the rooms the smoke spreads to.")]
+    [Min(0f)]
+    public float otherRoomLowestSmokeHeight = 1.0f;
 
     [Tooltip("Seconds of burning for the smoke layer to grow from just under the ceiling down to Lowest Smoke Height.")]
     [Min(0.01f)]
@@ -1871,12 +1883,27 @@ public class IgnisSmokeDiffusion : MonoBehaviour
         return Mathf.Clamp01(since / seconds);
     }
 
+    /// <summary>
+    /// The share of its full smoke a cell may hold now: all of it in the
+    /// burning room; away from it, Other Room Start Share when the edge of the
+    /// smoke gets there, growing to all of it over Other Room Build Up Seconds.
+    /// </summary>
+    float BuildUp(FireFront front, int cell)
+    {
+        if (otherRoomBuildUpSeconds <= 0f || otherRoomStartShare >= 1f || !AwayFromFire(front.room, cell))
+            return 1f;
+
+        float since = front.burnSeconds - ArrivalSeconds(front.room, cell);
+        return Mathf.Lerp(otherRoomStartShare, 1f, Mathf.Clamp01(since / otherRoomBuildUpSeconds));
+    }
+
     /// <summary>Height of the bottom of the smoke layer over a cell.</summary>
     float LayerBottom(FireFront front, int cell)
     {
         RoomAir room = front.room;
         float top = room.ceilingY - VolumeTopClearance();
-        float lowest = Mathf.Min(top, room.floorY + lowestSmokeHeight);
+        float height = AwayFromFire(room, cell) ? otherRoomLowestSmokeHeight : lowestSmokeHeight;
+        float lowest = Mathf.Min(top, room.floorY + height);
         return Mathf.Lerp(top, lowest, Banked(front, cell));
     }
 
@@ -1888,7 +1915,7 @@ public class IgnisSmokeDiffusion : MonoBehaviour
     bool NeedsSmoke(FireFront front, int cell, int band, float filled, float lead)
     {
         RoomAir room = front.room;
-        if (filled >= FillTarget(room, cell))
+        if (filled >= FillTarget(room, cell) * BuildUp(front, cell))
             return false;
         if (ArrivalSeconds(room, cell) > front.burnSeconds + lead)
             return false;

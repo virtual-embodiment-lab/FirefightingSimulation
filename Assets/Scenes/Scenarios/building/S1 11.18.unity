@@ -61846,20 +61846,24 @@ MonoBehaviour:
   keepPlumeAtFire: 1
   plumeOpacity: 2.5
   plumeSmokePrefab: {fileID: 0}
+  plumeParticleSize: 1
   lingeringSmoke: 1
-  particlesPerCell: 3
-  releaseRate: 10
+  particlesPerCell: 4
+  releaseRate: 13
   particlesPerVolume: 128
-  lingeringOpacity: 3
+  lingeringOpacity: 4.5
   lingerSeconds: 600
   lingeringSmokePrefab: {fileID: 0}
-  frontSpeed: 0.75
-  otherRoomSmoke: 0.25
-  doorwaySmoke: 0.6
-  otherRoomSpeed: 0.6
-  spreadingVolumes: 0.5
-  lowestSmokeHeight: 0.8
-  bankDownSeconds: 60
+  frontSpeed: 1
+  otherRoomSmoke: 0.125
+  doorwaySmoke: 0.3
+  otherRoomStartShare: 0.3
+  otherRoomBuildUpSeconds: 180
+  otherRoomSpeed: 0.38
+  spreadingVolumes: 0.35
+  lowestSmokeHeight: 0.3
+  otherRoomLowestSmokeHeight: 0.8
+  bankDownSeconds: 45
   sinkSpeed: 0.15
   ventThroughWindows: 1
   windowName: Window

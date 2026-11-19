@@ -39,12 +39,14 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
     [SerializeField, Min(0f)] private float smokeNearCardWidth;
     [Tooltip("Smoke cards closer to the eyes than this, in meters, are not drawn. 0 draws them all.")]
     [SerializeField, Min(0f)] private float smokeNearSkip;
-    [Tooltip("Share of the contained Wild flame particles on Quest, in place of IgnisSmokeDiffusion's Flame Particles. 0 keeps that value.")]
-    [SerializeField, Range(0f, 1f)] private float questFlameParticles;
-    [Tooltip("Flame brightness on Quest, so fewer flames look as bright, in place of IgnisSmokeDiffusion's Flame Brightness. 0 keeps that value.")]
-    [SerializeField, Range(0f, 3f)] private float questFlameBrightness;
+    [Tooltip("Share of the contained Wild flame particles on Quest, in place of IgnisSmokeDiffusion's Flame Particles. Drawn at low resolution, the PC's 0.6 blurs into one solid sheet of flame; fewer leaves gaps between the tongues. 0 keeps that value.")]
+    [SerializeField, Range(0f, 1f)] private float questFlameParticles = 0.3f;
+    [Tooltip("Flame brightness on Quest, in place of IgnisSmokeDiffusion's Flame Brightness. 1 keeps the plugin's own; above it, stacked flames wash out to yellow. 0 keeps IgnisSmokeDiffusion's value.")]
+    [SerializeField, Range(0f, 3f)] private float questFlameBrightness = 1f;
     [Tooltip("Size of the plume's particles on Quest, in place of IgnisSmokeDiffusion's Plume Particle Size: a narrower, more defined column over the fire that costs far less up close. 0 keeps that value.")]
     [SerializeField, Range(0f, 1f)] private float questPlumeParticleSize = 0.4f;
+    [Tooltip("How opaque the plume's particles are on Quest, in place of IgnisSmokeDiffusion's Plume Opacity, so the narrower plume still hides the fire. Opacity costs no GPU time. 0 keeps that value.")]
+    [SerializeField, Range(0f, 6f)] private float questPlumeOpacity = 4f;
 
     [Header("Smoke Resolution")]
     [Tooltip("Draws the house smoke at a lower resolution than the rest of the frame (LowResSmokeFeature on the Quest renderer), so up close it fills far fewer pixels. Soft smoke looks nearly the same.")]
@@ -122,7 +124,7 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
     {
         Shader.SetGlobalVector(SmokeNearBudgetId, new Vector4(smokeNearCardWidth, smokeNearSkip, 0f, 0f));
 
-        if (questFlameParticles <= 0f && questFlameBrightness <= 0f && questPlumeParticleSize <= 0f)
+        if (questFlameParticles <= 0f && questFlameBrightness <= 0f && questPlumeParticleSize <= 0f && questPlumeOpacity <= 0f)
             return;
 
         foreach (IgnisSmokeDiffusion diffusion in FindObjectsByType<IgnisSmokeDiffusion>(FindObjectsSortMode.None))
@@ -133,6 +135,9 @@ public sealed class QuestPerformanceSettings : MonoBehaviour
                 diffusion.flameBrightness = questFlameBrightness;
             if (questPlumeParticleSize > 0f)
                 diffusion.SetPlumeParticleSize(questPlumeParticleSize);
+            // Read whenever a volume's opacity is applied, so a burning plume takes it too.
+            if (questPlumeOpacity > 0f)
+                diffusion.plumeOpacity = questPlumeOpacity;
         }
     }
 

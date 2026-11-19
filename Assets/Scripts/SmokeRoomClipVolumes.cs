@@ -73,6 +73,30 @@ public static class SmokeRoomClipVolumes
         Upload();
     }
 
+    /// <summary>Returns the shader box containing this world-space fire origin.</summary>
+    public static int FindContainingBox(Vector3 position)
+    {
+        int box = -1;
+        float bestDepth = 0f;
+        int count = Mathf.Min(uploadOrder.Count, MaxRooms);
+        for (int i = 0; i < count; i++)
+        {
+            Room room = uploadOrder[i];
+            Vector3 offset = position - room.center;
+            float x = Vector3.Dot(offset, room.right);
+            float z = -room.right.z * offset.x + room.right.x * offset.z;
+            float depth = Mathf.Min(room.halfSize.x - Mathf.Abs(x),
+                Mathf.Min(room.halfSize.y - Mathf.Abs(offset.y), room.halfSize.z - Mathf.Abs(z)));
+            if (depth >= bestDepth)
+            {
+                bestDepth = depth;
+                box = i;
+            }
+        }
+
+        return box;
+    }
+
     /// <summary>
     /// Sends the boxes to the shader, each room's boxes next to each other. For
     /// every box, _SmokeRoomGroups holds the index of its room's first box and

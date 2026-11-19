@@ -87,6 +87,9 @@ public class NetworkedFireState : RealtimeComponent<FireStateModel>
     private const float ProfileTemperatureSyncInterval = 0.1f;
     private const float ProfileTemperatureSyncEpsilon = 0.25f;
     private const float ExtinguishStateSyncInterval = 0.05f;
+    private const float SteamImpactSyncInterval = 0.1f;
+    private const float SteamImpactHoldSeconds = 0.25f;
+    private float _nextSteamImpactSyncTime;
     private const float FireSpreadSyncInterval = 0.2f;
     private const float FireSpreadSyncEpsilon = 0.002f;
     private const float PresentationSnapshotInterval = 0.1f;
@@ -366,6 +369,8 @@ public class NetworkedFireState : RealtimeComponent<FireStateModel>
 
     protected override void OnRealtimeModelReplaced(FireStateModel previousModel, FireStateModel currentModel)
     {
+        SuppressionSteam.Clear(_flammableObject);
+        _nextSteamImpactSyncTime = 0f;
         _ownershipRequestPending = false;
         _nextClaimAttemptTime = 0f;
         _lastAppliedResetEpoch = 0;
@@ -580,6 +585,9 @@ public class NetworkedFireState : RealtimeComponent<FireStateModel>
         // rewinding the authority's actual simulation state.
         if (model == null || _flammableObject == null || realtime == null || !realtime.connected)
             return;
+
+        if (!IsAuthority)
+            PresentSteamImpact();
 
         if (!TryGetPresentedSnapshot(out FirePresentationSnapshot presentation))
             return;
@@ -1017,6 +1025,7 @@ public class NetworkedFireState : RealtimeComponent<FireStateModel>
         int nextIgnitionEpoch = Mathf.Max(1, model.ignitionEpoch + 1);
         int resetVfxSeed = DeriveCycleVfxSeed(nextIgnitionEpoch);
 
+        SuppressionSteam.Clear(_flammableObject);
         _flammableObject.ResetObj();
         _flammableObject.ResetMaterialFromIgnis();
         if (TryGetComponent<HazardTemperature>(out HazardTemperature resetTemperature))
@@ -1202,11 +1211,36 @@ public class NetworkedFireState : RealtimeComponent<FireStateModel>
             float profilePower = _fireProfileController != null
                 ? _fireProfileController.GetCurrentExtinguishPowerMultiplier()
                 : 1f;
+            if (sprayer.ProducesImpactSteam && profilePower > 0f &&
+                !_flammableObject.IsExtinguished() && !_flammableObject.hasBurnedOut())
+                ShowAndPublishSteamImpact(hit.point);
+
             _flammableObject.IncrementalExtinguish(
                 hit.point,
                 sprayer.SprayStartRadius * profilePower,
                 sprayer.SprayRadiusIncrementSpeed * profilePower * Time.deltaTime);
         }
+    }
+
+    private void ShowAndPublishSteamImpact(Vector3 hitPoint)
+    {
+        SuppressionSteam.EmitAt(_flammableObject, hitPoint);
+        if (realtime == null || !realtime.connected || Time.unscaledTime < _nextSteamImpactSyncTime)
+            return;
+
+        model.steamImpactLocal = transform.InverseTransformPoint(hitPoint);
+        model.steamImpactRoomTime = realtime.roomTime;
+        _nextSteamImpactSyncTime = Time.unscaledTime + SteamImpactSyncInterval;
+    }
+
+    private void PresentSteamImpact()
+    {
+        double hitTime = model.steamImpactRoomTime;
+        double age = realtime.roomTime - hitTime;
+        if (hitTime <= 0.0 || hitTime <= model.resetAtRoomTime || age > SteamImpactHoldSeconds)
+            return;
+
+        SuppressionSteam.EmitAt(_flammableObject, transform.TransformPoint(model.steamImpactLocal));
     }
 
     /// <summary>

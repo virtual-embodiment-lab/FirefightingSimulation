@@ -84,6 +84,10 @@ namespace Ignis
                         // Only process the visual extinguish if the fire is taking damage
                         if (powerMultiplier > 0f)
                         {
+                            if (parentSpray != null && parentSpray.ProducesImpactSteam && flamObj.onFire &&
+                                !flamObj.IsExtinguished() && !flamObj.hasBurnedOut())
+                                SuppressionSteam.EmitAt(flamObj, pos);
+
                             flamObj.IncrementalExtinguish(pos, effectiveRadius, effectiveIncrement);
                             if (powerMultiplier == 1f && profile != null)
                             {

@@ -48,6 +48,7 @@ public class SpraySync : RealtimeComponent<SpraySyncModel>
     /// <summary>Nozzle pose is synchronized implicitly via the root RealtimeTransform.</summary>
     public Transform NozzleTransform => _spray != null ? _spray.NozzleTransform : null;
     public float MaxSprayDistance => _spray != null ? _spray.MaxSprayDistance : 10f;
+    public bool ProducesImpactSteam => _spray != null && _spray.ProducesImpactSteam;
     public float SprayStartRadius => _spray != null ? _spray.StartRadius : 0.5f;
     public float SprayRadiusIncrementSpeed => _spray != null ? _spray.RadiusIncrementSpeed : 0.5f;
 

@@ -1,4 +1,4 @@
-// Gives the local VR player a red edge vignette when their head is high in nearby fire or room smoke.
+// Gives the local VR player a red edge vignette near fire, room smoke, or suppression steam.
 // Samples visible hazards and floor-relative headset height without changing shared gameplay state.
 using Ignis;
 using UnityEngine;
@@ -25,11 +25,16 @@ public sealed class PlayerHeatCue : MonoBehaviour
     [Header("Hazard Sensing")]
     [SerializeField, Min(0.1f)] private float fireRange = 4f;
     [SerializeField, Min(0.1f)] private float smokeRange = 5f;
+    [SerializeField, Min(0.1f)] private float steamRange = 3f;
     [SerializeField, Min(0.1f)] private float fireRefreshInterval = 1f;
 
     [Header("Vignette")]
     [SerializeField] private Color edgeColor = new Color(0.8f, 0.08f, 0.08f, 1f);
     [SerializeField, Range(0f, 1f)] private float maximumIntensity = 0.32f;
+    [Tooltip("Maximum extra vignette intensity from nearby suppression steam at full head height.")]
+    [SerializeField, Range(0f, 1f)] private float steamIntensityBoost = 0.18f;
+    [Tooltip("Seconds the steam heat boost lingers after the last puff, before the vignette fades.")]
+    [SerializeField, Min(0.1f)] private float steamHeatHoldSeconds = 3f;
     [SerializeField, Range(0f, 1f)] private float edgeSmoothness = 0.65f;
     [SerializeField, Min(0.01f)] private float fadeInSeconds = 0.5f;
     [SerializeField, Min(0.01f)] private float fadeOutSeconds = 0.8f;
@@ -78,7 +83,9 @@ public sealed class PlayerHeatCue : MonoBehaviour
 
         float heightFactor = GetHeightFactor();
         float hazardFactor = heightFactor > 0f ? GetHazardExposure() : 0f;
-        float targetIntensity = maximumIntensity * heightFactor * hazardFactor;
+        float steamFactor = heightFactor > 0f && steamIntensityBoost > 0f ? GetSteamExposure() : 0f;
+        float targetIntensity = heightFactor * Mathf.Clamp01(
+            maximumIntensity * hazardFactor + steamIntensityBoost * steamFactor);
         float transitionSeconds = targetIntensity > currentIntensity ? fadeInSeconds : fadeOutSeconds;
         currentIntensity = Mathf.MoveTowards(currentIntensity, targetIntensity,
             Time.deltaTime * Mathf.Max(maximumIntensity, currentIntensity) /
@@ -223,6 +230,26 @@ public sealed class PlayerHeatCue : MonoBehaviour
                 continue;
 
             strongest = distanceFactor * smokeStrength;
+        }
+
+        return strongest;
+    }
+
+    private float GetSteamExposure()
+    {
+        Vector3 head = headsetCamera.transform.position;
+        float earliestPuffTime = Time.time - steamHeatHoldSeconds;
+        float strongest = 0f;
+        var emitters = SuppressionSteam.EnabledEmitters;
+        for (int i = 0; i < emitters.Count; i++)
+        {
+            SuppressionSteam emitter = emitters[i];
+            if (!emitter.TryGetRecentImpact(earliestPuffTime, out Vector3 position))
+                continue;
+
+            float exposure = Mathf.Clamp01(1f - Vector3.Distance(head, position) / steamRange);
+            if (exposure > strongest && !IsBlocked(head, position, emitter.transform))
+                strongest = exposure;
         }
 
         return strongest;

@@ -23,6 +23,8 @@ public class Spray : MonoBehaviour
     [SerializeField] private ParticleSystem waterParticles;
     [SerializeField] private Transform nozzleTransform; // Position & direction where water comes out
     [SerializeField] private float maxSprayDistance = 10f;
+    [Tooltip("Show rising white vapor where this tool hits a compatible burning object.")]
+    [SerializeField] private bool producesImpactSteam;
 
     [Header("Ignis Extinguish Settings")]
     [SerializeField] private float startRadius = 0.5f;
@@ -41,6 +43,7 @@ public class Spray : MonoBehaviour
     public ParticleSystem WaterParticles => waterParticles;
     public Transform NozzleTransform => nozzleTransform;
     public float MaxSprayDistance => maxSprayDistance;
+    public bool ProducesImpactSteam => producesImpactSteam;
     public float StartRadius => startRadius;
     public float RadiusIncrementSpeed => radiusIncrementSpeed;
     public bool RestrictsByFireProfile => restrictByFireProfile;

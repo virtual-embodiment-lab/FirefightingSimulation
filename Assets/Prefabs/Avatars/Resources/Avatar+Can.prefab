@@ -1985,6 +1985,7 @@ MonoBehaviour:
   waterParticles: {fileID: 7640504187789708995}
   nozzleTransform: {fileID: 2205701494248343633}
   maxSprayDistance: 10
+  producesImpactSteam: 1
   startRadius: 0.5
   radiusIncrementSpeed: 0.5
   restrictByFireProfile: 0

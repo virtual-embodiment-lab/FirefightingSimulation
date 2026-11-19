@@ -185,4 +185,12 @@ public partial class FireStateModel
 
     [RealtimeProperty(39, RealtimePropertyType.UnreliableRedundant, true)]
     private double _presentationSnapshotRoomTime;
+
+    // Latest visual-only steam contact. Local space follows moving hazards;
+    // the room clock lets receivers discard old samples after spraying stops.
+    [RealtimeProperty(40, RealtimePropertyType.UnreliableRedundant, true)]
+    private Vector3 _steamImpactLocal;
+
+    [RealtimeProperty(41, RealtimePropertyType.UnreliableRedundant, true)]
+    private double _steamImpactRoomTime;
 }

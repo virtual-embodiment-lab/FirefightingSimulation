@@ -16,37 +16,46 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
+using Gesture = GrabPullSyntheticHands.Gesture;
 using Object = UnityEngine.Object;
 
 public class GrabPullSyntheticHands : XRHandSubsystemProvider
 {
     public static Vector3 Left = new Vector3(-.2f, .15f, .4f), Right = new Vector3(.2f, .15f, .4f);
-    public static bool LeftTracked = true, RightTracked = false, Fist;
-    public static float LeftPinch = .02f, RightPinch = .02f;
+    public enum Gesture { Open, Pinch, LooseFist, LittleFingerOpen, ThumbOut, Fist }
+    public static bool LeftTracked = true, RightTracked = false;
+    public static Gesture LeftGesture, RightGesture;
     public override void Start() { }
     public override void Stop() { }
     public override void Destroy() { }
     public override void GetHandLayout(NativeArray<bool> joints) { for (int i = 0; i < joints.Length; i++) joints[i] = true; }
-    static void Fill(NativeArray<XRHandJoint> joints, Handedness side, Vector3 position, float pinch)
+    static void Fill(NativeArray<XRHandJoint> joints, Handedness side, Vector3 position, Gesture gesture)
     {
         for (int i = 0; i < joints.Length; i++)
             joints[i] = XRHandProviderUtility.CreateJoint(side, XRHandJointTrackingState.Pose, XRHandJointIDUtility.FromIndex(i), new Pose(position, Quaternion.identity));
         foreach (var ids in new[] {
             new[] { XRHandJointID.IndexProximal, XRHandJointID.IndexIntermediate, XRHandJointID.IndexDistal, XRHandJointID.IndexTip },
             new[] { XRHandJointID.MiddleProximal, XRHandJointID.MiddleIntermediate, XRHandJointID.MiddleDistal, XRHandJointID.MiddleTip },
-            new[] { XRHandJointID.RingProximal, XRHandJointID.RingIntermediate, XRHandJointID.RingDistal, XRHandJointID.RingTip } })
+            new[] { XRHandJointID.RingProximal, XRHandJointID.RingIntermediate, XRHandJointID.RingDistal, XRHandJointID.RingTip },
+            new[] { XRHandJointID.LittleProximal, XRHandJointID.LittleIntermediate, XRHandJointID.LittleDistal, XRHandJointID.LittleTip } })
         {
-            var offsets = Fist ? new[] { Vector3.zero, new Vector3(0,0,.03f), new Vector3(0,.02f,.03f), new Vector3(0,.02f,0) }
-                               : new[] { Vector3.zero, new Vector3(0,0,.02f), new Vector3(0,0,.04f), new Vector3(0,0,.06f) };
-            for (int i = 0; i < 4; i++) joints[ids[i].ToIndex()] = XRHandProviderUtility.CreateJoint(side, XRHandJointTrackingState.Pose, ids[i], new Pose(position + offsets[i], Quaternion.identity));
+            int finger = (ids[0].ToIndex() - XRHandJointID.IndexProximal.ToIndex()) / 5;
+            var knuckle = position + Vector3.right * (finger * .02f);
+            bool open = gesture == Gesture.Open || gesture == Gesture.Pinch ||
+                        (gesture == Gesture.LittleFingerOpen && ids[0] == XRHandJointID.LittleProximal);
+            var curledTip = gesture == Gesture.LooseFist ? new Vector3(0,.03f,.025f) : new Vector3(0,.02f,0);
+            var offsets = open ? new[] { Vector3.zero, new Vector3(0,0,.02f), new Vector3(0,0,.04f), new Vector3(0,0,.06f) }
+                : new[] { Vector3.zero, new Vector3(0,0,.03f), new Vector3(0,.02f,.03f), curledTip };
+            for (int i = 0; i < 4; i++) joints[ids[i].ToIndex()] = XRHandProviderUtility.CreateJoint(side, XRHandJointTrackingState.Pose, ids[i], new Pose(knuckle + offsets[i], Quaternion.identity));
         }
         var index = joints[XRHandJointID.IndexTip.ToIndex()]; index.TryGetPose(out var indexPose);
-        joints[XRHandJointID.ThumbTip.ToIndex()] = XRHandProviderUtility.CreateJoint(side, XRHandJointTrackingState.Pose, XRHandJointID.ThumbTip, new Pose(indexPose.position + Vector3.right * pinch, Quaternion.identity));
+        float thumbDistance = gesture == Gesture.Open || gesture == Gesture.ThumbOut ? .09f : .02f;
+        joints[XRHandJointID.ThumbTip.ToIndex()] = XRHandProviderUtility.CreateJoint(side, XRHandJointTrackingState.Pose, XRHandJointID.ThumbTip, new Pose(indexPose.position + Vector3.right * thumbDistance, Quaternion.identity));
     }
     public override XRHandSubsystem.UpdateSuccessFlags TryUpdateHands(XRHandSubsystem.UpdateType type,
         ref Pose leftRoot, NativeArray<XRHandJoint> left, ref Pose rightRoot, NativeArray<XRHandJoint> right)
     {
-        Fill(left, Handedness.Left, Left, LeftPinch); Fill(right, Handedness.Right, Right, RightPinch);
+        Fill(left, Handedness.Left, Left, LeftGesture); Fill(right, Handedness.Right, Right, RightGesture);
         leftRoot = new Pose(Left, Quaternion.identity); rightRoot = new Pose(Right, Quaternion.identity);
         var flags = XRHandSubsystem.UpdateSuccessFlags.None;
         if (LeftTracked) flags |= XRHandSubsystem.UpdateSuccessFlags.LeftHandRootPose | XRHandSubsystem.UpdateSuccessFlags.LeftHandJoints;
@@ -118,39 +127,68 @@ public static class GrabPullChecks
             void Reset() => Call(grab, "ResetMovementState");
             bool Zero(Vector3 v) => v.sqrMagnitude < .00000001f;
             GrabPullSyntheticHands.LeftTracked = true; GrabPullSyntheticHands.RightTracked = false;
-            GrabPullSyntheticHands.LeftPinch = .02f; GrabPullSyntheticHands.RightPinch = .02f; GrabPullSyntheticHands.Fist = false;
-            Check(passes, "Standing pinch cannot pull", Zero(Step(1.7f)) && !walking.IsCrawling);
+            GrabPullSyntheticHands.LeftGesture = Gesture.Fist; GrabPullSyntheticHands.RightGesture = Gesture.Fist;
+            Check(passes, "Standing fist cannot pull", Zero(Step(1.7f)) && !walking.IsCrawling);
             GrabPullSyntheticHands.Left += Vector3.back * .1f;
             Check(passes, "Standing hand motion cannot pull", Zero(Step(1.7f)));
             Set(walking, "_move", .8f);
             Check(passes, "Crouching clears swing momentum and anchors without a jump", Zero(Step(.8f)) && walking.IsCrawling && walking.MoveInput == 0 && continuous.leftHandMoveInput.manualValue == Vector2.zero);
             GrabPullSyntheticHands.Left += Vector3.back * .02f;
             var pull = Step(.8f);
-            Check(passes, "Left-hand backward pull moves forward (actual " + pull.ToString("F4") + ")", pull.z > .08f && Mathf.Abs(pull.x) < .0001f && pull.y == 0);
+            Check(passes, "A 2 cm backward hand stroke moves the rig forward 7 cm", Mathf.Abs(pull.z - .07f) < .001f && Mathf.Abs(pull.x) < .0001f && pull.y == 0);
             GrabPullSyntheticHands.Left += Vector3.right * .02f;
-            Check(passes, "Sideways pull moves opposite the hand", Step(.8f).x < -.08f);
+            Check(passes, "Sideways pull moves opposite the hand", Step(.8f).x < -.06f);
             GrabPullSyntheticHands.Left += Vector3.up * .25f;
             Check(passes, "Vertical hand motion cannot lift the rig", Zero(Step(.8f)));
             Check(passes, "Kneel/stand hysteresis retains crawling at 1.05m", Zero(Step(1.05f)) && walking.IsCrawling);
             Check(passes, "Standing at 1.1m stops grab", Zero(Step(1.1f)) && !walking.IsCrawling);
             Step(1.05f); Check(passes, "Hysteresis retains standing at 1.05m", !walking.IsCrawling);
             Check(passes, "Reentering crawl reanchors", Zero(Step(.8f)));
-            GrabPullSyntheticHands.LeftPinch = .045f; GrabPullSyntheticHands.Left += Vector3.back * .02f;
-            Check(passes, "Pinch remains latched between enter/release thresholds", Step(.8f).z > .08f);
-            GrabPullSyntheticHands.LeftPinch = .06f; GrabPullSyntheticHands.Left += Vector3.back * .2f;
-            Check(passes, "Opening the hand stops immediately", Zero(Step(.8f)));
-            GrabPullSyntheticHands.LeftPinch = .045f;
-            Check(passes, "A released pinch must close past the start threshold", Zero(Step(.8f)));
-            GrabPullSyntheticHands.LeftPinch = .02f;
+            GrabPullSyntheticHands.Left += Vector3.back * .04f;
+            Check(passes, "First rearward hand stroke selects forward travel", Step(.8f).z > .13f);
+            GrabPullSyntheticHands.Left += Vector3.forward * .08f;
+            Check(passes, "Forward travel cannot reverse within the grab", Zero(Step(.8f)));
+            GrabPullSyntheticHands.Left += Vector3.back * .06f;
+            Check(passes, "Returning toward the farthest point does not add travel", Zero(Step(.8f)));
+            GrabPullSyntheticHands.Left += Vector3.back * .04f;
+            Check(passes, "Extending the forward stroke resumes travel", Mathf.Abs(Step(.8f).z - .07f) < .001f);
+            foreach (var gesture in new[] { Gesture.Open, Gesture.Pinch, Gesture.LooseFist, Gesture.LittleFingerOpen, Gesture.ThumbOut })
+            {
+                GrabPullSyntheticHands.LeftGesture = Gesture.Fist;
+                Step(.8f);
+                GrabPullSyntheticHands.LeftGesture = gesture;
+                GrabPullSyntheticHands.Left += Vector3.back * .08f;
+                bool stops = Zero(Step(.8f));
+                Step(.8f);
+                GrabPullSyntheticHands.Left += Vector3.back * .08f;
+                Check(passes, gesture + " neither sustains nor starts a crawl grab", stops && Zero(Step(.8f)));
+            }
+            GrabPullSyntheticHands.LeftGesture = Gesture.Fist;
             Check(passes, "Closing again anchors without a jump", Zero(Step(.8f)));
+            GrabPullSyntheticHands.Left += Vector3.forward * .03f;
+            Check(passes, "A fresh grab can start by moving backward", Step(.8f).z < -.10f);
+            GrabPullSyntheticHands.Left += Vector3.back * .08f;
+            Check(passes, "Backward travel cannot reverse within the grab", Zero(Step(.8f)));
+            GrabPullSyntheticHands.Left += Vector3.forward * .10f;
+            Check(passes, "Extending the backward stroke resumes travel", Mathf.Abs(Step(.8f).z + .07f) < .001f);
+            // Look straight down as a crawling player would, and start with a sideways stroke.
+            Reset(); head.transform.localRotation = Quaternion.Euler(90, 0, 0); Step(.8f);
+            GrabPullSyntheticHands.Left += Vector3.left * .04f + Vector3.forward * .001f;
+            pull = Step(.8f);
+            Check(passes, "Sideways travel and small fore-aft jitter do not lock the direction", pull.x > .13f && Mathf.Abs(pull.z) < .001f);
+            GrabPullSyntheticHands.Left += Vector3.back * .03f;
+            Check(passes, "Looking down still allows a forward stroke", Step(.8f).z > .09f);
+            GrabPullSyntheticHands.Left += Vector3.forward * .06f;
+            Check(passes, "Looking down still prevents the return stroke", Zero(Step(.8f)));
+            head.transform.localRotation = Quaternion.identity;
             GrabPullSyntheticHands.RightTracked = true; GrabPullSyntheticHands.Right = new Vector3(.8f,.15f,.9f);
-            Check(passes, "Adding the second hand reanchors instead of jumping", Zero(Step(.8f)));
-            GrabPullSyntheticHands.Left += Vector3.back * .02f; GrabPullSyntheticHands.Right += Vector3.back * .02f;
-            Check(passes, "Both pinching hands drive midpoint movement", Step(.8f).z > .08f);
+            Check(passes, "Adding a second fist does not jump", Zero(Step(.8f)));
+            GrabPullSyntheticHands.Right += Vector3.back * .30f;
+            Check(passes, "The second fist cannot move the rig while the first holds control", Zero(Step(.8f)));
             GrabPullSyntheticHands.LeftTracked = false;
             Check(passes, "Losing one hand reanchors the remaining hand", Zero(Step(.8f)));
-            GrabPullSyntheticHands.Right += Vector3.back * .02f;
-            Check(passes, "Right hand can pull on its own", Step(.8f).z > .08f);
+            GrabPullSyntheticHands.Right += Vector3.forward * .02f;
+            Check(passes, "The right hand can choose the opposite direction after handoff", Step(.8f).z < -.06f);
             GrabPullSyntheticHands.RightTracked = false;
             Check(passes, "Losing all tracking stops movement", Zero(Step(.8f)));
             GrabPullSyntheticHands.LeftTracked = true; GrabPullSyntheticHands.Left += Vector3.back * 2f;
@@ -169,7 +207,7 @@ public static class GrabPullChecks
             Check(passes, "Releasing equipment reanchors", Zero(Step(.8f)));
             Reset(); Step(.8f); float slowDistance = 0;
             for (int i = 0; i < 90; i++) { GrabPullSyntheticHands.Left += Vector3.back * (.09f / 90f); slowDistance += Step(.8f).z; }
-            Check(passes, "Slow 0.09m pull at 90Hz is accumulated", slowDistance > .37f && slowDistance < .42f);
+            Check(passes, "Slow 0.09m pull at 90Hz is accumulated", slowDistance > .29f && slowDistance < .32f);
             GrabPullSyntheticHands.Left += Vector3.back * 5f;
             Check(passes, "Tracking spike is capped at 0.4m/frame", Mathf.Abs(Step(.8f).magnitude - .4f) < .001f);
             Reset(); Step(.8f); GrabPullSyntheticHands.Left += Vector3.right * .001f;
@@ -177,14 +215,14 @@ public static class GrabPullChecks
             root.transform.position = new Vector3(3, 8, 5); Step(.8f);
             Check(passes, "Upper-floor rig position does not change posture selection", walking.IsCrawling);
             root.transform.rotation = Quaternion.Euler(0,90,0); Reset(); Step(.8f); GrabPullSyntheticHands.Left += Vector3.back * .02f;
-            pull = Step(.8f); Check(passes, "Pull respects rotated rig coordinates", pull.x > .08f && Mathf.Abs(pull.z) < .001f);
+            pull = Step(.8f); Check(passes, "Pull respects rotated rig coordinates", pull.x > .06f && Mathf.Abs(pull.z) < .001f);
             offset.transform.localRotation = Quaternion.Euler(0,90,0); Reset(); Step(.8f); GrabPullSyntheticHands.Left += Vector3.back * .02f;
-            pull = Step(.8f); Check(passes, "Pull respects rotated camera-offset tracking space", pull.z < -.08f && Mathf.Abs(pull.x) < .001f);
+            pull = Step(.8f); Check(passes, "Pull respects rotated camera-offset tracking space", pull.z < -.06f && Mathf.Abs(pull.x) < .001f);
             offset.transform.localRotation = Quaternion.identity; root.transform.rotation = Quaternion.identity;
             offset.transform.localPosition = Vector3.up * .2f; Step(1.15f);
             Check(passes, "Posture uses the floor, not the camera offset height", !walking.IsCrawling);
             offset.transform.localPosition = Vector3.zero;
-            Step(1.7f); GrabPullSyntheticHands.Fist = true; GrabPullSyntheticHands.LeftPinch = .1f;
+            Step(1.7f); GrabPullSyntheticHands.LeftGesture = Gesture.Fist;
             for (int i = 0; i < 90; i++)
             {
                 GrabPullSyntheticHands.Left.z = .4f + Mathf.Sin(i * .2f) * .2f;
@@ -197,8 +235,7 @@ public static class GrabPullChecks
                 GrabPullSyntheticHands.Left.z = .4f + Mathf.Sin(i * .2f) * .2f;
                 hands.TryUpdateHands(XRHandSubsystem.UpdateType.Dynamic); Call(walking, "EvaluateMovement", 1f / 90f);
             }
-            Check(passes, "Crawling fist swings cannot produce walking or unpinched pull input", walking.MoveInput == 0 && continuous.leftHandMoveInput.manualValue == Vector2.zero && Zero(Step(.65f)));
-            GrabPullSyntheticHands.Fist = false; GrabPullSyntheticHands.LeftPinch = .02f;
+            Check(passes, "Swing walking stays suppressed during a crawl grab", walking.MoveInput == 0 && continuous.leftHandMoveInput.manualValue == Vector2.zero);
             // Exercise the default smoothing with a deterministic headset frame interval.
             Set(grab, "m_HandPositionSmoothing", .02f);
             foreach (int refreshRate in new[] { 72, 90, 120 })
@@ -209,7 +246,7 @@ public static class GrabPullChecks
                     var handPosition = new Vector3(0,.15f,.4f - .09f * frame / refreshRate);
                     distance += ((Vector3)Call(grab, "ComputePull", new object[] { handPosition, 1, root.transform, 1f / refreshRate, false })).z;
                 }
-                Check(passes, "Default smoothing preserves deliberate slow pulls at " + refreshRate + "Hz", distance > .36f && distance < .42f);
+                Check(passes, "Default smoothing preserves deliberate slow pulls at " + refreshRate + "Hz", distance > .28f && distance < .32f);
             }
             Set(grab, "m_HandPositionSmoothing", 0f); Reset();
             var config = root.AddComponent<LocomotionModeConfigurator>(); config.Apply(LocomotionModeConfigurator.Mode.Teleport);
@@ -224,7 +261,7 @@ public static class GrabPullChecks
             // Apply the real provider through XRI's body transformer, not a hand-written translation.
             GrabPullSyntheticHands.Left += Vector3.back * .02f; pull = Step(.8f); var before = root.transform.position;
             Call(grab, "MoveRig", pull); Call(body, "Update");
-            Check(passes, "XRI body transformer actually moves the origin forward", root.transform.position.z > before.z + .08f);
+            Check(passes, "XRI body transformer actually moves the origin forward", root.transform.position.z > before.z + .06f);
             Check(passes, "XRI pull leaves origin height unchanged", Mathf.Abs(root.transform.position.y - before.y) < .0001f);
             var controller = root.AddComponent<CharacterController>(); controller.height = 1f; controller.radius = .2f;
             controller.center = Vector3.up * .5f; controller.skinWidth = .01f;
@@ -242,7 +279,7 @@ public static class GrabPullChecks
             foreach (string path in new[] { "Assets/Scenes/Scenarios/Base.unity", "Assets/Scenes/Scenarios/Demo 10.23/Scenario 1.unity" })
             {
                 var text = File.ReadAllText(path);
-                Check(passes, Path.GetFileName(path) + " contains the enhanced movement component", text.Contains("guid: 70ea3414e0e559742a9dbf28c962878d") && text.Contains("moveProvider: {fileID: 1395329950}") && text.Contains("head: {fileID: 1395329944}"));
+                Check(passes, Path.GetFileName(path) + " uses the slower grab provider", text.Contains("guid: 2539bd77fc5d2114a97376cde6b2e285") && text.Contains("m_MoveFactor: 3.5"));
             }
         }
         finally

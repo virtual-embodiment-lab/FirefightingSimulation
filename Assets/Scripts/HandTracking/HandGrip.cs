@@ -20,6 +20,8 @@ public static class HandGrip
     // Finger straightness: knuckle-to-tip distance / finger length, about 1 straight and 0.5 in a fist.
     private const float k_FistEnter = 0.65f;
     private const float k_FistExit = 0.8f;
+    private const float k_FullFistEnter = 0.55f;
+    private const float k_FullFistExit = 0.60f;
     private const float k_OpenFinger = 0.85f;
 
     // Average of index, middle and ring straightness for a loose grab.
@@ -56,9 +58,27 @@ public static class HandGrip
     }
 
     /// <summary>Fist only (index, middle and ring curled); a pinch does not count. Pass the previous result for hysteresis.</summary>
-    public static bool IsFist(XRHand hand, bool wasFist)
+    public static bool IsFist(XRHand hand, bool wasFist) =>
+        AreThreeFingersCurled(hand, wasFist ? k_FistExit : k_FistEnter);
+
+    /// <summary>All four fingers tightly curled with the thumb tucked against them.</summary>
+    public static bool IsFullFist(XRHand hand, bool wasFist)
     {
-        float fist = wasFist ? k_FistExit : k_FistEnter;
+        float fist = wasFist ? k_FullFistExit : k_FullFistEnter;
+        if (!AreThreeFingersCurled(hand, fist) ||
+            Straightness(hand, XRHandJointID.LittleProximal, XRHandJointID.LittleIntermediate, XRHandJointID.LittleDistal, XRHandJointID.LittleTip) > fist ||
+            !TryGetPosition(hand, XRHandJointID.IndexProximal, out Vector3 indexKnuckle) ||
+            !TryGetPosition(hand, XRHandJointID.LittleProximal, out Vector3 littleKnuckle))
+            return false;
+
+        // Scale thumb reach to the tracked hand. A thumb held out away from the curled
+        // fingers should not start or sustain a crawl grab.
+        float knuckleWidth = Vector3.Distance(indexKnuckle, littleKnuckle);
+        return knuckleWidth > 0f && ThumbToIndex(hand) <= knuckleWidth * (wasFist ? 1.15f : 1f);
+    }
+
+    private static bool AreThreeFingersCurled(XRHand hand, float fist)
+    {
         return Straightness(hand, XRHandJointID.IndexProximal, XRHandJointID.IndexIntermediate, XRHandJointID.IndexDistal, XRHandJointID.IndexTip) <= fist &&
                Straightness(hand, XRHandJointID.MiddleProximal, XRHandJointID.MiddleIntermediate, XRHandJointID.MiddleDistal, XRHandJointID.MiddleTip) <= fist &&
                Straightness(hand, XRHandJointID.RingProximal, XRHandJointID.RingIntermediate, XRHandJointID.RingDistal, XRHandJointID.RingTip) <= fist;

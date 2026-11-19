@@ -123349,7 +123349,7 @@ MonoBehaviour:
   m_EnableFreeZMovement: 1
   m_UseGravity: 0
   m_GravityApplicationMode: 0
-  m_MoveFactor: 4.5
+  m_MoveFactor: 3.5
   m_MaxMovementPerFrame: 0.4
   m_HandMovementDeadzone: 0.005
   m_HandPositionSmoothing: 0.02

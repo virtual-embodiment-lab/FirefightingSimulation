@@ -6,8 +6,9 @@ using UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement;
 
 /// <summary>
 /// Hand-tracking equivalent of the XR Interaction Toolkit Grab Move Provider.
-/// A grab (a closed fist, see <see cref="HandGrip.IsFist"/>; a pinch does not count)
+/// A grab (a full fist, see <see cref="HandGrip.IsFullFist"/>)
 /// anchors the hand in the world while the XR Origin moves opposite the hand motion.
+/// A grab keeps the direction of its first fore-aft stroke until the hand opens.
 ///
 /// Only one hand drives at a time. The first hand to grab keeps control until it opens;
 /// the other hand is ignored meanwhile. If the other hand is still grabbing when the first
@@ -29,7 +30,7 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
     [SerializeField]
     [Tooltip("Crawl speed: how far the player moves per meter the grabbing hand is pulled. Higher is faster.")]
     [Min(0f)]
-    float m_MoveFactor = 4.5f;
+    float m_MoveFactor = 3.5f;
 
     [SerializeField]
     [Tooltip("Maximum player movement that can be applied in one frame, in meters. Set to zero for no limit.")]
@@ -64,8 +65,11 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
     bool m_RightGrabbing;
     int m_ActiveHand;
     bool m_HasPreviousPosition;
-    int m_PreviousActiveHandMask;
-    Vector3 m_PreviousHandPosition;
+    int m_PreviousActiveHand;
+    Vector3 m_GrabStartPosition;
+    Vector3 m_GrabForward;
+    float m_GrabDirection;
+    Vector3 m_PreviousMovePosition;
     Vector3 m_SmoothedHandPosition;
     HandWalkingStickLocomotion m_WalkingStick;
 
@@ -156,23 +160,31 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
         return ComputePull(currentHandPosition, m_ActiveHand, xrOrigin.transform, Time.deltaTime, out attemptingMove);
     }
 
-    Vector3 ComputePull(Vector3 currentHandPosition, int activeHandMask, Transform origin, float deltaTime, out bool attemptingMove)
+    Vector3 ComputePull(Vector3 currentHandPosition, int activeHand, Transform origin, float deltaTime, out bool attemptingMove)
     {
         attemptingMove = false;
         // Re-anchor when a grab begins or when control passes to the other hand,
         // so the hand taking over starts from where it is instead of jumping.
-        if (!m_HasPreviousPosition || activeHandMask != m_PreviousActiveHandMask)
+        if (!m_HasPreviousPosition || activeHand != m_PreviousActiveHand)
         {
             m_HasPreviousPosition = true;
-            m_PreviousActiveHandMask = activeHandMask;
-            m_PreviousHandPosition = currentHandPosition;
+            m_PreviousActiveHand = activeHand;
+            m_GrabStartPosition = currentHandPosition;
+            var camera = mediator.xrOrigin.Camera;
+            var facing = camera != null ? camera.transform : origin;
+            m_GrabForward = Vector3.ProjectOnPlane(facing.forward, Vector3.up);
+            // When the player looks straight down, the head's right axis still gives its heading.
+            if (m_GrabForward.sqrMagnitude < 0.01f)
+                m_GrabForward = Vector3.Cross(facing.right, Vector3.up);
+            m_GrabForward.Normalize();
+            m_GrabDirection = 0f;
+            m_PreviousMovePosition = Vector3.zero;
             m_SmoothedHandPosition = currentHandPosition;
             return Vector3.zero;
         }
 
         // Filter the hand pose before taking a delta. This keeps small tracking noise from
         // becoming locomotion while still allowing a deliberate pull to accumulate smoothly.
-        var previousHandPosition = m_PreviousHandPosition;
         if (m_HandPositionSmoothing > 0f)
         {
             var smoothing = 1f - Mathf.Exp(-deltaTime / m_HandPositionSmoothing);
@@ -180,36 +192,32 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
         }
         m_SmoothedHandPosition = currentHandPosition;
 
-        var handDelta = currentHandPosition - previousHandPosition;
-        handDelta.y = 0f;
-
-        var handDistance = handDelta.magnitude;
-        if (handDistance <= m_HandMovementDeadzone)
-            return Vector3.zero;
-
-        // Accumulate small pulls instead of discarding them every frame. Otherwise a
-        // deliberate slow crawl stops working at headset refresh rates.
-        m_PreviousHandPosition = currentHandPosition;
-        var usableHandDelta = handDelta;
-        // Joint poses are relative to Camera Offset, which may be rotated relative to the Origin.
+        // Transform the offset, so moving the rig itself does not feed back into the pull.
         var space = mediator.xrOrigin.CameraFloorOffsetObject != null
             ? mediator.xrOrigin.CameraFloorOffsetObject.transform : origin;
-        var move = Vector3.ProjectOnPlane(space.TransformVector(-usableHandDelta), Vector3.up) * m_MoveFactor;
+        var handOffset = m_GrabStartPosition - currentHandPosition;
+        handOffset.y = 0f;
+        var movePosition = Vector3.ProjectOnPlane(space.TransformVector(handOffset), Vector3.up);
+        var moveDelta = movePosition - m_PreviousMovePosition;
+        float forwardDelta = Vector3.Dot(moveDelta, m_GrabForward);
 
-        if (m_PreventBackwardMovement)
+        if (m_GrabDirection == 0f && Mathf.Abs(forwardDelta) > m_HandMovementDeadzone &&
+            (!m_PreventBackwardMovement || forwardDelta > 0f))
         {
-            var headsetForward = mediator.xrOrigin.Camera != null ? mediator.xrOrigin.Camera.transform.forward : origin.forward;
-            headsetForward = Vector3.ProjectOnPlane(headsetForward, Vector3.up);
-            if (headsetForward.sqrMagnitude > Mathf.Epsilon)
-            {
-                headsetForward.Normalize();
-                var horizontalMove = Vector3.ProjectOnPlane(move, Vector3.up);
-                var forwardAmount = Vector3.Dot(horizontalMove, headsetForward);
-                if (forwardAmount < 0f)
-                    move -= headsetForward * forwardAmount;
-            }
+            m_GrabDirection = Mathf.Sign(forwardDelta);
         }
 
+        // Keep the farthest point reached along the chosen direction. Returning the hand
+        // cannot reverse the rig or add extra travel on the way back to that point.
+        if (forwardDelta * m_GrabDirection <= 0f || (m_PreventBackwardMovement && forwardDelta < 0f))
+            moveDelta -= m_GrabForward * forwardDelta;
+
+        // Accumulate small pulls instead of discarding them every frame.
+        if (moveDelta.sqrMagnitude <= m_HandMovementDeadzone * m_HandMovementDeadzone)
+            return Vector3.zero;
+
+        m_PreviousMovePosition += moveDelta;
+        var move = moveDelta * m_MoveFactor;
         if (m_MaxMovementPerFrame > 0f)
             move = Vector3.ClampMagnitude(move, m_MaxMovementPerFrame);
 
@@ -292,8 +300,7 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
             return false;
         }
 
-        // A closed fist, shared with the walking stick and holster so "grab" means the same everywhere.
-        wasGrabbing = HandGrip.IsFist(hand, wasGrabbing);
+        wasGrabbing = HandGrip.IsFullFist(hand, wasGrabbing);
         if (!wasGrabbing)
             return false;
 
@@ -320,8 +327,11 @@ public sealed class HandTrackingGrabMoveProvider : ConstrainedMoveProvider
         m_RightGrabbing = false;
         m_ActiveHand = k_NoHand;
         m_HasPreviousPosition = false;
-        m_PreviousActiveHandMask = 0;
-        m_PreviousHandPosition = default;
+        m_PreviousActiveHand = k_NoHand;
+        m_GrabStartPosition = default;
+        m_GrabForward = default;
+        m_GrabDirection = 0f;
+        m_PreviousMovePosition = default;
         m_SmoothedHandPosition = default;
     }
 }

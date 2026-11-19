@@ -198,19 +198,69 @@ The user played build 3 in the headset (2026-11-19): "the narrower plume feels
 pretty good", they did not notice the stair-stepped edge, and overall "much
 much better than before". This state is committed as the fallback point.
 
+## Session 2, part 2: flames at low resolution, composite inside URP's pass
+
+The user (2026-11-19): 67 FPS "is super fine, its very buttery enough"; the goal
+is to get the fire and smoke as close to that as possible, changing the look
+little.
+
+- Flames: the contained Wild flames go on layer 15 `LowResFlames` (left out of
+  Mobile_Renderer's transparents). Their additive outputs (Shader Graph, no
+  LightMode tag = SRPDefaultUnlit) go into a separate 8-bit texture, added to
+  the frame before the smoke; their alpha outputs (Steam/Smoke, built-in,
+  UniversalForwardOnly) go into the smoke texture ahead of the smoke. The flame
+  texture must be 8-bit: in the 16-bit smoke texture, flames stacked past white
+  shone through the smoke (stove-top flames far too bright and orange). With
+  the separate texture the stove-top region matches to 0.001 in the editor.
+- The composite was a render-graph pass of its own after the transparents.
+  Probe run 5 showed it split the frame's render pass: ~4.7 ms with the pass
+  present but drawing nothing, ~6 ms with the draw; the depth-only copy costs
+  ~0.5 ms. Now the feature only leaves its results as global textures
+  (`SetGlobalTextureAfterPass`), and two full-screen triangles of
+  `LowResSmokeEffects` (`Hidden/LowResSmoke/Composite`, queues 3011 flames add,
+  3012 smoke over) draw them inside URP's transparent pass, only for the
+  headset camera (`RenderPipelineManager.beginCameraRendering`).
+- `LowResSmokeFeature.LowRes = false` now moves the effects back to their own
+  layers (URP draws them natively); the feature's own full-res pass is only
+  for the editor's Scene view (it would split the pass too).
+- Not done (#3 of the plan): the neighbor houses can't leave the depth copy:
+  412 of their 439 renderers carry colliders, so their layer can't change, and
+  the copy turned out to cost ~0.5 ms in all.
+
+Runs at the stove (FPS):
+| step | run 4 (flames low-res) | run 6 (+ composite in URP's pass) |
+|---|---|---|
+| baseline | 29-31 | 34-38 |
+| flames back at full res | 26 | 30 |
+| everything native at full res | - | 15 (GPU 70 ms) |
+| no flames / no plume | 32 / 33 | 41 / 41 |
+| no room smoke | 42 | 54 |
+| no fire effects | 67 | 67 |
+| smoke and flames at 0.25 | 34 | 43 |
+| near-eye cap 1.0 | 31 | 37 |
+| pass with nothing to draw | 52 (GPU 16.3) | 67 (GPU 10.6) |
+Run 5 (diagnostic): no fire 67 / GPU 10.2; empty pass 51 / 16.5; empty without
+the depth copy 53 / 16; empty without the composite pass 67 / 10.3; empty with
+the composite pass drawing nothing 56 / ~15.
+
+Probe hiccup: the first launch after the user signed back into the headset
+found no fire: Normcore could not connect yet (Wi-Fi), and the scenario's fire
+start waits on the multiplayer quorum. Check for the "holding the view" line
+before trusting a run.
+
 ## Next steps
 
-To reach 72 FPS at the stove the fire must fit in ~3.5 ms of GPU (the scene
-alone is ~10.5 ms) and the CPU must drop too (67 FPS with no fire at all).
-1. Card-smoke tuning left: flames to low resolution (needs a flames-only
-   effect: the Wild effect mixes additive flames with alpha steam), the
-   neighbor houses out of the depth copy while the viewer is inside the house,
-   smoke 0.25, near cap. Maybe 30-35 FPS at the stove.
-2. CPU: profile a development build (main thread ~10.5 ms with no fire).
-3. Only a cheaper kind of room smoke (not dozens of stacked cards around the
-   viewer, e.g. one analytic smoke layer per room on Quest, keeping the Ignis
-   plume and vent) gets near 72 up close. That changes the approved lingering
-   smoke look: the user decides.
+At the stove the frame is now ~35 FPS; the fire adds about 10 ms of room
+smoke (plume ~4, lingering ~6), ~4 ms of flames and ~4 ms of the rest.
+1. Smoke and flames at 0.25 instead of 0.35: +8 FPS (43). Softer, and the
+   occlusion stair-steps get coarser: the user should judge it in the headset.
+   Separate scales for smoke and flames would need a second depth copy
+   (~0.5 ms).
+2. Near-eye card cap 1.0: +3 FPS, smaller cards right at the face.
+3. CPU: profile a development build (main thread ~10.5 ms with no fire).
+4. Only a cheaper kind of room smoke (one analytic smoke layer per room on
+   Quest, keeping the Ignis plume and vent) gets near 67 up close. That changes
+   the approved lingering smoke look: the user decides.
 
 ## Tools and how-to
 

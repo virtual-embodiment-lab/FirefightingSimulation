@@ -6,24 +6,37 @@ using UnityEngine.Rendering.RendererUtils;
 using UnityEngine.Rendering.Universal;
 
 /// <summary>
-/// Draws the house smoke at a lower resolution than the rest of the frame, then
-/// lays it over the frame. Up close every smoke card covers most of the view and
-/// dozens of them stack on each pixel, so the smoke is limited by how many
-/// pixels it fills: at half the resolution it fills a quarter as many.
+/// Draws the house smoke and the flames at a lower resolution than the rest of
+/// the frame. Up close every smoke card covers most of the view and dozens of
+/// them stack on each pixel, so the smoke is limited by how many pixels it
+/// fills: at 0.35 of the resolution it fills an eighth as many.
 /// </summary>
 /// <remarks>
-/// Only renderers on Smoke Layer are drawn this way. LowResSmokeEffects moves
-/// the Ignis smoke effects onto it in Quest builds; the renderer's own
-/// Transparent Layer Mask must leave that layer out, so the smoke is not drawn
-/// twice. Nothing is on the layer on PC, so the feature does nothing there.
+/// Only renderers on Smoke Layer and Flame Layer are drawn this way.
+/// LowResSmokeEffects moves the Ignis effects onto them in Quest builds; the
+/// renderer's own Transparent Layer Mask must leave both layers out, so they
+/// are not drawn twice. Nothing is on the layers on PC, so the feature does
+/// nothing there.
 ///
 /// Before the main pass starts, the opaque scene is drawn into a small depth
-/// buffer, depth only, and the smoke after it with the usual depth test, so
+/// buffer, depth only, and the effects after it with the usual depth test, so
 /// the stove, the furniture and the hands hide the smoke behind them as before.
 /// Doing this ahead of the main pass keeps that one render pass on the
-/// headset's tiled GPU. After the transparent objects, where the Ignis smoke
-/// drew before (it sorts after the flames and the hose water), the smoke is
-/// laid over the frame in one full-screen draw.
+/// headset's tiled GPU. The results are left as global textures, and two
+/// full-screen triangles of LowResSmokeEffects lay them over the frame from
+/// inside URP's own transparent pass, where the effects drew before (they sort
+/// after the hose water). A pass of our own there split the frame's render
+/// pass: the whole multisampled frame went out to memory and back, ~5 ms.
+///
+/// The Ignis flames are laid over the frame before the smoke, as they drew
+/// before (their queue is 3000, the smoke's 3010). Their flames and embers add
+/// light: they go into a texture of their own, in 8 bits like the frame, which
+/// is added to the frame first, so it saturates there before the smoke over it
+/// dims it, as before. (In the smoke's float texture, flames stacked far past
+/// white shone through the smoke.) The steam and smoke in the same effect blend
+/// by alpha and go into the smoke texture ahead of the smoke. The two kinds are
+/// told apart by pass: the additive Shader Graph outputs have no LightMode tag,
+/// the alpha ones are UniversalForwardOnly.
 /// </remarks>
 [DisallowMultipleRendererFeature("Low Res Smoke")]
 public sealed class LowResSmokeFeature : ScriptableRendererFeature
@@ -31,18 +44,28 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
     [Tooltip("Renderers drawn at the lower resolution. Leave this layer out of the renderer's Transparent Layer Mask.")]
     [SerializeField] LayerMask smokeLayer;
 
+    [Tooltip("Flame effects drawn at the lower resolution, before the smoke: their untagged passes add light, their other passes blend by alpha. Leave this layer out of the renderer's Transparent Layer Mask.")]
+    [SerializeField] LayerMask flameLayer;
+
     [Tooltip("Far scenery left out of the depth-only copy of the scene the smoke is tested against, because it never stands in front of the smoke. QuestPerformanceSettings puts the skyline on it.")]
     [SerializeField] LayerMask farSceneryLayer;
 
     [Tooltip("Width and height of the smoke as a share of the frame's.")]
     [SerializeField, Range(0.2f, 1f)] float resolutionScale = 0.35f;
 
+    [Tooltip("Hidden/LowResSmoke/Composite, referenced here so it is in the build. LowResSmokeEffects draws with it.")]
     [SerializeField] Shader compositeShader;
 
-    /// <summary>Set while any smoke renderer on the layer is visible; nothing is drawn otherwise.</summary>
+    /// <summary>Set while any smoke or flame renderer on the layers is visible; nothing is drawn otherwise.</summary>
     public static bool HasSmoke;
 
-    /// <summary>False draws the smoke layer at full resolution, as it was drawn before.</summary>
+    /// <summary>Set while any flame renderer on Flame Layer is visible; the flame texture is skipped otherwise.</summary>
+    public static bool HasFlames;
+
+    /// <summary>
+    /// False puts the effects back where they drew before, at full resolution:
+    /// LowResSmokeEffects moves them back to their own layers.
+    /// </summary>
     public static bool LowRes = true;
 
     /// <summary>Above zero, replaces Resolution Scale.</summary>
@@ -68,17 +91,28 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
     /// <summary>Skips laying the smoke over the frame, so it is not seen.</summary>
     public static bool DebugSkipComposite;
 
+    /// <summary>The global textures the composite reads.</summary>
+    public static readonly int SmokeTextureId = Shader.PropertyToID("_LowResSmokeTexture");
+    public static readonly int FlamesTextureId = Shader.PropertyToID("_LowResFlamesTexture");
+
+    /// <summary>
+    /// Whether this frame's camera gets the low-resolution effects, so the
+    /// composite triangles know whether to draw. Decided before culling, so it
+    /// repeats the checks of AddRenderPasses that it can.
+    /// </summary>
+    public static bool DrawsLowRes(Camera camera)
+    {
+        return (HasSmoke || DebugForceOn) && LowRes && camera != null && camera.cameraType == CameraType.Game;
+    }
+
     // Made in Create: Unity does not allow ShaderTagIds in static initializers.
     static ShaderTagId[] smokeTags;
     static ShaderTagId[] depthTags;
-
-    static readonly int SmokeTextureId = Shader.PropertyToID("_LowResSmokeTexture");
-    static readonly int FrameTexelId = Shader.PropertyToID("_LowResSmokeFrameTexel");
+    static ShaderTagId[] additiveFlameTags;
+    static ShaderTagId[] alphaFlameTags;
 
     SmokePass smokePass;
-    CompositePass compositePass;
     FullResolutionPass fullResolutionPass;
-    Material compositeMaterial;
 
     public override void Create()
     {
@@ -89,9 +123,11 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
             new ShaderTagId("UniversalForwardOnly"),
         };
         depthTags ??= new[] { new ShaderTagId("DepthOnly") };
+        // A pass with no LightMode tag counts as SRPDefaultUnlit.
+        additiveFlameTags ??= new[] { new ShaderTagId("SRPDefaultUnlit") };
+        alphaFlameTags ??= new[] { new ShaderTagId("UniversalForward"), new ShaderTagId("UniversalForwardOnly") };
 
         smokePass = new SmokePass { renderPassEvent = RenderPassEvent.BeforeRenderingPrePasses };
-        compositePass = new CompositePass { renderPassEvent = RenderPassEvent.AfterRenderingTransparents };
         fullResolutionPass = new FullResolutionPass { renderPassEvent = RenderPassEvent.AfterRenderingTransparents };
     }
 
@@ -104,47 +140,36 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
         if (cameraType == CameraType.Preview || cameraType == CameraType.Reflection)
             return;
 
-        fullResolutionPass.smokeLayer = smokeLayer;
-        if (!LowRes || cameraType != CameraType.Game || !EnsureMaterial())
+        if (cameraType != CameraType.Game)
         {
+            // The editor's Scene view: the effects at full resolution, in a
+            // pass of their own (it may split the render pass; it is a preview).
+            // Flames sort before the smoke by queue, so one list draws both.
+            fullResolutionPass.effectLayers = smokeLayer.value | flameLayer.value;
             renderer.EnqueuePass(fullResolutionPass);
             return;
         }
 
+        if (!LowRes)
+            return;
+
         smokePass.smokeLayer = smokeLayer;
+        smokePass.flameLayer = flameLayer;
+        smokePass.drawFlames = HasFlames && flameLayer.value != 0;
         // Everything the camera draws can stand in front of the smoke, except
         // the far scenery. The skyline alone is 1.3M triangles.
-        smokePass.occluderLayers = renderingData.cameraData.camera.cullingMask & ~smokeLayer.value
+        smokePass.occluderLayers = renderingData.cameraData.camera.cullingMask & ~smokeLayer.value & ~flameLayer.value
             & (SkipFarScenery ? ~farSceneryLayer.value : ~0);
         smokePass.scale = Mathf.Clamp(ScaleOverride > 0f ? ScaleOverride : resolutionScale, 0.1f, 1f);
-        compositePass.material = compositeMaterial;
-
         smokePass.drawOccluders = !DebugSkipOccluders;
         renderer.EnqueuePass(smokePass);
-        if (!DebugSkipComposite)
-            renderer.EnqueuePass(compositePass);
-    }
-
-    bool EnsureMaterial()
-    {
-        if (compositeMaterial == null && compositeShader != null && compositeShader.isSupported)
-            compositeMaterial = CoreUtils.CreateEngineMaterial(compositeShader);
-        return compositeMaterial != null;
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        CoreUtils.Destroy(compositeMaterial);
-        compositeMaterial = null;
     }
 
     /// <summary>
     /// Whether URP's own passes into the frame are foveated, so a pass of ours
-    /// matches them. A pass that differs ends the render pass there: on the
-    /// headset's tiled GPU the whole multisampled frame is then written out to
-    /// memory and read back, which costs milliseconds. URP foveates the frame
-    /// when it is the headset's eye buffer, and also when it is an intermediate
-    /// texture, except on standalone headsets with a scaled render viewport.
+    /// matches them. URP foveates the frame when it is the headset's eye
+    /// buffer, and also when it is an intermediate texture, except on
+    /// standalone headsets with a scaled render viewport.
     /// </summary>
     static bool FoveatesFrame(UniversalCameraData cameraData, UniversalResourceData resourceData)
     {
@@ -172,26 +197,17 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
         return renderGraph.CreateRendererList(desc);
     }
 
-    /// <summary>The low-resolution smoke of this camera's frame, from SmokePass to CompositePass.</summary>
-    sealed class SmokeFrame : ContextItem
-    {
-        public TextureHandle smoke;
-
-        public override void Reset()
-        {
-            smoke = TextureHandle.nullHandle;
-        }
-    }
-
     sealed class SmokePass : ScriptableRenderPass
     {
         public LayerMask smokeLayer;
+        public LayerMask flameLayer;
         public int occluderLayers;
         public float scale;
         public bool drawOccluders = true;
+        public bool drawFlames;
 
-        // URP's depth-only passes also write depth into the red channel; that
-        // is the smoke texture here, so they write no color at all.
+        // URP's depth-only passes also write depth into the red channel of
+        // their target, here the flame texture, so they write no color at all.
         static readonly RenderStateBlock DepthOnlyState = new RenderStateBlock(RenderStateMask.Blend)
         {
             blendState = new BlendState(false, false)
@@ -214,10 +230,26 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
             },
         };
 
+        // Flames add their light as they do in the frame (SrcAlpha, One) and
+        // leave the opacity alone, so the frame behind them still shows.
+        static readonly RenderStateBlock AdditiveState = new RenderStateBlock(RenderStateMask.Blend)
+        {
+            blendState = new BlendState(false, false)
+            {
+                blendState0 = new RenderTargetBlendState(ColorWriteMask.All,
+                    BlendMode.SrcAlpha, BlendMode.One,
+                    BlendMode.Zero, BlendMode.One,
+                    BlendOp.Add, BlendOp.Add),
+            },
+        };
+
         sealed class PassData
         {
             public RendererListHandle occluders;
+            public RendererListHandle additiveFlames;
+            public RendererListHandle alphaFlames;
             public RendererListHandle smoke;
+            public bool drawFlames;
         }
 
         public SmokePass()
@@ -258,88 +290,73 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
             depthDesc.filterMode = FilterMode.Point;
             TextureHandle depth = renderGraph.CreateTexture(depthDesc);
 
-            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Low Res Smoke", out PassData data, profilingSampler))
+            // The flames' light, in 8 bits like the frame: it saturates here as
+            // it did in the frame, so the smoke over it dims the same amount.
+            // In floats, flames stacked far past white would shine through.
+            TextureHandle flames = TextureHandle.nullHandle;
+            if (drawFlames)
+            {
+                var flameDesc = colorDesc;
+                flameDesc.name = "_LowResFlames";
+                flameDesc.format = QualitySettings.activeColorSpace == ColorSpace.Linear
+                    ? GraphicsFormat.R8G8B8A8_SRGB
+                    : GraphicsFormat.R8G8B8A8_UNorm;
+                flames = renderGraph.CreateTexture(flameDesc);
+            }
+
+            // First the depth-only scene, and the flames against it.
+            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Low Res Flames", out PassData data, profilingSampler))
             {
                 data.occluders = Renderers(renderGraph, frameData, depthTags, RenderQueueRange.opaque,
                     SortingCriteria.CommonOpaque, drawOccluders ? occluderLayers : 0, DepthOnlyState);
-                data.smoke = Renderers(renderGraph, frameData, smokeTags, RenderQueueRange.transparent,
-                    SortingCriteria.CommonTransparent, smokeLayer.value, SmokeState);
                 builder.UseRendererList(data.occluders);
-                builder.UseRendererList(data.smoke);
-                builder.SetRenderAttachment(smoke, 0, AccessFlags.Write);
+                if (drawFlames)
+                {
+                    data.additiveFlames = Renderers(renderGraph, frameData, additiveFlameTags, RenderQueueRange.transparent,
+                        SortingCriteria.CommonTransparent, flameLayer.value, AdditiveState);
+                    builder.UseRendererList(data.additiveFlames);
+                    builder.SetRenderAttachment(flames, 0, AccessFlags.Write);
+                    builder.SetGlobalTextureAfterPass(flames, FlamesTextureId);
+                }
                 builder.SetRenderAttachmentDepth(depth, AccessFlags.Write);
                 builder.AllowPassCulling(false);
+                data.drawFlames = drawFlames;
                 builder.SetRenderFunc((PassData passData, RasterGraphContext context) =>
                 {
                     context.cmd.DrawRendererList(passData.occluders);
+                    if (passData.drawFlames)
+                        context.cmd.DrawRendererList(passData.additiveFlames);
+                });
+            }
+
+            // Then the flames' steam and the smoke, against the same depth. The
+            // render graph joins the two into one render pass, so the depth
+            // never leaves the GPU's tile memory.
+            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Low Res Smoke", out PassData data, profilingSampler))
+            {
+                data.alphaFlames = Renderers(renderGraph, frameData, alphaFlameTags, RenderQueueRange.transparent,
+                    SortingCriteria.CommonTransparent, drawFlames ? flameLayer.value : 0, SmokeState);
+                data.smoke = Renderers(renderGraph, frameData, smokeTags, RenderQueueRange.transparent,
+                    SortingCriteria.CommonTransparent, smokeLayer.value, SmokeState);
+                builder.UseRendererList(data.alphaFlames);
+                builder.UseRendererList(data.smoke);
+                builder.SetRenderAttachment(smoke, 0, AccessFlags.Write);
+                builder.SetRenderAttachmentDepth(depth, AccessFlags.Read);
+                builder.SetGlobalTextureAfterPass(smoke, SmokeTextureId);
+                builder.AllowPassCulling(false);
+                builder.SetRenderFunc((PassData passData, RasterGraphContext context) =>
+                {
+                    context.cmd.DrawRendererList(passData.alphaFlames);
                     context.cmd.DrawRendererList(passData.smoke);
                 });
             }
-
-            frameData.GetOrCreate<SmokeFrame>().smoke = smoke;
         }
     }
 
-    sealed class CompositePass : ScriptableRenderPass
-    {
-        public Material material;
-
-        sealed class PassData
-        {
-            public Material material;
-            public MaterialPropertyBlock properties;
-            public TextureHandle smoke;
-            public Vector4 frameTexel;
-        }
-
-        readonly MaterialPropertyBlock properties = new MaterialPropertyBlock();
-
-        public CompositePass()
-        {
-            profilingSampler = new ProfilingSampler("Low Res Smoke Composite");
-        }
-
-        public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
-        {
-            if (!frameData.Contains<SmokeFrame>())
-                return;
-            TextureHandle smoke = frameData.Get<SmokeFrame>().smoke;
-            if (!smoke.IsValid())
-                return;
-
-            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
-            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
-
-            using (var builder = renderGraph.AddRasterRenderPass<PassData>("Low Res Smoke Composite", out PassData data, profilingSampler))
-            {
-                data.material = material;
-                data.properties = properties;
-                data.smoke = smoke;
-                RenderTextureDescriptor target = cameraData.cameraTargetDescriptor;
-                data.frameTexel = new Vector4(1f / target.width, 1f / target.height, target.width, target.height);
-
-                builder.UseTexture(smoke, AccessFlags.Read);
-                // The same attachments and foveation as URP's transparent pass,
-                // so this draw joins it in one render pass.
-                builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
-                builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Read);
-                builder.AllowPassCulling(false);
-                builder.EnableFoveatedRasterization(FoveatesFrame(cameraData, resourceData));
-
-                builder.SetRenderFunc((PassData passData, RasterGraphContext context) =>
-                {
-                    passData.properties.SetTexture(SmokeTextureId, passData.smoke);
-                    passData.properties.SetVector(FrameTexelId, passData.frameTexel);
-                    context.cmd.DrawProcedural(Matrix4x4.identity, passData.material, 0, MeshTopology.Triangles, 3, 1, passData.properties);
-                });
-            }
-        }
-    }
-
-    /// <summary>Draws the smoke layer straight into the frame, as URP's transparent pass would.</summary>
+    /// <summary>Draws the effect layers straight into the frame, as URP's transparent pass would.</summary>
     sealed class FullResolutionPass : ScriptableRenderPass
     {
-        public LayerMask smokeLayer;
+        public int effectLayers;
 
         sealed class PassData
         {
@@ -359,7 +376,7 @@ public sealed class LowResSmokeFeature : ScriptableRendererFeature
             using (var builder = renderGraph.AddRasterRenderPass<PassData>("Full Res Smoke", out PassData data, profilingSampler))
             {
                 data.smoke = Renderers(renderGraph, frameData, smokeTags, RenderQueueRange.transparent,
-                    SortingCriteria.CommonTransparent, smokeLayer.value, null);
+                    SortingCriteria.CommonTransparent, effectLayers, null);
                 builder.UseRendererList(data.smoke);
                 builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
                 builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Read);

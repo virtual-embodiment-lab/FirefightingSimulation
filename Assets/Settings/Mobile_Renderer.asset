@@ -36,7 +36,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 4294963199
+    m_Bits: 4294930431
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -68,6 +68,9 @@ MonoBehaviour:
   smokeLayer:
     serializedVersion: 2
     m_Bits: 4096
+  flameLayer:
+    serializedVersion: 2
+    m_Bits: 32768
   farSceneryLayer:
     serializedVersion: 2
     m_Bits: 16384

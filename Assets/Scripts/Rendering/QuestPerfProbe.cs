@@ -74,30 +74,45 @@ public sealed class QuestPerfProbe : MonoBehaviour
     }
 
     // Measured standing in the burning room, where the frame rate drops: what
-    // each Quest budget saves over the one before it (the skyline left out of
-    // the smoke's depth copy, smoke at 0.35, plume at 0.4), and what each kind
-    // of fire effect still costs. Runs 1 and 2 (2026-11-19, in
-    // APK_OPTIMIZATION_NOTES.md) found no difference from lamp shadows or 8-bit
-    // smoke, so those are no longer measured.
+    // drawing the flames at low resolution saves, and what each kind of fire
+    // effect still costs. Earlier runs (2026-11-19, in APK_OPTIMIZATION_NOTES.md)
+    // measured the skyline, smoke scale and plume size budgets; lamp shadows and
+    // 8-bit smoke made no difference.
+    // Run 5 (2026-11-19) found the composite's own render-graph pass split the
+    // frame's render pass (~5 ms even with nothing drawn); the composite now
+    // draws inside URP's transparent pass. These steps check that the empty
+    // pass is now cheap, and what the effects cost against URP drawing them
+    // itself (smoke-full-res puts them back on their own layers).
     static readonly Step[] Steps =
     {
         new Step { label = "baseline", apply = p => null },
-        new Step { label = "skyline-in-depth-copy", apply = p => p.WithFarSceneryInDepthCopy() },
-        new Step { label = "smoke-scale-0.5", apply = p => p.WithSmokeScale(0.5f) },
-        new Step { label = "plume-size-0.6", apply = p => p.WithPlumeSize(0.6f) },
+        new Step { label = "no-fire-effects", apply = p => p.HideAllFireEffects() },
+        new Step { label = "empty-pass", apply = p => p.All(p.HideAllFireEffects(), p.WithLowResDebug(true, false, false)) },
+        new Step { label = "empty-no-composite", apply = p => p.All(p.HideAllFireEffects(), p.WithLowResDebug(true, false, true)) },
+        new Step { label = "baseline", apply = p => null },
+        new Step { label = "smoke-full-res", apply = p => p.WithLowResSmoke(false) },
+        new Step { label = "flames-full-res", apply = p => p.WithLowResFlames(false) },
+        new Step { label = "baseline", apply = p => null },
+        new Step { label = "no-flames", apply = p => p.HideEffects("Flame_box") },
+        new Step { label = "no-plume", apply = p => p.HideEffects("Only_smoke_plume") },
+        new Step { label = "no-room-smoke", apply = p => p.HideEffects("Only_smoke") },
         new Step { label = "baseline", apply = p => null },
         new Step { label = "smoke-scale-0.25", apply = p => p.WithSmokeScale(0.25f) },
         new Step { label = "smoke-cap-1.0", apply = p => p.WithSmokeNearBudget(1f, 0f) },
         new Step { label = "baseline", apply = p => null },
-        new Step { label = "no-plume", apply = p => p.HideEffects("Only_smoke_plume") },
-        new Step { label = "no-room-smoke", apply = p => p.HideEffects("Only_smoke") },
-        new Step { label = "no-vent", apply = p => p.HideEffects("Window_smoke") },
-        new Step { label = "no-flames", apply = p => p.HideEffects("Flame_box") },
-        new Step { label = "no-fire-effects", apply = p => p.All(p.HideEffects("Only_smoke"), p.HideEffects("Window_smoke"), p.HideEffects("Flame_box")) },
-        new Step { label = "baseline", apply = p => null },
-        // What the low-resolution pass costs by itself, without smoke to draw.
-        new Step { label = "lowres-pass-empty", apply = p => p.All(p.HideEffects("Only_smoke"), p.HideEffects("Window_smoke"), p.HideEffects("Flame_box"), p.WithLowResDebug(true, false, false)) },
     };
+
+    System.Action HideAllFireEffects()
+    {
+        return All(HideEffects("Only_smoke"), HideEffects("Window_smoke"), HideEffects("Flame_box"));
+    }
+
+    System.Action WithLowResFlames(bool lowRes)
+    {
+        bool before = LowResSmokeEffects.LowResFlames;
+        LowResSmokeEffects.LowResFlames = lowRes;
+        return () => LowResSmokeEffects.LowResFlames = before;
+    }
 
     System.Action WithFarSceneryInDepthCopy()
     {

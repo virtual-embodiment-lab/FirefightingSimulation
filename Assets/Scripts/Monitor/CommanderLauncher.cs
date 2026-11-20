@@ -21,13 +21,8 @@ public sealed class CommanderLauncher : MonoBehaviour
     [Tooltip("Scenario scenes the commander can join (project-relative paths).")]
     [SerializeField] private string[] scenarios =
     {
-        "Assets/SCENARIOS/Scenario 1 (controlled; 1 story; daytime) 1.unity",
-        "Assets/SCENARIOS/Scenario 2 (controlled; 2 story; daytime) 1.unity",
-        "Assets/SCENARIOS/Scenario 3 (controlled;1 story nighttime) 1.unity",
-        "Assets/SCENARIOS/Smoke-VFX-Test/Scenario1-ImprovedSmoke_Test0.unity",
-        "Assets/SCENARIOS/Non-Controlled/Scenario 1 (1 story; daytime).unity",
-        "Assets/SCENARIOS/Non-Controlled/Scenario 2 (2 story; daytime).unity",
-        "Assets/SCENARIOS/Non-Controlled/Scenario 3 (1 story nighttime).unity",
+        "Assets/Scenes/Scenarios/Demo 10.23/Scenario 1.unity",
+        "Assets/Scenes/Scenarios/building/S1 11.18.unity",
     };
 
     [Tooltip("Join this scenario immediately instead of showing the menu. Leave empty to choose on Play.")]
@@ -94,13 +89,13 @@ public sealed class CommanderLauncher : MonoBehaviour
         GUILayout.EndArea();
     }
 
-    // Scenes in sub-folders (Non-Controlled, Smoke-VFX-Test) share names with the main
-    // scenarios, so show the folder too.
+    // Scenario scenes in different folders can share a name (e.g. "Scenario 1"), so show the
+    // folder too.
     private static string DisplayName(string scenePath)
     {
         string name = Path.GetFileNameWithoutExtension(scenePath);
         string folder = Path.GetFileName(Path.GetDirectoryName(scenePath));
-        return folder == "SCENARIOS" ? name : $"{folder} / {name}";
+        return folder == "Scenarios" ? name : $"{folder} / {name}";
     }
 
     private static bool IsLoadable(string scenePath)

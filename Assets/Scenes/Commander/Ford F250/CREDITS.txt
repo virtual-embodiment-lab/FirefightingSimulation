@@ -1,0 +1,7 @@
+"Ford F250" by David_Holiday (https://sketchfab.com/David_Holiday)
+Source: https://sketchfab.com/3d-models/ford-f250-8a0871ede6a149559f4629805439e228
+License: Creative Commons Attribution 4.0 (CC BY 4.0) - http://creativecommons.org/licenses/by/4.0/
+
+Changes made for the Commander View: scaled from inches to metres, the body
+recoloured red, the many small meshes merged into one mesh per material, and
+the invisible edge-line geometry removed.

@@ -74,37 +74,48 @@ with Scenario 1 — pick the one the VR users actually loaded.
 
 ## Commander View
 
-The commander sits in the officer's (right front) seat of the fire truck, looking out
+The incident commander sits in the driver's seat of a red Ford F250 pickup, looking out
 of the windshield, and hears every VR user's voice clearly regardless of distance.
 
-1. Open `Assets/SCENARIOS/Commander/Commander.unity` and press **Play**. The Monitor
+1. Open `Assets/Scenes/Commander/Commander.unity` and press **Play**. The Monitor
    Mode toggle doesn't matter here.
 2. Pick **the scenario the VR users are in** from the menu (same rule as above: a
    different scenario silently shows the wrong fires).
-3. The commander joins that scenario's room seated in its fire truck. Scenario 2
-   parks the truck elsewhere; the seat follows whichever truck the scenario has.
+3. The commander joins that scenario's room with the pickup parked where the
+   scenario's fire truck stands. The fire truck is hidden on the commander's machine
+   only; VR users still see it and don't see the pickup.
 
 | Input | Action |
 |---|---|
 | Hold right mouse button + move | Look around (up to 100° left/right, 30° up/down) |
 | Release right mouse button | View eases back to the windshield |
+| W / S (or ↑ / ↓) | Move the truck forward / back |
+| A / D (or ← / →) | Move the truck left / right |
+| Q / E | Turn the truck left / right |
+| Shift | Move 3× faster |
+| R | Put the truck back where the scenario's fire truck stands |
 | F1 | Hide the overlay |
 
-The overlay shows the scenario, connection state and which VR user is speaking.
-In the scenarios checked so far (Scenario 1 and 2) the burning house is on the truck's
-right, so look right (through the officer's side window) to see it.
+Click into the Game view first so it receives the keys. The truck follows the
+ground and stops at walls and other solid objects (switch off `Stop At Obstacles` on
+`Commander Cab` to drive through them). The overlay shows the scenario, connection
+state and which VR user is speaking.
 
 How it is built:
 
 - `CommanderLauncher` (scenario menu) starts the observer through
   `MonitorMode.BeginCommander`, so the commander gets the same treatment as the
   monitor: no avatar, XR and the XR rig off, never claims fires, voices played as 2D.
-- `CommanderCab` holds the cab interior, the head pivot and the camera. They are
-  authored around the `Fire Truck (reference)` object in the Commander scene; when a
-  scenario loads, the rig is moved to the same spot in that scenario's truck (found by
-  its mesh). To adjust the seat or the interior, edit them in the Commander scene.
-- The truck model has no interior and is invisible from inside, so the dashboard,
-  pillars, roof and seats are simple boxes under `Commander Cab/Interior`.
+- `CommanderCab` holds the pickup, the head pivot and the camera. They are authored
+  around `Fire Truck (placement reference)` (hidden) in the Commander scene; when a
+  scenario loads, the rig is moved to the same spot relative to that scenario's fire
+  truck (found by its mesh). To adjust the seat, move `Commander Head` in the
+  Commander scene.
+- The pickup is `Assets/Scenes/Commander/Ford F250/Ford F250.glb` (see `CREDITS.txt`
+  there: CC BY 4.0, the author must be credited). Its ~7,400 small meshes are merged
+  into one per material when Play starts (`CommanderVehicleModel`), which also turns
+  the white body red (`F250 Paint Red`) and drops the export's invisible edge lines and
+  two reference images. The scene view therefore shows it white and unmerged.
 - Joining scenarios from Play mode needs no Build Settings changes. A standalone
   commander build needs the Commander scene and the scenarios in Build Settings.
 

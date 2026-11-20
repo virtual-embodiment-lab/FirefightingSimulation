@@ -5,23 +5,28 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// The commander's seat in the fire truck. The rig (cab interior, head pivot and camera) is
-/// authored in the Commander scene around a reference copy of the truck. When a scenario
-/// loads, <see cref="MonitorMode"/> hands the scene to <see cref="EnterScene"/>, which moves
-/// the rig to the same spot in that scenario's truck.
+/// The incident commander's pickup truck. The rig (pickup model, head pivot and camera) is
+/// authored in the Commander scene around a reference copy of the scenario fire truck. When a
+/// scenario loads, <see cref="MonitorMode"/> hands the scene to <see cref="EnterScene"/>, which
+/// parks the pickup where that scenario's fire truck stands and hides the fire truck on this
+/// machine only (VR users still see it).
 ///
 /// The commander faces the windshield; holding the right mouse button looks around (within
 /// <see cref="maxYaw"/> / <see cref="maxPitch"/>) and the view eases back when released.
-/// Every VR user's voice is played as 2D audio, so the whole conversation is audible from
-/// the truck. F1 toggles the overlay.
+/// WASD / arrow keys move the pickup (Q / E turn it, Shift is faster, R puts it back), keeping
+/// it on the ground. Every VR user's voice is played as 2D audio, so the whole conversation is
+/// audible from the truck. F1 toggles the overlay.
 /// </summary>
 public sealed class CommanderCab : MonoBehaviour
 {
-    [Tooltip("Truck in the Commander scene that this cab is authored against.")]
+    [Tooltip("Scenario fire truck in the Commander scene that the pickup is placed against. " +
+             "Only marks the spot; it is hidden in Play mode.")]
     [SerializeField] private Transform referenceTruck;
     [Tooltip("Eye pivot; rotated for looking around.")]
     [SerializeField] private Transform head;
     [SerializeField] private Camera viewCamera;
+    [Tooltip("Hide the scenario's fire truck on the commander's machine, since the pickup takes its place.")]
+    [SerializeField] private bool hideScenarioTruck = true;
 
     [Header("Look around (hold right mouse button)")]
     [SerializeField] private float maxYaw = 100f;
@@ -31,8 +36,23 @@ public sealed class CommanderCab : MonoBehaviour
     [Tooltip("How quickly the view returns to the windshield after releasing the button.")]
     [SerializeField] private float returnSharpness = 4f;
 
+    [Header("Moving the truck (WASD / arrows, Q / E, Shift, R)")]
+    [SerializeField] private float moveSpeed = 3f;
+    [SerializeField] private float fastMultiplier = 3f;
+    [Tooltip("Degrees per second for Q / E.")]
+    [SerializeField] private float turnSpeed = 45f;
+    [Tooltip("Stop the truck at walls and other solid objects instead of driving through them.")]
+    [SerializeField] private bool stopAtObstacles = true;
+
     [Header("Audio")]
     [SerializeField] private float speakingThreshold = 0.05f;
+
+    private const float GroundProbeHeight = 1.5f;
+    private const float GroundProbeDepth = 4f;
+    // The obstacle box starts this far above the ground, so the road and kerbs don't stop the truck.
+    private const float GroundClearance = 0.35f;
+    // The obstacle box is this much smaller than the truck, so it can slide along a wall it touches.
+    private const float ObstacleSkin = 0.05f;
 
     private readonly List<RealtimeAvatar> avatars = new();
     private readonly List<int> clientIds = new();
@@ -43,6 +63,13 @@ public sealed class CommanderCab : MonoBehaviour
     private Realtime realtime;
     private string scenarioName;
     private bool seatedInTruck;
+    private Vector3 homePosition;
+    private Quaternion homeRotation;
+    private bool followsGround;
+    private float rideHeight;
+    private float groundHeight;
+    private Vector3 bodyCentre;
+    private Vector3 bodyHalfExtents;
     private float yaw;
     private float pitch;
     private bool showOverlay = true;
@@ -56,10 +83,11 @@ public sealed class CommanderCab : MonoBehaviour
         {
             cabInTruck = TruckFrame(referenceTruck).inverse * transform.localToWorldMatrix;
             truckMesh = referenceTruck.GetComponentInChildren<MeshFilter>().sharedMesh;
+            SetTruckVisible(referenceTruck, false);
         }
     }
 
-    /// <summary>Seats the commander in <paramref name="scene"/>'s fire truck.</summary>
+    /// <summary>Parks the commander's pickup where <paramref name="scene"/>'s fire truck stands.</summary>
     public void EnterScene(Scene scene, RealtimeAvatarManager manager, Pose fallback)
     {
         avatarManager = manager;
@@ -70,20 +98,87 @@ public sealed class CommanderCab : MonoBehaviour
         seatedInTruck = truck != null;
         if (seatedInTruck)
         {
+            if (hideScenarioTruck)
+                SetTruckVisible(truck, false);
             Matrix4x4 pose = TruckFrame(truck) * cabInTruck;
             transform.SetPositionAndRotation(pose.GetPosition(), pose.rotation);
+        }
+        else
+        {
+            // No truck in this scene: stand at the VR spawn point instead, facing the same way.
+            Debug.LogWarning($"[Commander] No fire truck found in {scene.name}; placing the commander at the VR spawn point.");
+            Quaternion facing = Quaternion.Euler(0f, fallback.rotation.eulerAngles.y, 0f);
+            Vector3 eye = fallback.position + Vector3.up * 1.6f;
+            transform.SetPositionAndRotation(eye - facing * transform.InverseTransformPoint(head.position), facing);
+        }
+
+        homePosition = transform.position;
+        homeRotation = transform.rotation;
+        // Keep the pickup's current height above whatever ground is under it while it moves.
+        followsGround = false;
+        followsGround = TryGroundHeight(transform.position, transform.position.y, out groundHeight);
+        rideHeight = followsGround ? transform.position.y - groundHeight : 0f;
+        MeasureBody();
+    }
+
+    // The truck's box in this object's space, from its renderers, raised off the ground.
+    private void MeasureBody()
+    {
+        bool any = false;
+        Bounds local = default;
+        foreach (Renderer part in GetComponentsInChildren<Renderer>())
+        {
+            // Local bounds, so the box fits the truck however it is turned in the world.
+            Bounds own = part.localBounds;
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 point = transform.InverseTransformPoint(part.transform.TransformPoint(new Vector3(
+                    (corner & 1) == 0 ? own.min.x : own.max.x,
+                    (corner & 2) == 0 ? own.min.y : own.max.y,
+                    (corner & 4) == 0 ? own.min.z : own.max.z)));
+                if (any) local.Encapsulate(point);
+                else local = new Bounds(point, Vector3.zero);
+                any = true;
+            }
+        }
+        if (!any)
+        {
+            bodyHalfExtents = Vector3.zero;
             return;
         }
 
-        // No truck in this scene: stand at the VR spawn point instead, facing the same way.
-        Debug.LogWarning($"[Commander] No fire truck found in {scene.name}; placing the commander at the VR spawn point.");
-        Quaternion facing = Quaternion.Euler(0f, fallback.rotation.eulerAngles.y, 0f);
-        Vector3 eye = fallback.position + Vector3.up * 1.6f;
-        transform.SetPositionAndRotation(eye - facing * transform.InverseTransformPoint(head.position), facing);
+        float bottom = local.min.y + GroundClearance;
+        bodyCentre = new Vector3(local.center.x, (bottom + local.max.y) * 0.5f, local.center.z);
+        bodyHalfExtents = new Vector3(local.extents.x, (local.max.y - bottom) * 0.5f, local.extents.z) -
+                          Vector3.one * ObstacleSkin;
     }
 
-    // The truck model lies on its side inside the prefab (its local Y axis runs from tail to
-    // nose), so build an upright frame from its position and the direction its nose points.
+    private bool HasBody => stopAtObstacles && bodyHalfExtents.x > 0f && bodyHalfExtents.y > 0f && bodyHalfExtents.z > 0f;
+
+    private bool OverlapsAt(Vector3 position, Quaternion rotation) =>
+        Physics.CheckBox(position + rotation * bodyCentre, bodyHalfExtents, rotation,
+            Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+
+    // Only something the truck would run into blocks it. Objects it already overlaps (e.g. it
+    // was parked against a fence) are reported at distance 0 and ignored, so it can always be
+    // driven out.
+    private bool IsBlocked(Vector3 step)
+    {
+        float distance = step.magnitude;
+        if (distance <= 1e-5f)
+            return false;
+        foreach (RaycastHit hit in Physics.BoxCastAll(transform.position + transform.rotation * bodyCentre,
+                     bodyHalfExtents, step / distance, transform.rotation, distance + ObstacleSkin,
+                     Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.distance > 0f)
+                return true;
+        }
+        return false;
+    }
+
+    // The fire truck model lies on its side inside the prefab (its local Y axis runs from tail
+    // to nose), so build an upright frame from its position and the direction its nose points.
     private static Matrix4x4 TruckFrame(Transform truck)
     {
         Vector3 nose = Vector3.ProjectOnPlane(truck.up, Vector3.up).normalized;
@@ -102,10 +197,20 @@ public sealed class CommanderCab : MonoBehaviour
         return null;
     }
 
+    private static void SetTruckVisible(Transform truck, bool visible)
+    {
+        foreach (Renderer truckRenderer in truck.GetComponentsInChildren<Renderer>(true))
+            truckRenderer.enabled = visible;
+        foreach (Collider truckCollider in truck.GetComponentsInChildren<Collider>(true))
+            truckCollider.enabled = visible;
+    }
+
     private void LateUpdate()
     {
         ObservedAvatars.Collect(avatarManager, avatars, clientIds);
         HandleLook();
+        if (avatarManager != null)
+            HandleDriving();
 
         if (Time.unscaledTime >= nextAudioRefreshTime)
         {
@@ -136,6 +241,70 @@ public sealed class CommanderCab : MonoBehaviour
             showOverlay = !showOverlay;
     }
 
+    // WASD / arrows slide the pickup forward, back and sideways relative to where it faces,
+    // Q / E turn it in place. It is only moved on this machine; VR users don't see it.
+    private void HandleDriving()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+            return;
+
+        if (keyboard.rKey.wasPressedThisFrame)
+        {
+            transform.SetPositionAndRotation(homePosition, homeRotation);
+            if (followsGround)
+                groundHeight = homePosition.y - rideHeight;
+            return;
+        }
+
+        Vector2 move = Vector2.zero;
+        if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed) move.y += 1f;
+        if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed) move.y -= 1f;
+        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) move.x += 1f;
+        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed) move.x -= 1f;
+        float turn = (keyboard.eKey.isPressed ? 1f : 0f) - (keyboard.qKey.isPressed ? 1f : 0f);
+        if (move == Vector2.zero && turn == 0f)
+            return;
+
+        float dt = Time.unscaledDeltaTime;
+        float speed = moveSpeed * (keyboard.shiftKey.isPressed ? fastMultiplier : 1f);
+
+        if (turn != 0f)
+        {
+            Quaternion turned = Quaternion.Euler(0f, turn * turnSpeed * dt, 0f) * transform.rotation;
+            if (!HasBody || !OverlapsAt(transform.position, turned) || OverlapsAt(transform.position, transform.rotation))
+                transform.rotation = turned;
+        }
+
+        Vector3 step = transform.rotation * new Vector3(move.x, 0f, move.y) * (speed * dt);
+        if (step == Vector3.zero || (HasBody && IsBlocked(step)))
+            return;
+
+        Vector3 next = transform.position + step;
+        if (followsGround && TryGroundHeight(next, groundHeight + rideHeight, out float ground))
+        {
+            groundHeight = ground;
+            next.y = ground + rideHeight;
+        }
+        transform.position = next;
+    }
+
+    // Probes from a little above the last known ground, so roofs and overhangs above the
+    // truck are not mistaken for the road.
+    private bool TryGroundHeight(Vector3 position, float referenceHeight, out float height)
+    {
+        float probeTop = followsGround ? groundHeight + GroundProbeHeight : referenceHeight;
+        Vector3 origin = new(position.x, probeTop, position.z);
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, GroundProbeDepth + GroundProbeHeight,
+                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            height = hit.point.y;
+            return true;
+        }
+        height = 0f;
+        return false;
+    }
+
     private void OnGUI()
     {
         // Before a scenario is chosen the launcher menu owns the screen.
@@ -155,10 +324,10 @@ public sealed class CommanderCab : MonoBehaviour
             text.AppendLine($"  Player {i + 1} (id {clientIds[i]}){speaking}");
         }
         text.AppendLine();
-        text.Append("<size=12>Hold right mouse to look around · F1 hide</size>");
+        text.Append("<size=12>WASD move truck · Q/E turn · Shift faster · R reset · Hold right mouse to look · F1 hide</size>");
 
         GUIContent content = new(text.ToString());
-        float width = Mathf.Min(360f, Screen.width - 24f);
+        float width = Mathf.Min(380f, Screen.width - 24f);
         GUI.Box(new Rect(12f, 12f, width, panelStyle.CalcHeight(content, width)), content, panelStyle);
     }
 }

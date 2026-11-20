@@ -17,7 +17,7 @@ using UnityEngine.XR.Management;
 /// scene, so VR clients are unaffected.
 ///
 /// The Commander scene uses the same entity-less join through <see cref="BeginCommander"/>,
-/// but puts the observer in the fire truck (<see cref="CommanderCab"/>) instead of the
+/// but puts the observer in the Ford F250 pickup (<see cref="CommanderCab"/>) instead of the
 /// bird's-eye camera.
 /// </summary>
 public static class MonitorMode

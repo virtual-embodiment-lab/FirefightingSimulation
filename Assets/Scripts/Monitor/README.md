@@ -4,7 +4,7 @@ Two ways for someone **without a headset** to join the same Normcore room as the
 firefighters:
 
 - **Monitor Mode** — a bird's-eye view that follows the VR users (this page, below).
-- **Commander View** — sits in the officer's seat of the fire truck, facing the
+- **Commander View** — sits in the driver's seat of a red Ford F250 pickup, facing the
   windshield ([see below](#commander-view)).
 
 Both have no avatar, are invisible to participants, and never take ownership of any
@@ -82,8 +82,9 @@ of the windshield, and hears every VR user's voice clearly regardless of distanc
 2. Pick **the scenario the VR users are in** from the menu (same rule as above: a
    different scenario silently shows the wrong fires).
 3. The commander joins that scenario's room with the pickup parked where the
-   scenario's fire truck stands. The fire truck is hidden on the commander's machine
-   only; VR users still see it and don't see the pickup.
+   scenario's Ford F250 stands. That F250 is hidden on the commander's machine only;
+   VR users still see it and don't see the commander's pickup. A scenario without an
+   F250 puts the commander at the VR spawn point instead (with a console warning).
 
 | Input | Action |
 |---|---|
@@ -93,7 +94,7 @@ of the windshield, and hears every VR user's voice clearly regardless of distanc
 | A / D (or ← / →) | Move the truck left / right |
 | Q / E | Turn the truck left / right |
 | Shift | Move 3× faster |
-| R | Put the truck back where the scenario's fire truck stands |
+| R | Put the truck back where the scenario's F250 stands |
 | F1 | Hide the overlay |
 
 Click into the Game view first so it receives the keys. The truck follows the
@@ -107,15 +108,17 @@ How it is built:
   `MonitorMode.BeginCommander`, so the commander gets the same treatment as the
   monitor: no avatar, XR and the XR rig off, never claims fires, voices played as 2D.
 - `CommanderCab` holds the pickup, the head pivot and the camera. They are authored
-  around `Fire Truck (placement reference)` (hidden) in the Commander scene; when a
-  scenario loads, the rig is moved to the same spot relative to that scenario's fire
-  truck (found by its mesh). To adjust the seat, move `Commander Head` in the
-  Commander scene.
-- The pickup is `Assets/Scenes/Commander/Ford F250/Ford F250.glb` (see `CREDITS.txt`
-  there: CC BY 4.0, the author must be credited). Its ~7,400 small meshes are merged
-  into one per material when Play starts (`CommanderVehicleModel`), which also turns
-  the white body red (`F250 Paint Red`) and drops the export's invisible edge lines and
-  two reference images. The scene view therefore shows it white and unmerged.
+  around `F250 (placement reference)` (hidden) in the Commander scene; when a
+  scenario loads, the rig is moved to the same spot relative to that scenario's F250
+  (found by the prefab's meshes, so it must be an instance of `Ford F250.prefab`). To
+  adjust the seat, move `Commander Head` in the Commander scene.
+- **Setting up a scenario:** drag `Assets/Scenes/Commander/Ford F250/Ford F250.prefab`
+  into the scenario where the commander should park. Its pivot is on the ground under
+  the middle of the truck, and the commander faces the way the truck faces.
+- The pickup is `Assets/Scenes/Commander/Ford F250/Ford F250.prefab` (see `CREDITS.txt`
+  there: CC BY 4.0, the author must be credited). It is the original model
+  (`Source/Ford F250 Unmerged.glb`, ~7,400 small meshes) merged ahead of time into one
+  mesh per material, with the export's invisible edge lines removed.
 - Joining scenarios from Play mode needs no Build Settings changes. A standalone
   commander build needs the Commander scene and the scenarios in Build Settings.
 

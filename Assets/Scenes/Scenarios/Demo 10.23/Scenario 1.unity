@@ -392,6 +392,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 3996505}
   collider: {fileID: 3996504}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &3996503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -880,6 +886,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 6215995}
   collider: {fileID: 6215994}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &6215993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2282,6 +2294,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 19170856}
   collider: {fileID: 19170855}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &19170854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3034,6 +3052,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 30175382}
   collider: {fileID: 30175381}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &30175380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3488,6 +3512,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 38117249}
   collider: {fileID: 38117248}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &38117247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5123,6 +5153,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 54693883}
   collider: {fileID: 54693882}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &54693881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6053,6 +6089,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 74023523}
   collider: {fileID: 74023522}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &74023521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6614,6 +6656,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 82754822}
   collider: {fileID: 82754821}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &82754820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6994,6 +7042,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 84597428}
   collider: {fileID: 84597427}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &84597426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8575,6 +8629,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 108344794}
   collider: {fileID: 108344793}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &108344792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9090,6 +9150,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 113665061}
   collider: {fileID: 113665060}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &113665059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9401,6 +9467,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 115573306}
   collider: {fileID: 115573305}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &115573304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9727,6 +9799,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 118730880}
   collider: {fileID: 118730879}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &118730878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10543,6 +10621,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 131840040}
   collider: {fileID: 131840039}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &131840038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11208,6 +11292,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 137904586}
   collider: {fileID: 137904585}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &137904584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11505,6 +11595,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 138453187}
   collider: {fileID: 138453186}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &138453185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12452,6 +12548,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 145392042}
   collider: {fileID: 145392041}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &145392040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13171,6 +13273,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 158941405}
   collider: {fileID: 158941404}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &158941403
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13840,6 +13948,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 170105880}
   collider: {fileID: 170105879}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &170105878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14219,6 +14333,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 174011521}
   collider: {fileID: 174011520}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &174011519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14530,6 +14650,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 175750085}
   collider: {fileID: 175750084}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &175750083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15103,6 +15229,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 182126447}
   collider: {fileID: 182126446}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &182126445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15940,6 +16072,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 203463071}
   collider: {fileID: 203463070}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &203463069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17232,6 +17370,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 218588918}
   collider: {fileID: 218588917}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &218588916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18024,6 +18168,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 222713968}
   collider: {fileID: 222713967}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &222713966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18321,6 +18471,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 223100512}
   collider: {fileID: 223100511}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &223100510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18766,6 +18922,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 225769425}
   collider: {fileID: 225769424}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &225769423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19113,6 +19275,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 232697546}
   collider: {fileID: 232697545}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &232697544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19645,6 +19813,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 233774164}
   collider: {fileID: 233774163}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &233774162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20348,6 +20522,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 239694780}
   collider: {fileID: 239694779}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &239694778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20978,6 +21158,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 245757189}
   collider: {fileID: 245757188}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &245757187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22555,6 +22741,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 279789934}
   collider: {fileID: 279789933}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &279789932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22864,6 +23056,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 281990602}
   collider: {fileID: 281990601}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &281990600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23348,6 +23546,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 287226816}
   collider: {fileID: 287226815}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &287226814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23690,6 +23894,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 289823337}
   collider: {fileID: 289823336}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &289823335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24568,6 +24778,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 299872589}
   collider: {fileID: 299872588}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &299872587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26941,6 +27157,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 336046851}
   collider: {fileID: 336046850}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &336046849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27321,6 +27543,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 337341673}
   collider: {fileID: 337341672}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &337341671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28331,6 +28559,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 346632430}
   collider: {fileID: 346632429}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &346632428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29136,6 +29370,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 364778888}
   collider: {fileID: 364778887}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &364778886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29618,6 +29858,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 373343237}
   collider: {fileID: 373343236}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &373343235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30134,6 +30380,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 378787520}
   collider: {fileID: 378787519}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &378787518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -30553,6 +30805,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 379713326}
   collider: {fileID: 379713325}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &379713324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31041,6 +31299,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 384257687}
   collider: {fileID: 384257686}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &384257685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32391,6 +32655,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 395144961}
   collider: {fileID: 395144960}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &395144959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33017,6 +33287,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 404177855}
   collider: {fileID: 404177854}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &404177853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33590,6 +33866,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 407836953}
   collider: {fileID: 407836952}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &407836951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34097,6 +34379,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 413057274}
   collider: {fileID: 413057273}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &413057272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34646,6 +34934,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 420939945}
   collider: {fileID: 420939944}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &420939943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35051,6 +35345,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 427326880}
   collider: {fileID: 427326879}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &427326878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35348,6 +35648,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 429283211}
   collider: {fileID: 429283210}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &429283209
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35953,6 +36259,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 435026856}
   collider: {fileID: 435026855}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &435026854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36764,6 +37076,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 444228565}
   collider: {fileID: 444228564}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &444228563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37442,6 +37760,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 451217922}
   collider: {fileID: 451217921}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &451217920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38948,6 +39272,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 463816258}
   collider: {fileID: 463816257}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &463816256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39314,6 +39644,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 466329123}
   collider: {fileID: 466329122}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &466329121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40675,6 +41011,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 487474280}
   collider: {fileID: 487474279}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &487474278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41476,6 +41818,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 491586840}
   collider: {fileID: 491586839}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &491586838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41795,6 +42143,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 491747024}
   collider: {fileID: 491747023}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &491747022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42092,6 +42446,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 493666329}
   collider: {fileID: 493666328}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &493666327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43015,6 +43375,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 499532582}
   collider: {fileID: 499532581}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &499532580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43508,6 +43874,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 509425596}
   collider: {fileID: 509425595}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &509425594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43888,6 +44260,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 510812082}
   collider: {fileID: 510812081}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &510812080
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44310,6 +44688,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 515176425}
   collider: {fileID: 515176424}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &515176423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44607,6 +44991,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 518949509}
   collider: {fileID: 518949508}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &518949507
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45467,6 +45857,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 532603483}
   collider: {fileID: 532603482}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &532603481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45764,6 +46160,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 537192068}
   collider: {fileID: 537192067}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &537192066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46257,6 +46659,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 538556072}
   collider: {fileID: 538556071}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &538556070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47252,6 +47660,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 547421071}
   collider: {fileID: 547421070}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &547421069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47549,6 +47963,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 550072532}
   collider: {fileID: 550072531}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &550072530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47771,6 +48191,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 551233044}
   collider: {fileID: 551233043}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &551233042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48612,6 +49038,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 561701271}
   collider: {fileID: 561701270}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &561701269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48909,6 +49341,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 562742108}
   collider: {fileID: 562742107}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &562742106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49424,6 +49862,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 567039632}
   collider: {fileID: 567039631}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &567039630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49804,6 +50248,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 567446397}
   collider: {fileID: 567446396}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &567446395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50101,6 +50551,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 568170957}
   collider: {fileID: 568170956}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &568170955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50400,6 +50856,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 568968958}
   collider: {fileID: 568968957}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &568968956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51145,6 +51607,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 574482147}
   collider: {fileID: 574482146}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &574482145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51897,6 +52365,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 584793969}
   collider: {fileID: 584793968}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &584793967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52369,6 +52843,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 591390397}
   collider: {fileID: 591390396}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &591390395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52986,6 +53466,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 614561091}
   collider: {fileID: 614561090}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &614561089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -53821,6 +54307,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 619258681}
   collider: {fileID: 619258680}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &619258679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54326,6 +54818,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 622026768}
   collider: {fileID: 622026767}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &622026766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54637,6 +55135,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 622585815}
   collider: {fileID: 622585814}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &622585813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56022,6 +56526,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 637824072}
   collider: {fileID: 637824071}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &637824070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56551,6 +57061,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 642243832}
   collider: {fileID: 642243831}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &642243830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56883,6 +57399,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 645758466}
   collider: {fileID: 645758465}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &645758464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57388,6 +57910,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 655815941}
   collider: {fileID: 655815940}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &655815939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57687,6 +58215,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 658805642}
   collider: {fileID: 658805641}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &658805640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58254,6 +58788,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 662934665}
   collider: {fileID: 662934664}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &662934663
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58651,6 +59191,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 663565297}
   collider: {fileID: 663565296}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &663565295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58948,6 +59494,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 664179823}
   collider: {fileID: 664179822}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &664179821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59297,6 +59849,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 668136498}
   collider: {fileID: 668136497}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &668136496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59945,6 +60503,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 675656632}
   collider: {fileID: 675656631}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &675656630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60490,6 +61054,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 678834031}
   collider: {fileID: 678834030}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &678834029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61354,6 +61924,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 712080117}
   collider: {fileID: 712080116}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &712080115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61707,10 +62283,12 @@ MonoBehaviour:
     m_Bits: 4294967295
   growthSeconds: 30
   fadeSeconds: 8
+  lingeringFadeSeconds: 0
   fadeDistanceDelay: 1.5
   keepPlumeAtFire: 1
   plumeOpacity: 2.5
   plumeSmokePrefab: {fileID: 0}
+  plumeParticleSize: 1
   lingeringSmoke: 1
   particlesPerCell: 3
   releaseRate: 10
@@ -61718,13 +62296,34 @@ MonoBehaviour:
   lingeringOpacity: 3
   lingerSeconds: 600
   lingeringSmokePrefab: {fileID: 0}
+  frontSpeed: 0.75
+  otherRoomSmoke: 0.25
+  doorwaySmoke: 0.6
+  otherRoomStartShare: 1
+  otherRoomBuildUpSeconds: 0
+  otherRoomSpeed: 0.6
+  spreadingVolumes: 0.5
   lowestSmokeHeight: 0.8
+  otherRoomLowestSmokeHeight: 1
   bankDownSeconds: 60
   sinkSpeed: 0.15
+  ventThroughWindows: 1
+  windowName: Window
+  ventFullDepth: 0.6
+  ventSmokeRate: 2.5
+  ventOpacity: 2
+  ventParticleSize: 1.1
+  ventBrightness: 1
+  ventOutwardSpeed: 1.8
+  ventRise: 1.1
+  ventLifetime: 6
+  windowVentEffect: {fileID: 0}
   containSmoke: 1
   containedSmokePrefab: {fileID: 0}
   containFlames: 1
   containedFlamePrefab: {fileID: 0}
+  flameParticles: 0.6
+  flameBrightness: 1.25
   roomBoundaryMask:
     serializedVersion: 2
     m_Bits: 1
@@ -61961,6 +62560,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 714109727}
   collider: {fileID: 714109726}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &714109725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62377,6 +62982,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 722786775}
   collider: {fileID: 722786774}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &722786773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62985,6 +63596,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 729586767}
   collider: {fileID: 729586766}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &729586765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63893,6 +64510,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 743381782}
   collider: {fileID: 743381781}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &743381780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64409,6 +65032,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 746390577}
   collider: {fileID: 746390576}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &746390575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64866,6 +65495,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 750407473}
   collider: {fileID: 750407472}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &750407471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65286,6 +65921,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 751630688}
   collider: {fileID: 751630687}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &751630686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66417,6 +67058,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 766415502}
   collider: {fileID: 766415501}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &766415500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66714,6 +67361,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 768729707}
   collider: {fileID: 768729706}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &768729705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67003,6 +67656,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 770663609}
   collider: {fileID: 770663608}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &770663607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67300,6 +67959,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 775902341}
   collider: {fileID: 775902340}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &775902339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68999,6 +69664,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 804611481}
   collider: {fileID: 804611480}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &804611479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70145,6 +70816,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 821654710}
   collider: {fileID: 821654709}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &821654708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71317,6 +71994,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 837718760}
   collider: {fileID: 837718759}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &837718758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71616,6 +72299,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 842030083}
   collider: {fileID: 842030082}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &842030081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72348,6 +73037,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 848192268}
   collider: {fileID: 848192267}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &848192266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72805,6 +73500,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 855963792}
   collider: {fileID: 855963791}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &855963790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73163,6 +73864,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 856033340}
   collider: {fileID: 856033339}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &856033338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73460,6 +74167,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 856964709}
   collider: {fileID: 856964708}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &856964707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73922,6 +74635,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 860239146}
   collider: {fileID: 860239145}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &860239144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74233,6 +74952,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 861905798}
   collider: {fileID: 861905797}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &861905796
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74695,6 +75420,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 864637248}
   collider: {fileID: 864637247}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &864637246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75075,6 +75806,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 865333406}
   collider: {fileID: 865333405}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &865333404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75471,6 +76208,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 869509902}
   collider: {fileID: 869509901}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &869509900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75873,6 +76616,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 870209952}
   collider: {fileID: 870209951}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &870209950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76451,6 +77200,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 873366926}
   collider: {fileID: 873366925}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &873366924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76831,6 +77586,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 873818976}
   collider: {fileID: 873818975}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &873818974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77649,6 +78410,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 881091161}
   collider: {fileID: 881091160}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &881091159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78273,6 +79040,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 900317902}
   collider: {fileID: 900317901}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &900317900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78735,6 +79508,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 903442833}
   collider: {fileID: 903442832}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &903442831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79257,6 +80036,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 912896496}
   collider: {fileID: 912896495}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &912896494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80537,6 +81322,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 928284008}
   collider: {fileID: 928284007}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &928284006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81085,6 +81876,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 930695284}
   collider: {fileID: 930695283}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &930695282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81676,6 +82473,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 933825712}
   collider: {fileID: 933825711}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &933825710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82771,6 +83574,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 944286123}
   collider: {fileID: 944286122}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &944286121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83046,6 +83855,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 945542043}
   collider: {fileID: 945542042}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &945542041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83343,6 +84158,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 945972658}
   collider: {fileID: 945972657}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &945972656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83723,6 +84544,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 950103332}
   collider: {fileID: 950103331}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &950103330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84364,6 +85191,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 951834717}
   collider: {fileID: 951834716}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &951834715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84661,6 +85494,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 952138447}
   collider: {fileID: 952138446}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &952138445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85401,6 +86240,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 963496022}
   collider: {fileID: 963496021}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &963496020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85851,6 +86696,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 968116380}
   collider: {fileID: 968116379}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &968116378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86238,6 +87089,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 969501062}
   collider: {fileID: 969501061}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &969501060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86535,6 +87392,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 972573946}
   collider: {fileID: 972573945}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &972573944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87204,6 +88067,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 976457354}
   collider: {fileID: 976457353}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &976457352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87673,6 +88542,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 981877401}
   collider: {fileID: 981877400}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &981877399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88329,6 +89204,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 986205147}
   collider: {fileID: 986205146}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &986205145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89037,6 +89918,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 992343048}
   collider: {fileID: 992343047}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &992343046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89428,6 +90315,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 995926650}
   collider: {fileID: 995926649}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &995926648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89725,6 +90618,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1001642893}
   collider: {fileID: 1001642892}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1001642891
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90305,6 +91204,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1005565234}
   collider: {fileID: 1005565233}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1005565232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90983,6 +91888,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1012039448}
   collider: {fileID: 1012039447}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1012039446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91280,6 +92191,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1012840425}
   collider: {fileID: 1012840424}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1012840423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91591,6 +92508,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1012842446}
   collider: {fileID: 1012842445}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1012842444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92067,6 +92990,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1020046505}
   collider: {fileID: 1020046504}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1020046503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92489,6 +93418,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1021877424}
   collider: {fileID: 1021877423}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1021877422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92869,6 +93804,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1023652587}
   collider: {fileID: 1023652586}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1023652585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93249,6 +94190,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1023814715}
   collider: {fileID: 1023814714}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1023814713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93560,6 +94507,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1023887175}
   collider: {fileID: 1023887174}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1023887173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94183,6 +95136,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1029918274}
   collider: {fileID: 1029918273}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1029918272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94494,6 +95453,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1031103355}
   collider: {fileID: 1031103354}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1031103353
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96203,6 +97168,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1050796063}
   collider: {fileID: 1050796062}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1050796061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97092,6 +98063,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1058659351}
   collider: {fileID: 1058659350}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1058659349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97389,6 +98366,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1060061218}
   collider: {fileID: 1060061217}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1060061216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97987,6 +98970,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1062684819}
   collider: {fileID: 1062684818}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1062684817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98736,6 +99725,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1070156830}
   collider: {fileID: 1070156829}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1070156828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99198,6 +100193,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1077377709}
   collider: {fileID: 1077377708}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1077377707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99495,6 +100496,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1079171692}
   collider: {fileID: 1079171691}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1079171690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99785,6 +100792,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1085308799}
   collider: {fileID: 1085308798}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1085308797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100135,6 +101148,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1088973527}
   collider: {fileID: 1088973526}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1088973525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100857,6 +101876,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1098789854}
   collider: {fileID: 1098789853}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1098789852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101132,6 +102157,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1102617366}
   collider: {fileID: 1102617365}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1102617364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101532,6 +102563,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1104459424}
   collider: {fileID: 1104459423}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1104459422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -101829,6 +102866,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1108263330}
   collider: {fileID: 1108263329}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1108263328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102365,6 +103408,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1113973730}
   collider: {fileID: 1113973729}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1113973728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102676,6 +103725,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1114070115}
   collider: {fileID: 1114070114}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1114070113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103076,6 +104131,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1121081979}
   collider: {fileID: 1121081978}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1121081977
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103409,6 +104470,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1122367425}
   collider: {fileID: 1122367424}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1122367423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104210,6 +105277,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1128151126}
   collider: {fileID: 1128151125}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1128151124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104718,6 +105791,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1130273469}
   collider: {fileID: 1130273468}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1130273467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105757,6 +106836,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1152322472}
   collider: {fileID: 1152322471}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1152322470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106947,6 +108032,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1172747361}
   collider: {fileID: 1172747360}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1172747359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107696,6 +108787,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1178810304}
   collider: {fileID: 1178810303}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1178810302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108266,6 +109363,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1182153885}
   collider: {fileID: 1182153884}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1182153883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108594,6 +109697,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1184186711}
   collider: {fileID: 1184186710}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1184186709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108967,6 +110076,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1188668623}
   collider: {fileID: 1188668622}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1188668621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109396,6 +110511,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1195007188}
   collider: {fileID: 1195007187}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1195007186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109715,6 +110836,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1195483180}
   collider: {fileID: 1195483179}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1195483178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110095,6 +111222,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1197346254}
   collider: {fileID: 1197346253}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1197346252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110600,6 +111733,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1201666688}
   collider: {fileID: 1201666687}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1201666686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111301,6 +112440,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1207389869}
   collider: {fileID: 1207389868}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1207389867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111807,6 +112952,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1207974905}
   collider: {fileID: 1207974904}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1207974903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112589,6 +113740,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1215327714}
   collider: {fileID: 1215327713}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1215327712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113115,6 +114272,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1217534317}
   collider: {fileID: 1217534316}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1217534315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113686,6 +114849,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1219562510}
   collider: {fileID: 1219562509}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1219562508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114116,6 +115285,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1222510107}
   collider: {fileID: 1222510106}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1222510105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114559,6 +115734,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1227176164}
   collider: {fileID: 1227176163}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1227176162
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116802,6 +117983,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1257261922}
   collider: {fileID: 1257261921}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1257261920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117099,6 +118286,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1267195877}
   collider: {fileID: 1267195876}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1267195875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117554,6 +118747,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1271023584}
   collider: {fileID: 1271023583}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1271023582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -118288,6 +119487,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1273791586}
   collider: {fileID: 1273791585}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1273791584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119395,6 +120600,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1281785901}
   collider: {fileID: 1281785900}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1281785899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120813,6 +122024,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1301829103}
   collider: {fileID: 1301829102}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1301829101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121110,6 +122327,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1305424716}
   collider: {fileID: 1305424715}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1305424714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121490,6 +122713,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1307700500}
   collider: {fileID: 1307700499}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1307700498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121787,6 +123016,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1307879757}
   collider: {fileID: 1307879756}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1307879755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122206,6 +123441,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1312176541}
   collider: {fileID: 1312176540}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1312176539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122668,6 +123909,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1312993087}
   collider: {fileID: 1312993086}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1312993085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123026,6 +124273,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1313425643}
   collider: {fileID: 1313425642}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1313425641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124065,6 +125318,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1318522085}
   collider: {fileID: 1318522084}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1318522083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124736,6 +125995,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1327309031}
   collider: {fileID: 1327309030}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1327309029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125542,6 +126807,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1338080006}
   collider: {fileID: 1338080005}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1338080004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126105,6 +127376,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1344015413}
   collider: {fileID: 1344015412}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1344015411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126878,6 +128155,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1352485323}
   collider: {fileID: 1352485322}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1352485321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127261,6 +128544,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1354564646}
   collider: {fileID: 1354564645}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1354564644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127483,6 +128772,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1355881079}
   collider: {fileID: 1355881078}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1355881077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127959,6 +129254,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1357866988}
   collider: {fileID: 1357866987}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1357866986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129120,6 +130421,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1374253976}
   collider: {fileID: 1374253975}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1374253974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130713,6 +132020,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1391057547}
   collider: {fileID: 1391057546}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1391057545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131967,6 +133280,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1404909741}
   collider: {fileID: 1404909740}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1404909739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132801,6 +134120,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1418316127}
   collider: {fileID: 1418316126}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1418316125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133272,6 +134597,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1420753203}
   collider: {fileID: 1420753202}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1420753201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133963,6 +135294,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1432350813}
   collider: {fileID: 1432350812}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1432350811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134364,6 +135701,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1437326049}
   collider: {fileID: 1437326048}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1437326047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134695,6 +136038,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1439309353}
   collider: {fileID: 1439309352}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1439309351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135075,6 +136424,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1440405882}
   collider: {fileID: 1440405881}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1440405880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135494,6 +136849,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1442295674}
   collider: {fileID: 1442295673}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1442295672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136113,6 +137474,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1450047400}
   collider: {fileID: 1450047399}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1450047398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136928,6 +138295,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1459876083}
   collider: {fileID: 1459876082}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1459876081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137225,6 +138598,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1464181515}
   collider: {fileID: 1464181514}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1464181513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137501,6 +138880,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1465498639}
   collider: {fileID: 1465498638}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1465498637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137842,6 +139227,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1467692724}
   collider: {fileID: 1467692723}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1467692722
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138338,6 +139729,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1469236021}
   collider: {fileID: 1469236020}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1469236019
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138613,6 +140010,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1469726526}
   collider: {fileID: 1469726525}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1469726524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139024,6 +140427,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1472227235}
   collider: {fileID: 1472227234}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1472227233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139404,6 +140813,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1472303362}
   collider: {fileID: 1472303361}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1472303360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139784,6 +141199,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1477793553}
   collider: {fileID: 1477793552}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1477793551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140164,6 +141585,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1480718803}
   collider: {fileID: 1480718802}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1480718801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140461,6 +141888,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1481310991}
   collider: {fileID: 1481310990}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1481310989
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140897,6 +142330,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1481774776}
   collider: {fileID: 1481774775}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1481774774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142343,6 +143782,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1501995494}
   collider: {fileID: 1501995493}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1501995492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142819,6 +144264,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1506383635}
   collider: {fileID: 1506383634}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1506383633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143337,6 +144788,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1514330153}
   collider: {fileID: 1514330152}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1514330151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143634,6 +145091,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1515570247}
   collider: {fileID: 1515570246}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1515570245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143909,6 +145372,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1517082573}
   collider: {fileID: 1517082572}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1517082571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145009,6 +146478,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1530844623}
   collider: {fileID: 1530844622}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1530844621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145668,6 +147143,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1542749141}
   collider: {fileID: 1542749140}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1542749139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146055,6 +147536,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1545294618}
   collider: {fileID: 1545294617}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1545294616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147020,6 +148507,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1566158934}
   collider: {fileID: 1566158933}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1566158932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147698,6 +149191,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1576562143}
   collider: {fileID: 1576562142}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1576562141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148273,6 +149772,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1581564706}
   collider: {fileID: 1581564705}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1581564704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148778,6 +150283,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1584767854}
   collider: {fileID: 1584767853}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1584767852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149195,6 +150706,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1587801909}
   collider: {fileID: 1587801908}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1587801907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149582,6 +151099,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1588152711}
   collider: {fileID: 1588152710}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1588152709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150252,6 +151775,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1603056956}
   collider: {fileID: 1603056955}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1603056954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150722,6 +152251,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1608651232}
   collider: {fileID: 1608651231}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1608651230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151360,6 +152895,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1611716016}
   collider: {fileID: 1611716015}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1611716014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151782,6 +153323,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1614547392}
   collider: {fileID: 1614547391}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1614547390
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152093,6 +153640,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1622845240}
   collider: {fileID: 1622845239}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1622845238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153708,6 +155261,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1646944632}
   collider: {fileID: 1646944631}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1646944630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154007,6 +155566,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1650561734}
   collider: {fileID: 1650561733}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1650561732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154340,6 +155905,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1653662255}
   collider: {fileID: 1653662254}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1653662253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155012,6 +156583,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1660218448}
   collider: {fileID: 1660218447}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1660218446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155930,6 +157507,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1670599527}
   collider: {fileID: 1670599526}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1670599525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -156359,6 +157942,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1674248971}
   collider: {fileID: 1674248970}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1674248969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157141,6 +158730,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1695898011}
   collider: {fileID: 1695898010}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1695898009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158175,6 +159770,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1720902678}
   collider: {fileID: 1720902677}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1720902676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159013,6 +160614,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1730514956}
   collider: {fileID: 1730514955}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1730514954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159312,6 +160919,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1733300537}
   collider: {fileID: 1733300536}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1733300535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160234,6 +161847,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1742444228}
   collider: {fileID: 1742444227}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1742444226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -160779,6 +162398,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1745931112}
   collider: {fileID: 1745931111}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1745931110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161489,6 +163114,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1755134730}
   collider: {fileID: 1755134729}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1755134728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161965,6 +163596,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1757805845}
   collider: {fileID: 1757805844}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1757805843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163198,6 +164835,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1770138316}
   collider: {fileID: 1770138315}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1770138314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164299,6 +165942,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1784017138}
   collider: {fileID: 1784017137}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1784017136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164588,6 +166237,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1785376477}
   collider: {fileID: 1785376476}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1785376475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165153,6 +166808,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1790303125}
   collider: {fileID: 1790303124}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1790303123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166759,6 +168420,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1812929981}
   collider: {fileID: 1812929980}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1812929979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167349,6 +169016,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1816058597}
   collider: {fileID: 1816058596}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1816058595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168438,6 +170111,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1835522588}
   collider: {fileID: 1835522587}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1835522586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168910,6 +170589,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1843027917}
   collider: {fileID: 1843027916}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1843027915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169364,6 +171049,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1845810255}
   collider: {fileID: 1845810254}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1845810253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169744,6 +171435,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1845839147}
   collider: {fileID: 1845839146}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1845839145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170224,6 +171921,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1855083792}
   collider: {fileID: 1855083791}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1855083790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170679,6 +172382,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1865779553}
   collider: {fileID: 1865779552}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1865779551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170990,6 +172699,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1866803981}
   collider: {fileID: 1866803980}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1866803979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173080,6 +174795,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1885388212}
   collider: {fileID: 1885388211}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1885388210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173665,6 +175386,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1888109438}
   collider: {fileID: 1888109437}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1888109436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -174566,6 +176293,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1896735783}
   collider: {fileID: 1896735782}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1896735781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175034,6 +176767,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1900607408}
   collider: {fileID: 1900607407}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1900607406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176149,6 +177888,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1918308498}
   collider: {fileID: 1918308497}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1918308496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176625,6 +178370,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1922591856}
   collider: {fileID: 1922591855}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1922591854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177154,6 +178905,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1931875964}
   collider: {fileID: 1931875963}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1931875962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177669,6 +179426,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1935058746}
   collider: {fileID: 1935058745}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1935058744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178315,6 +180078,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1939316289}
   collider: {fileID: 1939316288}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1939316287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178931,6 +180700,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1945245506}
   collider: {fileID: 1945245505}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1945245504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179558,6 +181333,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1945985126}
   collider: {fileID: 1945985125}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1945985124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179834,6 +181615,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1946115262}
   collider: {fileID: 1946115261}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1946115260
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180267,6 +182054,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1947678102}
   collider: {fileID: 1947678101}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1947678100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181333,6 +183126,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1955181789}
   collider: {fileID: 1955181788}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1955181787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181609,6 +183408,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1956172478}
   collider: {fileID: 1956172477}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1956172476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181898,6 +183703,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1967632506}
   collider: {fileID: 1967632505}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1967632504
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182209,6 +184020,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1968926058}
   collider: {fileID: 1968926057}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1968926056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184406,6 +186223,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1992147913}
   collider: {fileID: 1992147912}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1992147911
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184703,6 +186526,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1993743922}
   collider: {fileID: 1993743921}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1993743920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185251,6 +187080,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 1998111200}
   collider: {fileID: 1998111199}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &1998111198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185835,6 +187670,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2007975205}
   collider: {fileID: 2007975204}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2007975203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186242,6 +188083,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2008697842}
   collider: {fileID: 2008697841}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2008697840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187496,6 +189343,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2021210125}
   collider: {fileID: 2021210124}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2021210123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187824,6 +189677,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2022588091}
   collider: {fileID: 2022588090}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2022588089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188278,6 +190137,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2030515406}
   collider: {fileID: 2030515405}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2030515404
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189467,6 +191332,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2046515630}
   collider: {fileID: 2046515629}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2046515628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190093,6 +191964,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2051001174}
   collider: {fileID: 2051001173}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2051001172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190368,6 +192245,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2051387677}
   collider: {fileID: 2051387676}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2051387675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190673,6 +192556,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2053940766}
   collider: {fileID: 2053940765}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2053940764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191053,6 +192942,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2054256496}
   collider: {fileID: 2054256495}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2054256494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191841,6 +193736,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2065907530}
   collider: {fileID: 2065907529}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2065907528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192985,6 +194886,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2077662214}
   collider: {fileID: 2077662213}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2077662212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193663,6 +195570,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2081966033}
   collider: {fileID: 2081966032}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2081966031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -193940,6 +195853,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2082183761}
   collider: {fileID: 2082183760}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2082183759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194384,6 +196303,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2087261659}
   collider: {fileID: 2087261658}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2087261657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195039,6 +196964,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2091216966}
   collider: {fileID: 2091216965}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2091216964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195272,6 +197203,63 @@ MonoBehaviour:
     component: {fileID: 2091216970}
     isDeprecated: 0
   _childViews: []
+--- !u!1001 &2091674579
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5754032989225405790, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_Name
+      value: Ford F250
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.838044
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.11602402
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -21.934855
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7294434978270834693, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8775b22484ef74cf6bc8a6382f97cbf7, type: 3}
 --- !u!1 &2092145983
 GameObject:
   m_ObjectHideFlags: 0
@@ -195419,6 +197407,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2092145989}
   collider: {fileID: 2092145988}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2092145987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195834,6 +197828,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2093603305}
   collider: {fileID: 2093603304}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2093603303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196145,6 +198145,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2095391592}
   collider: {fileID: 2095391591}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2095391590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196907,6 +198913,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2102499841}
   collider: {fileID: 2102499840}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2102499839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197452,6 +199464,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2106504030}
   collider: {fileID: 2106504029}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2106504028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197749,6 +199767,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2107190869}
   collider: {fileID: 2107190868}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2107190867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198185,6 +200209,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2111553558}
   collider: {fileID: 2111553557}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2111553556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199079,6 +201109,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2122481116}
   collider: {fileID: 2122481115}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2122481114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199668,6 +201704,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2123653109}
   collider: {fileID: 2123653108}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2123653107
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199965,6 +202007,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2124009644}
   collider: {fileID: 2124009643}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2124009642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200427,6 +202475,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2127012436}
   collider: {fileID: 2127012435}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2127012434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200738,6 +202792,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2127840794}
   collider: {fileID: 2127840793}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2127840792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201035,6 +203095,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2128077246}
   collider: {fileID: 2128077245}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2128077244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201475,6 +203541,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2131948470}
   collider: {fileID: 2131948469}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2131948468
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201825,6 +203897,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2136393122}
   collider: {fileID: 2136393121}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2136393120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202205,6 +204283,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2139360872}
   collider: {fileID: 2139360871}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2139360870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202588,6 +204672,12 @@ MonoBehaviour:
   readyForSmolder: 0
   flammableObject: {fileID: 2144477687}
   collider: {fileID: 2144477686}
+  originalBoxCollider:
+    recorded: 0
+    addedForFire: 0
+    isTrigger: 0
+    center: {x: 0, y: 0, z: 0}
+    size: {x: 0, y: 0, z: 0}
 --- !u!114 &2144477685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210834,3 +212924,4 @@ SceneRoots:
   - {fileID: 1124687603}
   - {fileID: 645380017}
   - {fileID: 7990111921957461878}
+  - {fileID: 2091674579}

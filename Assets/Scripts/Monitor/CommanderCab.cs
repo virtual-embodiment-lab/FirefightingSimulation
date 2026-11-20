@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// The incident commander's pickup truck. The rig (pickup model, head pivot and camera) is
-/// authored in the Commander scene around a reference copy of the scenario fire truck. When a
+/// authored in the Commander scene around a reference copy of the Ford F250 prefab. When a
 /// scenario loads, <see cref="MonitorMode"/> hands the scene to <see cref="EnterScene"/>, which
-/// parks the pickup where that scenario's fire truck stands and hides the fire truck on this
+/// parks the pickup where that scenario's F250 stands and hides the scenario's F250 on this
 /// machine only (VR users still see it).
 ///
 /// The commander faces the windshield; holding the right mouse button looks around (within
@@ -19,13 +19,14 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public sealed class CommanderCab : MonoBehaviour
 {
-    [Tooltip("Scenario fire truck in the Commander scene that the pickup is placed against. " +
+    [Tooltip("Copy of the Ford F250 prefab in the Commander scene that the pickup is placed against. " +
+             "Each scenario's F250 (an instance of the same prefab) marks where the commander parks. " +
              "Only marks the spot; it is hidden in Play mode.")]
     [SerializeField] private Transform referenceTruck;
     [Tooltip("Eye pivot; rotated for looking around.")]
     [SerializeField] private Transform head;
     [SerializeField] private Camera viewCamera;
-    [Tooltip("Hide the scenario's fire truck on the commander's machine, since the pickup takes its place.")]
+    [Tooltip("Hide the scenario's F250 on the commander's machine, since the pickup takes its place.")]
     [SerializeField] private bool hideScenarioTruck = true;
 
     [Header("Look around (hold right mouse button)")]
@@ -59,6 +60,8 @@ public sealed class CommanderCab : MonoBehaviour
 
     private Matrix4x4 cabInTruck;
     private Mesh truckMesh;
+    // How many levels the matched mesh sits below the truck's root object.
+    private int truckMeshDepth;
     private RealtimeAvatarManager avatarManager;
     private Realtime realtime;
     private string scenarioName;
@@ -79,15 +82,23 @@ public sealed class CommanderCab : MonoBehaviour
     private void Awake()
     {
         viewCamera.gameObject.tag = "MainCamera";
+        // The pickup's own collider (from the F250 prefab) would get in the way of its ground
+        // probe and obstacle checks; it moves by its own box (MeasureBody), so switch it off.
+        foreach (Collider own in GetComponentsInChildren<Collider>(true))
+            own.enabled = false;
         if (referenceTruck != null)
         {
             cabInTruck = TruckFrame(referenceTruck).inverse * transform.localToWorldMatrix;
-            truckMesh = referenceTruck.GetComponentInChildren<MeshFilter>().sharedMesh;
+            MeshFilter marker = referenceTruck.GetComponentInChildren<MeshFilter>();
+            truckMesh = marker.sharedMesh;
+            truckMeshDepth = 0;
+            for (Transform t = marker.transform; t != referenceTruck; t = t.parent)
+                truckMeshDepth++;
             SetTruckVisible(referenceTruck, false);
         }
     }
 
-    /// <summary>Parks the commander's pickup where <paramref name="scene"/>'s fire truck stands.</summary>
+    /// <summary>Parks the commander's pickup where <paramref name="scene"/>'s F250 stands.</summary>
     public void EnterScene(Scene scene, RealtimeAvatarManager manager, Pose fallback)
     {
         avatarManager = manager;
@@ -106,7 +117,8 @@ public sealed class CommanderCab : MonoBehaviour
         else
         {
             // No truck in this scene: stand at the VR spawn point instead, facing the same way.
-            Debug.LogWarning($"[Commander] No fire truck found in {scene.name}; placing the commander at the VR spawn point.");
+            Debug.LogWarning($"[Commander] No Ford F250 found in {scene.name}; placing the commander at the VR spawn point. " +
+                             "Place an instance of Assets/Scenes/Commander/Ford F250/Ford F250.prefab where the commander should park.");
             Quaternion facing = Quaternion.Euler(0f, fallback.rotation.eulerAngles.y, 0f);
             Vector3 eye = fallback.position + Vector3.up * 1.6f;
             transform.SetPositionAndRotation(eye - facing * transform.InverseTransformPoint(head.position), facing);
@@ -177,22 +189,29 @@ public sealed class CommanderCab : MonoBehaviour
         return false;
     }
 
-    // The fire truck model lies on its side inside the prefab (its local Y axis runs from tail
-    // to nose), so build an upright frame from its position and the direction its nose points.
+    // An upright frame at the truck's root: its position and the direction it faces, ignoring
+    // any tilt, so a truck parked on a slope still seats the commander level.
     private static Matrix4x4 TruckFrame(Transform truck)
     {
-        Vector3 nose = Vector3.ProjectOnPlane(truck.up, Vector3.up).normalized;
-        return Matrix4x4.TRS(truck.position, Quaternion.LookRotation(nose, Vector3.up), Vector3.one);
+        Vector3 facing = Vector3.ProjectOnPlane(truck.forward, Vector3.up).normalized;
+        return Matrix4x4.TRS(truck.position, Quaternion.LookRotation(facing, Vector3.up), Vector3.one);
     }
 
+    // The scenario's F250 is found by one of the prefab's meshes, then walked up to the truck's
+    // root, so the whole truck is used for placement and hidden.
     private Transform FindTruck(Scene scene)
     {
         if (truckMesh == null)
             return null;
         foreach (MeshFilter filter in Object.FindObjectsByType<MeshFilter>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
-            if (filter.gameObject.scene == scene && filter.sharedMesh == truckMesh)
-                return filter.transform;
+            // The commander's own pickup shares these meshes; never park against it.
+            if (filter.gameObject.scene != scene || filter.sharedMesh != truckMesh || filter.transform.IsChildOf(transform))
+                continue;
+            Transform root = filter.transform;
+            for (int i = 0; i < truckMeshDepth && root.parent != null; i++)
+                root = root.parent;
+            return root;
         }
         return null;
     }
@@ -316,7 +335,7 @@ public sealed class CommanderCab : MonoBehaviour
         bool connected = realtime != null && realtime.connected;
         System.Text.StringBuilder text = new();
         text.AppendLine("<b>COMMANDER VIEW</b>");
-        text.AppendLine($"Scenario: <b>{scenarioName}</b>{(seatedInTruck ? string.Empty : "  <color=#ffb347>(no fire truck)</color>")}");
+        text.AppendLine($"Scenario: <b>{scenarioName}</b>{(seatedInTruck ? string.Empty : "  <color=#ffb347>(no F250)</color>")}");
         text.AppendLine(connected ? $"Connected  ·  VR users: {avatars.Count}" : "<color=#ffb347>Connecting to room…</color>");
         for (int i = 0; i < avatars.Count; i++)
         {

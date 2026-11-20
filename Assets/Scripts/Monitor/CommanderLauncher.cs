@@ -7,7 +7,7 @@ using UnityEditor.SceneManagement;
 
 /// <summary>
 /// Entry point of the Commander scene. Pick the scenario the VR users are in and the
-/// commander joins its Normcore room seated in the fire truck (<see cref="CommanderCab"/>):
+/// commander joins its Normcore room seated in a Ford F250 pickup (<see cref="CommanderCab"/>):
 /// no avatar, XR off, never owns any fire, hears every VR user.
 ///
 /// Every scenario joins the same room and shares most fire IDs, so choosing a different
